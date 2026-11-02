@@ -693,11 +693,40 @@ def run(demo: bool, notify: bool):
     log(f"Regime: {regime} | top themes: {', '.join(top_themes)} | leaders: {len(leaders)}")
     log(f"Wrote {DOCS / 'index.html'}")
 
+    # ── Alerts: what changed since the previous run ────────────────
+    state_path = HIST / "state.json"
+    setups_now = sorted(leaders.index[leaders.setup & ~leaders.er_soon])
+    old_state = {}
+    if state_path.exists():
+        try:
+            old_state = json.loads(state_path.read_text())
+        except ValueError:
+            old_state = {}
+    if old_state.get("date") == d:                 # re-run of the same day: compare with the day before
+        old_state = old_state.get("prev") or {}
+    alert = []
+    if old_state:
+        if old_state.get("regime") and old_state["regime"] != regime:
+            alert.append(f"Regime changed: {old_state['regime']} → {regime} ({risk_on_n}/{len(gauges)} gauges risk-on)")
+        fresh = [t for t in setups_now if t not in set(old_state.get("setups", []))]
+        if fresh:
+            alert.append("New setups: " + ", ".join(
+                f"{t} (RS {int(leaders.at[t, 'rs_rating'])}, {leaders.at[t, 'pivot_dist']:+.1f}% from pivot)" for t in fresh[:8]))
+    new_state = {"date": d, "regime": regime, "setups": setups_now}
+    new_state["prev"] = (old_state if old_state.get("date") != d else None) or None
+    new_state["prev"] = {k: v for k, v in (new_state["prev"] or {}).items() if k != "prev"} or None
+    state_path.write_text(json.dumps(new_state, indent=1))
+    if alert:
+        log("  alert: " + " | ".join(alert))
+
     # ── Telegram ────────────────────────────────────────────────────
     is_saturday = dt.datetime.now(SGT).weekday() == 5
     if notify or is_saturday or SETTINGS.get("telegram_daily"):
         from notify import send_summary
         send_summary(payload, DATA_OUT / "tradingview_leaders.txt", SETTINGS)
+    elif alert and not demo and SETTINGS.get("telegram_alerts", True):
+        from notify import send_alert
+        send_alert(payload, alert, SETTINGS)
     return payload
 
 

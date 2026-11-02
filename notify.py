@@ -82,3 +82,20 @@ def send_summary(payload: dict, tv_file: Path, settings: dict) -> None:
                               data={"chat_id": chat, "caption": "TradingView watchlist — Import list…"},
                               files={"document": (f"RS_leaders_{payload['asof'][4:].replace(' ', '')}.txt", f)})
         print("Telegram file:", r.status_code, "ok" if r.status_code == 200 else r.text[:200])
+
+
+def send_alert(payload: dict, alert: list, settings: dict) -> None:
+    """Short midweek message, only sent when the regime changes or new setups appear."""
+    e = lambda s: html.escape(str(s))
+    lines = [f"<b>RS Engine alert — {e(payload['asof'])}</b>", ""] + [f"• {e(a)}" for a in alert]
+    url = settings.get("dashboard_url")
+    if url:
+        lines += ["", f'<a href="{e(url)}">Open dashboard</a>']
+    msg = "\n".join(lines)
+    token, chat = os.environ.get("TELEGRAM_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat:
+        print("Telegram not configured. Alert preview:\n" + msg)
+        return
+    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", timeout=30, data={
+        "chat_id": chat, "text": msg, "parse_mode": "HTML", "disable_web_page_preview": "true"})
+    print("Telegram alert:", r.status_code, "ok" if r.status_code == 200 else r.text[:200])

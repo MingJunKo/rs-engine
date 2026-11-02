@@ -76,6 +76,7 @@ Groups like PEJ (Leisure), BETZ, AMLP, IPAY, BOAT start with no holdings — the
 |---|---|
 | Tue–Sat 6:30am | Engine runs on the previous US close; dashboard and history update |
 | Saturday 6:30am | + Telegram summary and TradingView file (Friday close) |
+| Tue–Fri 6:30am, only if something changed | Short Telegram alert: regime change or new setups (turn off with `"telegram_alerts": false`) |
 | 1st of the month | Universe refresh from the ETF issuers |
 | Any time | Actions → RS Engine → Run workflow |
 
