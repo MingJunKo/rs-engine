@@ -134,6 +134,39 @@ table.t tr.bench td{color:var(--gold)}
 footer{padding:30px 0 50px;color:var(--t4);font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.06em}
 footer a{color:var(--t3)}
 
+/* collapsibles */
+details.fold{background:var(--surface);border:.5px solid var(--border);border-radius:7px;margin-bottom:10px}
+details.fold>summary{list-style:none;cursor:pointer;padding:11px 16px;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"+";font-size:13px;color:var(--gold-dim);width:10px}
+details.fold[open]>summary::before{content:"−"}
+details.fold>summary span{color:var(--t3);letter-spacing:.04em;text-transform:none;font-family:Barlow,sans-serif;font-size:11.5px}
+details.fold .body{padding:2px 18px 16px;font-size:12.5px;color:var(--t2);line-height:1.65}
+.tt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 22px;counter-reset:tt;list-style:none}
+.tt-list li{counter-increment:tt;padding-left:26px;position:relative}
+.tt-list li::before{content:counter(tt);position:absolute;left:0;top:1px;width:17px;height:17px;border-radius:50%;border:.5px solid var(--gold-dim);color:var(--gold);font-family:"DM Mono",monospace;font-size:9.5px;display:flex;align-items:center;justify-content:center}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:6px 22px}
+.guide b{color:var(--t1);font-weight:500;font-family:"DM Mono",monospace;font-size:11px}
+.flag.setup{color:#0b0b0a;background:var(--gold)}.flag.er{color:var(--dn);background:var(--dn-bg)}
+.letf{font-family:"DM Mono",monospace;font-size:10.5px;color:var(--t3)}
+/* chart drawer */
+td.sym .open{cursor:pointer}
+td.sym .ext{color:var(--t4);text-decoration:none;margin-left:5px;font-size:10px}
+td.sym .ext:hover{color:var(--gold)}
+tr.sel td{background:var(--gold-bg)!important}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(1100px,62vw);background:var(--surface);border-left:.5px solid var(--border-2);z-index:80;transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column;box-shadow:-20px 0 40px rgba(0,0,0,.5)}
+#drawer.open{transform:none}
+#drawer .dh{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:.5px solid var(--border)}
+#drawer .dh .s{font-family:"DM Mono",monospace;font-size:17px;font-weight:500;color:var(--t1)}
+#drawer .dh .n{color:var(--t2);font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#drawer .dh button,#drawer .dh a{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.08em;background:transparent;border:.5px solid var(--border-2);color:var(--t2);padding:5px 10px;border-radius:3px;cursor:pointer;text-decoration:none;white-space:nowrap}
+#drawer .dh button:hover,#drawer .dh a:hover{color:var(--gold);border-color:var(--gold-dim)}
+#drawer .stats{display:flex;flex-wrap:wrap;gap:6px 18px;padding:9px 16px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
+#drawer .stats b{color:var(--t1);font-weight:500}
+#tvbox{flex:1;min-height:0}
+#drawer .hint{padding:7px 16px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);border-top:.5px solid var(--border)}
+#cal{height:420px}
+@media (max-width:900px){#drawer{width:100vw}}
 @media (max-width:900px){
   .wrap{padding:0 16px}
   .grid2,.grid-rrg,.method{grid-template-columns:1fr}
@@ -161,6 +194,8 @@ footer a{color:var(--t3)}
   <section id="regime">
     <div class="sec-head"><h2>Risk appetite</h2><div class="line"></div><p>Ratio vs its 50-day average · 6 months</p></div>
     <div class="gauges" id="gauges"></div>
+    <details class="fold" id="cal-fold" style="margin-top:12px"><summary>Economic calendar <span>— US events this week (Jeff's rule: no new entries right before major data)</span></summary>
+      <div class="body"><div id="cal"></div></div></details>
   </section>
 
   <section id="rotation">
@@ -204,9 +239,41 @@ footer a{color:var(--t3)}
       <label><input type="checkbox" id="f-nh"> Within 15% of high</label>
       <label><input type="checkbox" id="f-ext"> Hide extended</label>
       <label><input type="checkbox" id="f-new"> New this week</label>
+      <label><input type="checkbox" id="f-setup"> Setups only</label>
+      <label><input type="checkbox" id="f-er"> Hide earnings ≤ 7d</label>
       <span class="count" id="count"></span>
     </div>
     <div class="tbl-wrap"><table class="t" id="leader-tbl"></table></div>
+    <p style="font-family:'DM Mono',monospace;font-size:9.5px;color:var(--t4);margin-top:8px">Click a ticker to open its chart · ↑ ↓ to flip through the list · ↗ opens TradingView</p>
+    <div style="margin-top:14px">
+      <details class="fold"><summary>Minervini trend template <span>— all 8 must pass for the TT flag</span></summary><div class="body">
+        <ol class="tt-list">
+          <li>Price above the 150-day and 200-day moving averages</li>
+          <li>150-day MA above the 200-day MA</li>
+          <li>200-day MA trending up for at least 1 month</li>
+          <li>50-day MA above both the 150-day and 200-day MAs</li>
+          <li>Price above the 50-day MA</li>
+          <li>Price at least 30% above its 52-week low</li>
+          <li>Price within 25% of its 52-week high</li>
+          <li>RS rating of 70 or higher (Minervini prefers 80–90+)</li>
+        </ol>
+        <p style="margin-top:12px;color:var(--t3)">Stage 2 uptrend filter from <i>Trade Like a Stock Market Wizard</i>. It says the trend is healthy — not that it's a buy point. Combine with <b style="color:var(--gold)">SETUP</b> (tight, near a pivot, not extended) and your own VCP read on the chart.</p>
+      </div></details>
+      <details class="fold"><summary>Column guide</summary><div class="body guide">
+        <div><b>RS</b> — volatility-adjusted RS rating 1–99 vs RSP (1W/1M/3M blended 15/35/50). <b>Δ1W</b> — change over 5 sessions.</div>
+        <div><b>RS Win 1M</b> — % of the last 20 sessions it beat RSP. Persistence, not one spike.</div>
+        <div><b>Off High</b> — % below the 52-week closing high.</div>
+        <div><b>ADR%</b> — average daily range, 20 days. Your floor: ${MIN_ADR}%.</div>
+        <div><b>ATR ext</b> — ATRs above the 50-DMA. Jeff avoids new entries above 4 (flag EXT).</div>
+        <div><b>Pivot</b> — % below the 20-day high. Within 6% = close to a breakout level.</div>
+        <div><b>Tight</b> — 10-day high-low range measured in ADRs. ≤ 2.5 = contracting; lower is tighter.</div>
+        <div><b>Vol dry</b> — 10-day ÷ 50-day average volume. Below 1 = volume drying up in the base.</div>
+        <div><b>RVol</b> — last session's volume ÷ 50-day average.</div>
+        <div><b>ER</b> — next earnings date. Red when within 7 days (no new entries).</div>
+        <div><b>SETUP</b> — near pivot (≤ 6%), tight (≤ 2.5 ADR), 0–4 ATR above the 50-DMA. A screen for buyable shape, not a buy signal.</div>
+        <div><b>TT</b> trend template · <b>NH</b> within 15% of high · <b>NEW</b> joined the list this week.</div>
+      </div></details>
+    </div>
   </section>
 
   <section id="method">
@@ -214,12 +281,20 @@ footer a{color:var(--t3)}
     <div class="method">
       <div class="card"><b>RS Rating (1–99)</b> — volatility-adjusted relative strength (Jeff Sun's VARS idea). Each day's move is measured in ATRs, the benchmark's ATR-moves are subtracted, and the result is summed over 1W, 1M and 3M, ranked across the universe and blended 15/35/50. A quiet stock grinding up beats a wild one that only got there by being volatile. <b>Δ1W</b> = change in rating over 5 sessions.</div>
       <div class="card"><b>RS Win %</b> — share of the last 20 sessions the ticker beat the benchmark. 75% = beat it on 15 of 20 days: persistent, not one spike. <b>RS 1M</b> = performance relative to the benchmark over a month. <b>Breadth</b> = % of the ETF's holdings in your universe above their 50-DMA.</div>
-      <div class="card"><b>Leaders</b> — stocks belonging to the top themes (best ETF per theme), with RS Rating ≥ min, above the 50-DMA, price and $-volume above your floors. <b>TT</b> = Minervini trend template. <b>Ext</b> = more than 4 ATRs above the 50-DMA (don't chase). <b>NH</b> = within 15% of the 52-week high. <b>New</b> = not on the list a week ago.</div>
+      <div class="card"><b>Leaders</b> — stocks belonging to the top themes (best ETF per theme), with RS Rating ≥ min, above the 50-DMA, price and $-volume above your floors. <b>TT</b> = Minervini trend template. <b>Ext</b> = more than 4 ATRs above the 50-DMA (don't chase). <b>NH</b> = within 15% of the 52-week high. <b>New</b> = not on the list a week ago. <b>SETUP</b> = near a pivot, tight, not extended — the ones to put on your Focus list.</div>
     </div>
   </section>
 
   <footer id="footer"></footer>
 </div>
+<aside id="drawer" aria-hidden="true">
+  <div class="dh"><div class="s" id="d-sym"></div><div class="n" id="d-name"></div>
+    <button id="d-prev" title="Previous (↑)">↑</button><button id="d-next" title="Next (↓)">↓</button>
+    <a id="d-tv" target="_blank" rel="noopener">TradingView ↗</a><button id="d-close" title="Close (Esc)">✕</button></div>
+  <div class="stats" id="d-stats"></div>
+  <div id="tvbox"><div id="tvchart" style="height:100%"></div></div>
+  <div class="hint">↑ ↓ next / previous · Esc close · SMA 10 / 21 / 50 / 200</div>
+</aside>
 
 <script>
 const D = /*__DATA__*/null;
@@ -342,6 +417,7 @@ function table(el, cols, rows, opts={}){
       if (opts.pin && a[opts.pin]) return -1; if (opts.pin && b[opts.pin]) return 1;
       const x=a[sortKey], y=b[sortKey]; if (x==null) return 1; if (y==null) return -1;
       return (typeof x === "string" ? x.localeCompare(y) : x-y) * dir; });
+    el._rows = r;
     el.innerHTML = `<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" data-k="${c.k||''}" title="${esc(c.tip||'')}">${c.h}</th>`).join("")}</tr></thead>
       <tbody>${r.map(x=>`<tr class="${opts.rowClass ? opts.rowClass(x) : ''}">${cols.map(c=>c.f(x)).join("")}</tr>`).join("")}</tbody>`;
     el.querySelectorAll("th").forEach(th => th.onclick = () => {
@@ -354,7 +430,55 @@ const ratingTd = x => x.rs_rating==null ? `<td style="color:#45403a" title="Not 
 const chgTd = (v, d=0) => `<td class="${v>0?'up':v<0?'dn':''}">${v==null?'–':(v>0?'▲':v<0?'▼':'·')+' '+Math.abs(v).toFixed(d)}</td>`;
 const offTd = v => v==null ? `<td>–</td>` : `<td><span class="offbar">${fmt(v,0,false)}%<i style="width:${Math.min(Math.abs(v),40)*1.2}px"></i></span></td>`;
 const winTd = v => v==null ? `<td>–</td>` : `<td style="color:${v>=60?'#8fcf8a':v<=40?'#e0a17a':'#a59c8f'}">${v.toFixed(0)}%</td>`;
-const symTd = (x, ex) => `<td class="sym l"><a href="${tvUrl(x.symbol, ex)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`;
+const symTd = (x, ex) => `<td class="sym l"><span class="open" data-sym="${esc(x.symbol)}">${esc(x.symbol)}</span><a class="ext" href="${tvUrl(x.symbol, ex)}" target="_blank" rel="noopener" title="Open in TradingView">↗</a></td>`;
+const LETF = {QQQ:"TQQQ / SQQQ",SPY:"SPXL / SPXS",IWM:"TNA / TZA",DIA:"UDOW / SDOW",TLT:"TMF / TMV",XLK:"TECL / TECS",XLF:"FAS / FAZ",
+  XLE:"ERX / ERY",XLV:"CURE",XLU:"UTSL",XLI:"DUSL",XLY:"WANT / SCC",XLRE:"DRN / DRV",XLB:"UYM / SMN",XLP:"UGE / SZK",XLC:"LTL",
+  SMH:"SOXL / SOXS",SOXX:"SOXL / SOXS",XSD:"SOXL / SOXS",XBI:"LABU / LABD",KRE:"DPST",XRT:"RETL",XOP:"GUSH / DRIP",GDX:"NUGT / JDST",
+  IBIT:"BITX / SBIT",KWEB:"CWEB",FXI:"YINN / YANG",ITA:"DFEN",XHB:"NAIL",ITB:"NAIL",WCLD:"CLDL",USO:"UCO / SCO",PPH:"PILL",PEJ:"OOTO",
+  IYT:"TPOR",XTN:"TPOR",ROBO:"UBOT",ETH:"ETHU"};
+
+/* chart drawer */
+let curRows = [], curIdx = -1, curTable = null, tvLoaded = null;
+function loadTV(){ return tvLoaded ||= new Promise((ok, no) => { const s = document.createElement("script");
+  s.src = "https://s3.tradingview.com/tv.js"; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+function openChart(table, sym){
+  curTable = table; curRows = table._rows || []; curIdx = curRows.findIndex(r => r.symbol === sym);
+  showChart();
+}
+function showChart(){
+  const x = curRows[curIdx]; if (!x) return;
+  const tvSym = x.exchange ? x.exchange + ":" + x.symbol : x.symbol;
+  $("#d-sym").textContent = x.symbol; $("#d-name").textContent = x.name || "";
+  $("#d-tv").href = tvUrl(x.symbol, x.exchange);
+  const st = [["RS", x.rs_rating], ["Δ1W", x.rs_chg_1w], ["Win", x.rs_win_1m!=null ? x.rs_win_1m+"%" : null],
+    ["1M", x.chg_1m!=null ? fmt(x.chg_1m)+"%" : null], ["Off high", x.off_high!=null ? fmt(x.off_high,1,false)+"%" : null],
+    ["ADR", x.adr!=null ? x.adr+"%" : null], ["ATR ext", x.atr_ext], ["Pivot", x.pivot_dist!=null ? fmt(x.pivot_dist)+"%" : null],
+    ["Tight", x.tightness], ["ER", x.earnings], ["Theme", x.theme], ["LETF", LETF[x.symbol]]];
+  $("#d-stats").innerHTML = st.filter(s=>s[1]!=null && s[1]!=="").map(s=>`<span>${s[0]} <b>${esc(s[1])}</b></span>`).join("") +
+    `<span style="margin-left:auto">${curIdx+1} / ${curRows.length}</span>`;
+  document.querySelectorAll("tr.sel").forEach(r=>r.classList.remove("sel"));
+  const tr = curTable && curTable.querySelector(`[data-sym="${CSS.escape(x.symbol)}"]`)?.closest("tr");
+  if (tr) { tr.classList.add("sel"); tr.scrollIntoView({block:"nearest"}); }
+  $("#drawer").classList.add("open"); $("#drawer").setAttribute("aria-hidden","false");
+  loadTV().then(() => {
+    $("#tvchart").innerHTML = "";
+    new TradingView.widget({container_id:"tvchart", autosize:true, symbol:tvSym, interval:"D", timezone:"Asia/Singapore",
+      theme:"dark", style:"1", locale:"en", hide_side_toolbar:false, allow_symbol_change:true, withdateranges:true, save_image:false,
+      backgroundColor:"#121211", gridColor:"rgba(255,255,255,0.04)",
+      studies:[{id:"MASimple@tv-basicstudies",inputs:{length:10}},{id:"MASimple@tv-basicstudies",inputs:{length:21}},
+               {id:"MASimple@tv-basicstudies",inputs:{length:50}},{id:"MASimple@tv-basicstudies",inputs:{length:200}}]});
+  }).catch(() => { $("#tvchart").innerHTML = `<p style="padding:30px;color:var(--t3)">Chart couldn't load — use TradingView ↗</p>`; });
+}
+function closeChart(){ $("#drawer").classList.remove("open"); $("#drawer").setAttribute("aria-hidden","true");
+  document.querySelectorAll("tr.sel").forEach(r=>r.classList.remove("sel")); curIdx = -1; }
+function step(d){ if (curIdx < 0) return; curIdx = Math.max(0, Math.min(curRows.length-1, curIdx + d)); showChart(); }
+document.addEventListener("click", e => { const o = e.target.closest(".open[data-sym]"); if (o) openChart(o.closest("table"), o.dataset.sym); });
+document.addEventListener("keydown", e => {
+  if (!$("#drawer").classList.contains("open") || e.target.matches("input,select,textarea")) return;
+  if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); step(1); }
+  else if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); step(-1); }
+  else if (e.key === "Escape") closeChart();
+});
 
 const etfCols = (withTheme) => [
   {h:"Symbol", k:"symbol", l:1, f:x=>symTd(x)},
@@ -373,6 +497,7 @@ const etfCols = (withTheme) => [
   {h:"Off 52W H", k:"off_high", f:x=>offTd(x.off_high)},
   {h:"Breadth", k:"breadth_50", tip:"% of holdings above 50-DMA", f:x=>`<td>${x.breadth_50==null?'–':x.breadth_50+'%'}</td>`},
   {h:"Rotation", k:"quadrant", l:1, f:x=>`<td class="l q ${x.quadrant}">${x.quadrant||'–'}</td>`},
+  {h:"LETF", l:1, tip:"Leveraged ETFs on this index/sector (Jeff's capital-efficiency tool)", f:x=>`<td class="l letf">${LETF[x.symbol]||''}</td>`},
   ...(withTheme ? [{h:"Stocks", l:1, tip:"Whether this theme has holdings in your stock universe", f:x=>{const t=(D.themes.find(z=>z.theme===x.theme)||{}); return `<td class="l" style="color:${t.has_stocks?'#6b645a':'#c9a55a'}">${t.has_stocks?'✓':'add holdings'}</td>`;}}] : []),
 ];
 
@@ -456,7 +581,13 @@ function render(){
 
   // leaders
   const S = D.settings;
-  $("#leader-rule").textContent = `Top ${S.top_themes} themes · RS ≥ ${S.min_rs_rating} · above 50-DMA · price ≥ $${S.min_price} · $vol ≥ $${(S.min_dollar_volume/1e6).toFixed(0)}M`;
+  $("#leader-rule").textContent = `Top ${S.top_themes} themes · RS ≥ ${S.min_rs_rating} · above 50-DMA · ADR ≥ ${S.min_adr}% · price ≥ $${S.min_price} · $vol ≥ $${(S.min_dollar_volume/1e6).toFixed(0)}M`;
+  document.querySelectorAll(".guide div").forEach(d => d.innerHTML = d.innerHTML.replace("${MIN_ADR}", S.min_adr));
+  $("#cal-fold").addEventListener("toggle", function once(){ if (!this.open || $("#cal").childElementCount) return;
+    const s = document.createElement("script"); s.async = true; s.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
+    s.text = JSON.stringify({colorTheme:"dark", isTransparent:true, width:"100%", height:"100%", locale:"en", importanceFilter:"0,1", countryFilter:"us"});
+    const w = document.createElement("div"); w.className = "tradingview-widget-container"; w.style.height = "100%";
+    w.innerHTML = '<div class="tradingview-widget-container__widget" style="height:100%"></div>'; w.appendChild(s); $("#cal").appendChild(w); });
   const counts = {}; D.leaders.forEach(l => counts[l.theme] = (counts[l.theme]||0)+1);
   let activeTheme = null;
   $("#themechips").innerHTML = `<button class="on" data-t="">All<b>${D.leaders.length}</b></button>` +
@@ -477,20 +608,25 @@ function render(){
     {h:"ADR%", k:"adr", f:x=>`<td style="color:${x.adr>=3?'#ede6d8':'#6b645a'}">${fmt(x.adr,1,false)}</td>`},
     {h:"$Vol M", k:"dollar_vol", f:x=>`<td>${x.dollar_vol>=1000?(x.dollar_vol/1000).toFixed(1)+'B':x.dollar_vol?.toFixed(0)}</td>`},
     {h:"ATR ext", k:"atr_ext", tip:"ATRs above the 50-DMA (Jeff: avoid > 4)", f:x=>`<td class="${x.atr_ext>4?'dn':''}">${fmt(x.atr_ext,1,false)}</td>`},
+    {h:"Pivot", k:"pivot_dist", tip:"% below the 20-day high", f:x=>`<td style="color:${x.pivot_dist>=-6?'#ede6d8':'#6b645a'}">${fmt(x.pivot_dist,1)}%</td>`},
+    {h:"Tight", k:"tightness", tip:"10-day range in ADRs (lower = tighter)", f:x=>`<td style="color:${x.tightness<=2.5?'#e8c070':'#6b645a'}">${fmt(x.tightness,1,false)}</td>`},
+    {h:"Vol dry", k:"vol_dryup", tip:"10-day ÷ 50-day volume (<1 = drying up)", f:x=>`<td style="color:${x.vol_dryup<1?'#8fcf8a':'#6b645a'}">${fmt(x.vol_dryup,2,false)}</td>`},
     {h:"RVol", k:"rvol", f:x=>`<td style="color:${x.rvol>=1.5?'#e8c070':'#a59c8f'}">${fmt(x.rvol,2,false)}</td>`},
-    {h:"Flags", l:1, f:x=>`<td class="l">${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}</td>`},
+    {h:"ER", k:"er_days", tip:"Next earnings date", f:x=>`<td class="${x.er_soon?'dn':''}" style="${x.er_soon?'':'color:#6b645a'}">${x.earnings||'–'}</td>`},
+    {h:"Flags", l:1, f:x=>`<td class="l">${x.setup?'<span class="flag setup">SETUP</span>':''}${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}${x.er_soon?'<span class="flag er">ER</span>':''}</td>`},
   ];
   const drawLeaders = () => {
     const q = $("#q").value.trim().toUpperCase();
     const rows = D.leaders.filter(l =>
       (!activeTheme || l.theme===activeTheme) && (!q || l.symbol.includes(q) || (l.name||"").toUpperCase().includes(q)) &&
       (!$("#f-tt").checked || l.trend_template) && (!$("#f-nh").checked || l.near_high) &&
-      (!$("#f-ext").checked || !l.extended) && (!$("#f-new").checked || l.new));
+      (!$("#f-ext").checked || !l.extended) && (!$("#f-new").checked || l.new) &&
+      (!$("#f-setup").checked || l.setup) && (!$("#f-er").checked || !l.er_soon));
     $("#count").textContent = `${rows.length} of ${D.leaders.length}`;
     table($("#leader-tbl"), lcols, rows, {sort:"rs_rating"});
   };
   $("#themechips").querySelectorAll("button").forEach(b=>b.onclick=()=>{activeTheme=b.dataset.t||null; $("#themechips").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); drawLeaders();});
-  ["#q","#f-tt","#f-nh","#f-ext","#f-new"].forEach(s=>$(s).addEventListener("input", drawLeaders));
+  ["#q","#f-tt","#f-nh","#f-ext","#f-new","#f-setup","#f-er"].forEach(s=>$(s).addEventListener("input", drawLeaders));
   drawLeaders();
 
   let rt; window.addEventListener("resize", ()=>{clearTimeout(rt); rt=setTimeout(()=>{drawCharts(); drawRRG();},150);});
