@@ -8,5 +8,5 @@
   "max_leaders": 60,
   "telegram_top_n": 15,
   "telegram_daily": false,
-  "dashboard_url": ""
+  "dashboard_url": "https://mingjunko.github.io/rs-engine"
 }
