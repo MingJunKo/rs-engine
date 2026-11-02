@@ -1,0 +1,39 @@
+name: Refresh universe
+
+on:
+  schedule:
+    - cron: "0 2 1 * *"        # 1st of every month, 10am SGT
+  workflow_dispatch:
+    inputs:
+      etfs:
+        description: "Only these ETFs (space separated, blank = all)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rs-engine
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python refresh_universe.py ${{ inputs.etfs }}
+      - run: cat data/universe_changes.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Commit
+        run: |
+          git config user.name "rs-engine-bot"
+          git config user.email "rs-engine-bot@users.noreply.github.com"
+          git add config/universe.csv data/universe_changes.md
+          git diff --cached --quiet || git commit -m "Universe refresh $(date -u +%Y-%m-%d)"
+          git push
