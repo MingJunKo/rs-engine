@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RS Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b0b0a; --surface:#121211; --surface-2:#171716; --surface-3:#1d1d1b;
+  --border:#232320; --border-2:#2e2d29; --gold:#c9a55a; --gold-bright:#e8c070; --gold-dim:#7a6234; --gold-bg:#17130a;
+  --t1:#ede6d8; --t2:#a59c8f; --t3:#6b645a; --t4:#45403a;
+  --up:#5bbf7a; --up-bg:rgba(91,191,122,.14); --dn:#d4706a; --dn-bg:rgba(212,112,106,.14);
+  --growth:#7c9cff; --cyclical:#e0b25a; --defensive:#5fc9a8; --neutral:#8a8478;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+body{background:var(--ink);color:var(--t1);font-family:Barlow,system-ui,sans-serif;font-weight:300;font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.mono{font-family:"DM Mono",ui-monospace,monospace}
+.wrap{max-width:1440px;margin:0 auto;padding:0 28px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,11,10,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--border)}
+nav .wrap{display:flex;align-items:center;gap:26px;height:48px;overflow-x:auto;scrollbar-width:none}
+nav .brand{font-family:"Playfair Display",serif;font-weight:700;font-size:16px;white-space:nowrap}
+nav .brand em{color:var(--gold);font-style:italic}
+nav a{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);text-decoration:none;white-space:nowrap}
+nav a:hover{color:var(--gold)}
+nav .asof{margin-left:auto;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);white-space:nowrap}
+
+/* hero */
+.hero{padding:34px 0 26px;border-bottom:.5px solid var(--border)}
+.eyebrow{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-dim)}
+.hero h1{font-family:"Playfair Display",serif;font-weight:900;font-size:clamp(30px,4.4vw,46px);line-height:1.05;margin:10px 0 16px;letter-spacing:-.5px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.regime{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:4px;border:.5px solid;font-family:"DM Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.badge.bull{color:var(--up);border-color:rgba(91,191,122,.4);background:var(--up-bg)}
+.badge.bear{color:var(--dn);border-color:rgba(212,112,106,.4);background:var(--dn-bg)}
+.badge.warn{color:var(--gold-bright);border-color:var(--gold-dim);background:var(--gold-bg)}
+.verdict{flex:1;min-width:280px;max-width:860px;color:var(--t2);font-size:14.5px;line-height:1.65}
+.demo{margin-top:14px;font-family:"DM Mono",monospace;font-size:10px;color:var(--dn);letter-spacing:.06em}
+
+/* sections */
+section{padding:30px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+.sec-head h2{font-family:"DM Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.sec-head .line{flex:1;height:.5px;background:var(--border)}
+.sec-head p{font-size:11.5px;color:var(--t3);white-space:nowrap}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:16px 18px}
+.card h3{font-family:"DM Mono",monospace;font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--t2);margin-bottom:4px}
+.card .sub{font-size:11px;color:var(--t3);margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-rrg{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+.grid2>*,.grid-rrg>*{min-width:0}
+
+/* gauges */
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px}
+.gauge{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:13px 14px 10px;position:relative;overflow:hidden}
+.gauge::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--dn);opacity:.7}
+.gauge.on::before{background:var(--up)}
+.gauge .lbl{font-size:12.5px;font-weight:500;color:var(--t1)}
+.gauge .note{font-size:10px;color:var(--t3);line-height:1.35;height:41px;overflow:hidden;margin-top:2px}
+.gauge .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px}
+.pill{font-family:"DM Mono",monospace;font-size:8.5px;letter-spacing:.12em;padding:2px 7px;border-radius:2px;text-transform:uppercase}
+.pill.on{color:var(--up);background:var(--up-bg)}.pill.off{color:var(--dn);background:var(--dn-bg)}
+.gauge .chg{font-family:"DM Mono",monospace;font-size:12px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+
+/* legends / tabs */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:-4px 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.legend i{width:14px;height:2.5px;border-radius:2px;display:inline-block}
+.tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:.5px solid var(--border-2);color:var(--t3);padding:5px 11px;border-radius:3px;cursor:pointer}
+.tabs button:hover{color:var(--t1)}
+.tabs button.on{color:var(--gold);border-color:var(--gold-dim);background:var(--gold-bg)}
+svg text{font-family:"DM Mono",monospace}
+
+/* heatmap */
+.heat{width:100%;border-collapse:separate;border-spacing:2px;font-family:"DM Mono",monospace;font-size:9.5px}
+.heat th{color:var(--t4);font-weight:400;padding:0 0 4px;white-space:nowrap}
+.heat td.nm{color:var(--t2);padding-right:8px;white-space:nowrap;text-align:left;font-size:10.5px}
+.heat td.nm b{color:var(--t1);font-weight:500;margin-right:6px}
+.heat td.c{height:22px;min-width:9px;border-radius:2px;text-align:center;color:rgba(0,0,0,.65);font-size:8.5px}
+.heat .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:.5px solid var(--border);border-radius:7px;background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:12px}
+table.t th{position:sticky;top:0;background:var(--gold-bg);color:var(--gold);font-family:"DM Mono",monospace;font-size:8.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-align:right;padding:9px 10px;border-bottom:.5px solid var(--border-2);white-space:nowrap;cursor:pointer;user-select:none}
+table.t th.l,table.t td.l{text-align:left}
+table.t th:hover{color:var(--gold-bright)}
+table.t td{padding:6px 10px;border-bottom:.5px solid var(--border);text-align:right;white-space:nowrap;font-family:"DM Mono",monospace;font-size:11.5px;color:var(--t2)}
+table.t tr:last-child td{border-bottom:none}
+table.t tr:hover td{background:var(--surface-2)}
+table.t td.sym{color:var(--t1);font-weight:500;position:sticky;left:0;background:var(--surface);z-index:1}
+table.t tr:hover td.sym{background:var(--surface-2)}
+table.t td.sym a{text-decoration:none}
+table.t td.sym a:hover{color:var(--gold)}
+table.t td.nm{font-family:Barlow,sans-serif;font-size:12px;color:var(--t2);max-width:230px;overflow:hidden;text-overflow:ellipsis}
+table.t tr.bench td{color:var(--gold)}
+.rating{display:inline-block;min-width:30px;text-align:center;padding:2px 6px;border-radius:3px;font-weight:500;color:#0b0b0a}
+.chip{display:inline-block;font-family:Barlow,sans-serif;font-size:10.5px;padding:1px 7px;border-radius:9px;border:.5px solid var(--border-2);color:var(--t2);white-space:nowrap}
+.sdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.flag{font-size:9px;padding:1px 5px;border-radius:2px;margin-left:3px;letter-spacing:.06em}
+.flag.tt{color:var(--up);background:var(--up-bg)}.flag.ext{color:var(--dn);background:var(--dn-bg)}
+.flag.new{color:var(--gold-bright);background:var(--gold-bg)}.flag.nh{color:var(--growth);background:rgba(124,156,255,.12)}
+.offbar{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.offbar i{display:inline-block;height:7px;background:var(--dn);opacity:.55;border-radius:1px}
+.q{font-size:10.5px}
+.q.Leading{color:var(--up)}.q.Weakening{color:var(--gold)}.q.Lagging{color:var(--dn)}.q.Improving{color:var(--growth)}
+
+/* leaders controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.controls input[type=search]{background:var(--surface);border:.5px solid var(--border-2);color:var(--t1);padding:6px 10px;border-radius:4px;font-family:"DM Mono",monospace;font-size:11px;width:180px;outline:none}
+.controls input[type=search]:focus{border-color:var(--gold-dim)}
+.controls label{font-size:11.5px;color:var(--t2);display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.controls select{background:var(--surface);border:.5px solid var(--border-2);color:var(--t1);padding:5px 8px;border-radius:4px;font-size:11.5px;font-family:Barlow,sans-serif}
+.themechips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.themechips button{font-family:Barlow,sans-serif;font-size:11.5px;background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;cursor:pointer}
+.themechips button b{font-family:"DM Mono",monospace;font-weight:500;color:var(--gold);margin-left:5px;font-size:10.5px}
+.themechips button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
+.more{display:block;margin:10px auto 0;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:.5px solid var(--border-2);color:var(--t2);padding:7px 16px;border-radius:3px;cursor:pointer}
+.more:hover{color:var(--gold);border-color:var(--gold-dim)}
+.count{font-family:"DM Mono",monospace;font-size:10px;color:var(--t3);margin-left:auto}
+
+/* method */
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:12px;color:var(--t2);line-height:1.6}
+.method b{color:var(--t1);font-weight:500}
+footer{padding:30px 0 50px;color:var(--t4);font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.06em}
+footer a{color:var(--t3)}
+
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  .grid2,.grid-rrg,.method{grid-template-columns:1fr}
+  .sec-head p{display:none}
+  nav .asof{display:none}
+}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <div class="brand">MJ — <em>RS Engine</em></div>
+  <a href="#regime">Regime</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
+  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#method">Method</a>
+  <div class="asof" id="nav-asof"></div>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>Where is the money <em>going?</em></h1>
+    <div class="regime"><div id="badge"></div><p class="verdict" id="verdict"></p></div>
+    <div class="demo" id="demo"></div>
+  </header>
+
+  <section id="regime">
+    <div class="sec-head"><h2>Risk appetite</h2><div class="line"></div><p>Ratio vs its 50-day average · 6 months</p></div>
+    <div class="gauges" id="gauges"></div>
+  </section>
+
+  <section id="rotation">
+    <div class="sec-head"><h2>Style rotation</h2><div class="line"></div><p>Growth · Cyclical · Defensive (equal-weight sectors)</p></div>
+    <div class="grid2">
+      <div class="card"><h3>Performance relative to <span class="bm"></span></h3>
+        <div class="sub">Each line = equal-weight basket of its sectors ÷ benchmark, rebased to 100. Rising = taking leadership.</div>
+        <div class="legend" id="leg-style"></div><div id="chart-style"></div></div>
+      <div class="card"><h3>Participation — % of stocks above 50-DMA</h3>
+        <div class="sub">Across your stock universe. Tells you <i>where</i> breadth is improving.</div>
+        <div class="legend" id="leg-part"></div><div id="chart-part"></div></div>
+    </div>
+    <div class="grid-rrg" style="margin-top:14px">
+      <div class="card"><h3>Relative rotation graph</h3>
+        <div class="sub">Weekly, 6-week tails. Clockwise: Improving → Leading → Weakening → Lagging.</div>
+        <div class="tabs" id="rrg-tabs"></div><div id="rrg"></div></div>
+      <div class="card"><h3>Rotation heatmap — weekly RS rating</h3>
+        <div class="sub">Rank within the set each week (99 = strongest). Read left → right to see who is rising.</div>
+        <div class="tabs" id="heat-tabs"></div><div style="overflow-x:auto" id="heat"></div></div>
+    </div>
+  </section>
+
+  <section id="sectors">
+    <div class="sec-head"><h2>Indices & sectors</h2><div class="line"></div><p>Benchmark: <span class="bm"></span></p></div>
+    <div class="tabs" id="sector-tabs"></div>
+    <div class="tbl-wrap"><table class="t" id="sector-tbl"></table></div>
+  </section>
+
+  <section id="groups">
+    <div class="sec-head"><h2>Industry groups & themes</h2><div class="line"></div><p>Gold rows = themes that feed the leaders list</p></div>
+    <div class="tbl-wrap"><table class="t" id="group-tbl"></table></div>
+    <button class="more" id="group-more"></button>
+  </section>
+
+  <section id="leaders">
+    <div class="sec-head"><h2>Leading stocks</h2><div class="line"></div><p id="leader-rule"></p></div>
+    <div class="themechips" id="themechips"></div>
+    <div class="controls">
+      <input type="search" id="q" placeholder="Search ticker / name">
+      <label><input type="checkbox" id="f-tt"> Trend template only</label>
+      <label><input type="checkbox" id="f-nh"> Within 15% of high</label>
+      <label><input type="checkbox" id="f-ext"> Hide extended</label>
+      <label><input type="checkbox" id="f-new"> New this week</label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tbl-wrap"><table class="t" id="leader-tbl"></table></div>
+  </section>
+
+  <section id="method">
+    <div class="sec-head"><h2>How to read this</h2><div class="line"></div></div>
+    <div class="method">
+      <div class="card"><b>RS Rating (1–99)</b> — volatility-adjusted relative strength (Jeff Sun's VARS idea). Each day's move is measured in ATRs, the benchmark's ATR-moves are subtracted, and the result is summed over 1W, 1M and 3M, ranked across the universe and blended 15/35/50. A quiet stock grinding up beats a wild one that only got there by being volatile. <b>Δ1W</b> = change in rating over 5 sessions.</div>
+      <div class="card"><b>RS Win %</b> — share of the last 20 sessions the ticker beat the benchmark. 75% = beat it on 15 of 20 days: persistent, not one spike. <b>RS 1M</b> = performance relative to the benchmark over a month. <b>Breadth</b> = % of the ETF's holdings in your universe above their 50-DMA.</div>
+      <div class="card"><b>Leaders</b> — stocks belonging to the top themes (best ETF per theme), with RS Rating ≥ min, above the 50-DMA, price and $-volume above your floors. <b>TT</b> = Minervini trend template. <b>Ext</b> = more than 4 ATRs above the 50-DMA (don't chase). <b>NH</b> = within 15% of the 52-week high. <b>New</b> = not on the list a week ago.</div>
+    </div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const STYLE = {growth:"var(--growth)", cyclical:"var(--cyclical)", defensive:"var(--defensive)", neutral:"var(--neutral)"};
+const STYLE_HEX = {growth:"#7c9cff", cyclical:"#e0b25a", defensive:"#5fc9a8", neutral:"#8a8478", all:"#ede6d8"};
+const fmt = (v, d=1, sign=true) => v==null ? "–" : (sign && v>0 ? "+" : "") + Number(v).toFixed(d);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tvUrl = (sym, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + sym : sym);
+
+function ratingColor(r){
+  if (r==null) return "#2e2d29";
+  if (r >= 90) return "#5bbf7a"; if (r >= 80) return "#8fcf8a"; if (r >= 70) return "#b8d68f";
+  if (r >= 50) return "#d9c98e"; if (r >= 30) return "#e0a17a"; return "#d4706a";
+}
+function pctCell(v, scale=10){
+  if (v==null) return `<td>–</td>`;
+  const a = Math.min(Math.abs(v)/scale, 1)*0.38;
+  const bg = v>=0 ? `rgba(91,191,122,${a})` : `rgba(212,112,106,${a})`;
+  return `<td style="background:${bg};color:${v>=0?'#bfe5c9':'#f0c4c0'}">${fmt(v)}%</td>`;
+}
+function spark(vals, w=86, h=20, color="#a59c8f"){
+  vals = (vals||[]).filter(v=>v!=null);
+  if (vals.length < 2) return "";
+  const mn = Math.min(...vals), mx = Math.max(...vals), r = (mx-mn)||1;
+  const pts = vals.map((v,i)=>`${(i/(vals.length-1)*(w-4)+2).toFixed(1)},${(h-2-(v-mn)/r*(h-4)).toFixed(1)}`).join(" ");
+  const last = pts.split(" ").pop().split(",");
+  return `<svg width="${w}" height="${h}"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.2"/><circle cx="${last[0]}" cy="${last[1]}" r="2" fill="#c9a55a"/></svg>`;
+}
+function rsBars(vals, w=86, h=20){
+  vals = (vals||[]).filter(v=>v!=null);
+  if (vals.length < 2) return "";
+  const s = [...vals].sort((a,b)=>a-b), n = vals.length, bw = w/n;
+  const mxi = vals.indexOf(Math.max(...vals));
+  return `<svg width="${w}" height="${h}">` + vals.map((v,i)=>{
+    const p = (s.indexOf(v))/(n-1); const bh = Math.max(1.5, p*(h-2));
+    const c = i===mxi ? "#e8c070" : (i===n-1 ? "#c9a55a" : "#5d7a4f");
+    return `<rect x="${(i*bw+.4).toFixed(1)}" y="${(h-bh).toFixed(1)}" width="${(bw-.9).toFixed(1)}" height="${bh.toFixed(1)}" fill="${c}"/>`;
+  }).join("") + `</svg>`;
+}
+
+/* ── line chart (multi-series, responsive) ─────────────────────── */
+function lineChart(el, series, dates, opts={}){
+  const W = el.clientWidth || 560, H = opts.h || 230, P = {l:36, r:12, t:8, b:22};
+  const all = series.flatMap(s => s.values.filter(v=>v!=null));
+  let mn = Math.min(...all), mx = Math.max(...all); const pad = (mx-mn)*0.08 || 1; mn -= pad; mx += pad;
+  const n = dates.length, X = i => P.l + i/(n-1)*(W-P.l-P.r), Y = v => P.t + (1-(v-mn)/(mx-mn))*(H-P.t-P.b);
+  let g = "";
+  const ticks = 4;
+  for (let k=0;k<=ticks;k++){ const v = mn + (mx-mn)*k/ticks; const y = Y(v);
+    g += `<line x1="${P.l}" x2="${W-P.r}" y1="${y}" y2="${y}" stroke="#232320"/><text x="${P.l-6}" y="${y+3}" fill="#6b645a" font-size="9" text-anchor="end">${v.toFixed(opts.dp ?? 0)}</text>`; }
+  if (opts.ref != null && opts.ref>mn && opts.ref<mx) g += `<line x1="${P.l}" x2="${W-P.r}" y1="${Y(opts.ref)}" y2="${Y(opts.ref)}" stroke="#45403a" stroke-dasharray="3 3"/>`;
+  [0, Math.floor(n/3), Math.floor(2*n/3), n-1].forEach(i => g += `<text x="${X(i)}" y="${H-6}" fill="#6b645a" font-size="9" text-anchor="${i===0?'start':i===n-1?'end':'middle'}">${dates[i]}</text>`);
+  series.forEach(s => {
+    const pts = s.values.map((v,i)=> v==null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).filter(Boolean).join(" ");
+    g += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.width||1.8}" ${s.dash?`stroke-dasharray="${s.dash}"`:""} stroke-linejoin="round"/>`;
+    const lv = s.values[s.values.length-1];
+    if (lv!=null && !s.dash) g += `<circle cx="${X(n-1)}" cy="${Y(lv)}" r="3" fill="${s.color}"/>`;
+  });
+  el.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}</svg>`;
+}
+
+/* ── RRG ──────────────────────────────────────────────────────── */
+function rrg(el, items){
+  const W = el.clientWidth || 600, H = Math.min(W*0.82, 480), P = 30;
+  const pts = items.flatMap(i => i.rrg);
+  let ext = Math.max(2, ...pts.map(p => Math.max(Math.abs(p[0]-100), Math.abs(p[1]-100)))) * 1.12;
+  const X = v => P + (v-100+ext)/(2*ext)*(W-2*P), Y = v => H-P - (v-100+ext)/(2*ext)*(H-2*P);
+  const cx = X(100), cy = Y(100);
+  let g = `<rect x="${cx}" y="${P}" width="${W-P-cx}" height="${cy-P}" fill="rgba(91,191,122,.06)"/>
+    <rect x="${cx}" y="${cy}" width="${W-P-cx}" height="${H-P-cy}" fill="rgba(201,165,90,.06)"/>
+    <rect x="${P}" y="${cy}" width="${cx-P}" height="${H-P-cy}" fill="rgba(212,112,106,.06)"/>
+    <rect x="${P}" y="${P}" width="${cx-P}" height="${cy-P}" fill="rgba(124,156,255,.06)"/>
+    <line x1="${cx}" x2="${cx}" y1="${P}" y2="${H-P}" stroke="#2e2d29"/><line x1="${P}" x2="${W-P}" y1="${cy}" y2="${cy}" stroke="#2e2d29"/>
+    <text x="${W-P-6}" y="${P+14}" text-anchor="end" fill="#5bbf7a" font-size="10" letter-spacing="2">LEADING</text>
+    <text x="${W-P-6}" y="${H-P-8}" text-anchor="end" fill="#c9a55a" font-size="10" letter-spacing="2">WEAKENING</text>
+    <text x="${P+6}" y="${H-P-8}" fill="#d4706a" font-size="10" letter-spacing="2">LAGGING</text>
+    <text x="${P+6}" y="${P+14}" fill="#7c9cff" font-size="10" letter-spacing="2">IMPROVING</text>
+    <text x="${W/2}" y="${H-8}" text-anchor="middle" fill="#45403a" font-size="9">RS-RATIO →</text>
+    <text x="12" y="${H/2}" fill="#45403a" font-size="9" transform="rotate(-90 12 ${H/2})" text-anchor="middle">RS-MOMENTUM →</text>`;
+  items.forEach(it => {
+    if (!it.rrg.length) return;
+    const c = STYLE_HEX[it.style] || "#8a8478";
+    const p = it.rrg.map(q => `${X(q[0]).toFixed(1)},${Y(q[1]).toFixed(1)}`);
+    g += `<polyline points="${p.join(" ")}" fill="none" stroke="${c}" stroke-opacity=".55" stroke-width="1.4"/>`;
+    it.rrg.slice(0,-1).forEach((q,i)=> g += `<circle cx="${X(q[0])}" cy="${Y(q[1])}" r="${1.5+i*.3}" fill="${c}" fill-opacity=".45"/>`);
+    const L = it.rrg[it.rrg.length-1];
+    g += `<circle cx="${X(L[0])}" cy="${Y(L[1])}" r="5" fill="${c}" stroke="#0b0b0a" stroke-width="1.5"><title>${esc(it.symbol)} — ${esc(it.name)}</title></circle>
+      <text x="${X(L[0])+8}" y="${Y(L[1])+3.5}" fill="#ede6d8" font-size="10">${esc(it.label||it.symbol)}</text>`;
+  });
+  el.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}</svg>
+   <div class="legend" style="margin:8px 0 0">${["growth","cyclical","defensive"].map(s=>`<span><i style="background:${STYLE_HEX[s]};height:7px;width:7px;border-radius:50%"></i>${s[0].toUpperCase()+s.slice(1)}</span>`).join("")}</div>`;
+}
+
+/* ── heatmap ──────────────────────────────────────────────────── */
+function heatColor(v){
+  if (v==null) return "#1d1d1b";
+  const t = v/99;  // red → sand → green
+  const a = [212,112,106], m = [217,201,142], b = [91,191,122];
+  const mix = (p,q,u) => p.map((x,i)=>Math.round(x+(q[i]-x)*u));
+  const c = t < .5 ? mix(a,m,t/.5) : mix(m,b,(t-.5)/.5);
+  return `rgb(${c.join(",")})`;
+}
+function heatmap(el, h){
+  const step = h.weeks.length > 16 ? 2 : 1;
+  let s = `<table class="heat"><tr><th></th>${h.weeks.map((w,i)=>`<th>${i%step===0 && i>h.weeks.length-17 ? w.split(" ")[0] : ""}</th>`).join("")}</tr>`;
+  h.rows.forEach(r => {
+    s += `<tr><td class="nm"><span class="dot" style="background:${STYLE_HEX[r.style]||'#8a8478'}"></span><b>${esc(r.symbol)}</b>${esc(r.name)}</td>` +
+      r.values.map((v,i)=>`<td class="c" style="background:${heatColor(v)}" title="${esc(r.symbol)} ${h.weeks[i]}: ${v??'–'}">${i===r.values.length-1 && v!=null ? v : ""}</td>`).join("") + `</tr>`;
+  });
+  el.innerHTML = s + `</table><div class="legend" style="margin-top:10px"><span>Week of ${h.weeks[0]} → ${h.weeks[h.weeks.length-1]}</span></div>`;
+}
+
+/* ── sortable table helper ────────────────────────────────────── */
+function table(el, cols, rows, opts={}){
+  let sortKey = opts.sort, dir = -1;
+  const draw = () => {
+    const r = [...rows];
+    if (sortKey) r.sort((a,b)=>{
+      if (opts.pin && a[opts.pin]) return -1; if (opts.pin && b[opts.pin]) return 1;
+      const x=a[sortKey], y=b[sortKey]; if (x==null) return 1; if (y==null) return -1;
+      return (typeof x === "string" ? x.localeCompare(y) : x-y) * dir; });
+    el.innerHTML = `<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" data-k="${c.k||''}" title="${esc(c.tip||'')}">${c.h}</th>`).join("")}</tr></thead>
+      <tbody>${r.map(x=>`<tr class="${opts.rowClass ? opts.rowClass(x) : ''}">${cols.map(c=>c.f(x)).join("")}</tr>`).join("")}</tbody>`;
+    el.querySelectorAll("th").forEach(th => th.onclick = () => {
+      const k = th.dataset.k; if (!k) return; dir = (sortKey===k) ? -dir : -1; sortKey = k; draw(); });
+  };
+  draw();
+}
+
+const ratingTd = x => x.rs_rating==null ? `<td style="color:#45403a" title="Not enough history yet">new</td>` : `<td><span class="rating" style="background:${ratingColor(x.rs_rating)}">${x.rs_rating}</span></td>`;
+const chgTd = (v, d=0) => `<td class="${v>0?'up':v<0?'dn':''}">${v==null?'–':(v>0?'▲':v<0?'▼':'·')+' '+Math.abs(v).toFixed(d)}</td>`;
+const offTd = v => v==null ? `<td>–</td>` : `<td><span class="offbar">${fmt(v,0,false)}%<i style="width:${Math.min(Math.abs(v),40)*1.2}px"></i></span></td>`;
+const winTd = v => v==null ? `<td>–</td>` : `<td style="color:${v>=60?'#8fcf8a':v<=40?'#e0a17a':'#a59c8f'}">${v.toFixed(0)}%</td>`;
+const symTd = (x, ex) => `<td class="sym l"><a href="${tvUrl(x.symbol, ex)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`;
+
+const etfCols = (withTheme) => [
+  {h:"Symbol", k:"symbol", l:1, f:x=>symTd(x)},
+  {h:withTheme?"Group":"Name", k:"name", l:1, f:x=>`<td class="nm l"><span class="sdot" style="background:${STYLE_HEX[x.style]}"></span>${esc(x.name)}</td>`},
+  ...(withTheme ? [{h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.theme)}</span></td>`}] : []),
+  {h:"RS", k:"rs_rating", tip:"Volatility-adjusted RS rating 1–99", f:ratingTd},
+  {h:"Δ1W", k:"rs_chg_1w", tip:"Change in RS rating over 5 sessions", f:x=>chgTd(x.rs_chg_1w)},
+  {h:"RS Win 1M", k:"rs_win_1m", tip:"% of last 20 sessions beating the benchmark", f:x=>winTd(x.rs_win_1m)},
+  {h:"RS line 1M", f:x=>`<td>${rsBars(x.spark_rs)}</td>`},
+  {h:"Price 1M", f:x=>`<td>${spark(x.spark_px)}</td>`},
+  {h:"RS 1M", k:"rs_1m", tip:"Performance relative to benchmark, 1 month", f:x=>pctCell(x.rs_1m, 8)},
+  {h:"1D", k:"chg_1d", f:x=>pctCell(x.chg_1d, 3)},
+  {h:"1W", k:"chg_1w", f:x=>pctCell(x.chg_1w, 6)},
+  {h:"1M", k:"chg_1m", f:x=>pctCell(x.chg_1m, 12)},
+  {h:"3M", k:"chg_3m", f:x=>pctCell(x.chg_3m, 25)},
+  {h:"Off 52W H", k:"off_high", f:x=>offTd(x.off_high)},
+  {h:"Breadth", k:"breadth_50", tip:"% of holdings above 50-DMA", f:x=>`<td>${x.breadth_50==null?'–':x.breadth_50+'%'}</td>`},
+  {h:"Rotation", k:"quadrant", l:1, f:x=>`<td class="l q ${x.quadrant}">${x.quadrant||'–'}</td>`},
+  ...(withTheme ? [{h:"Stocks", l:1, tip:"Whether this theme has holdings in your stock universe", f:x=>{const t=(D.themes.find(z=>z.theme===x.theme)||{}); return `<td class="l" style="color:${t.has_stocks?'#6b645a':'#c9a55a'}">${t.has_stocks?'✓':'add holdings'}</td>`;}}] : []),
+];
+
+function render(){
+  if (!D) { document.body.innerHTML = "<p style='padding:40px'>No data.</p>"; return; }
+  document.querySelectorAll(".bm").forEach(e => e.textContent = D.benchmark);
+  $("#nav-asof").textContent = "Data " + D.asof;
+  $("#eyebrow").textContent = `Market close ${D.asof} · ${D.universe.etfs} ETFs · ${D.universe.stocks} stocks`;
+  $("#badge").innerHTML = `<span class="badge ${D.regime.tone}">${esc(D.regime.label)}</span>`;
+  $("#verdict").textContent = D.regime.verdict;
+  if (D.demo) $("#demo").textContent = "SIMULATED DATA — layout preview only. Real data appears once the engine runs on GitHub.";
+  $("#footer").innerHTML = `Generated ${D.generated} · Not investment advice · <a href="data/leaders.csv">leaders.csv</a> · <a href="data/sectors.csv">sectors.csv</a> · <a href="data/stocks.csv">stocks.csv</a> · <a href="data/tradingview_leaders.txt">TradingView list</a>`;
+
+  // gauges
+  $("#gauges").innerHTML = D.gauges.map((g,i) => `<div class="gauge ${g.risk_on?'on':''}">
+      <div class="lbl">${esc(g.label)}</div><div class="note">${esc(g.note)}</div>
+      <div id="g${i}" style="margin-top:8px"></div>
+      <div class="row"><span class="pill ${g.risk_on?'on':'off'}">${g.risk_on?'Risk-on':'Risk-off'}</span>
+      <span class="chg ${g.chg_1m>=0?'up':'dn'}">${fmt(g.chg_1m)}% <span style="color:var(--t4)">1M</span></span></div></div>`).join("");
+  D.gauges.forEach((g,i) => {
+    const el = $("#g"+i), w = el.clientWidth || 170, h = 44;
+    const vals = g.series, ma = g.ma, all = vals.concat(ma.filter(v=>v!=null));
+    const mn = Math.min(...all), mx = Math.max(...all), r = (mx-mn)||1;
+    const P = (arr) => arr.map((v,j)=> v==null?null:`${(j/(arr.length-1)*w).toFixed(1)},${(h-2-(v-mn)/r*(h-4)).toFixed(1)}`).filter(Boolean).join(" ");
+    el.innerHTML = `<svg width="${w}" height="${h}"><polyline points="${P(ma)}" fill="none" stroke="#45403a" stroke-width="1" stroke-dasharray="2 2"/>
+      <polyline points="${P(vals)}" fill="none" stroke="${g.risk_on?'#5bbf7a':'#d4706a'}" stroke-width="1.5"/></svg>`;
+  });
+
+  // style + participation charts
+  const sl = D.style.lines, dates = D.style.dates;
+  const legend = (ids, chg) => ids.map(s=>`<span><i style="background:${STYLE_HEX[s]}"></i>${s==='all'?'All stocks':s[0].toUpperCase()+s.slice(1)}${chg&&chg[s]!=null?` <b class="${chg[s]>=0?'up':'dn'}" style="font-weight:500;font-family:DM Mono">${fmt(chg[s])}% 1M</b>`:''}</span>`).join("");
+  $("#leg-style").innerHTML = legend(["growth","cyclical","defensive"], D.style.chg);
+  const pp = D.style.participation;
+  $("#leg-part").innerHTML = legend(Object.keys(pp).filter(k=>k!=='all').concat(['all']), Object.fromEntries(Object.entries(pp).map(([k,v])=>[k, v[v.length-1]-v[Math.max(0,v.length-22)]])))
+    .replace(/% 1M/g," pts 1M");
+  const drawCharts = () => {
+    lineChart($("#chart-style"), ["growth","cyclical","defensive"].map(s=>({values:sl[s], color:STYLE_HEX[s]})), dates, {ref:100});
+    lineChart($("#chart-part"), [...["growth","cyclical","defensive"].filter(s=>pp[s]).map(s=>({values:pp[s], color:STYLE_HEX[s], width:1.6})), {values:pp.all, color:"#ede6d8", width:1.4, dash:"4 3"}], dates, {ref:50});
+  };
+  drawCharts();
+
+  // RRG
+  const rrgSets = {
+    "SPDR sectors": D.etfs.filter(e=>e.category==="SPDR Sector"),
+    "EW sectors": D.etfs.filter(e=>e.category==="EW Sector"),
+    "Top themes": D.themes.slice(0,12).map(t=>({...D.etfs.find(e=>e.symbol===t.symbol), label:t.symbol})),
+  };
+  let rrgKey = "SPDR sectors";
+  const drawRRG = () => rrg($("#rrg"), rrgSets[rrgKey]);
+  $("#rrg-tabs").innerHTML = Object.keys(rrgSets).map(k=>`<button class="${k===rrgKey?'on':''}">${k}</button>`).join("");
+  $("#rrg-tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{rrgKey=b.textContent; $("#rrg-tabs").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); drawRRG();});
+  drawRRG();
+
+  // heatmap
+  const hk = Object.keys(D.heatmaps); let heatKey = hk[0];
+  $("#heat-tabs").innerHTML = hk.map(k=>`<button class="${k===heatKey?'on':''}">${k}</button>`).join("");
+  $("#heat-tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{heatKey=b.textContent; $("#heat-tabs").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); heatmap($("#heat"), D.heatmaps[heatKey]);});
+  heatmap($("#heat"), D.heatmaps[heatKey]);
+
+  // sector tables
+  const cats = ["Index","Segment","EW Sector","SPDR Sector"];
+  let catKey = "SPDR Sector";
+  const drawSectors = () => table($("#sector-tbl"), etfCols(false), D.etfs.filter(e=>e.category===catKey),
+    {sort:"rs_rating", pin: catKey==="Index" ? "isBench" : null, rowClass:x=>x.symbol===D.benchmark?"bench":""});
+  D.etfs.forEach(e => e.isBench = e.symbol===D.benchmark);
+  $("#sector-tabs").innerHTML = cats.map(k=>`<button class="${k===catKey?'on':''}">${k}${k.endsWith('Sector')?'s':k==='Index'?'':'s'}</button>`).join("");
+  $("#sector-tabs").querySelectorAll("button").forEach((b,i)=>b.onclick=()=>{catKey=cats[i]; $("#sector-tabs").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); drawSectors();});
+  drawSectors();
+
+  // groups
+  const topThemes = new Set(D.themes.filter(t=>t.top).map(t=>t.theme));
+  const groups = D.etfs.filter(e=>e.category==="Group").sort((a,b)=>b.rs_rating-a.rs_rating);
+  let showAll = false;
+  const drawGroups = () => {
+    table($("#group-tbl"), etfCols(true), showAll ? groups : groups.slice(0,25),
+      {sort:"rs_rating", rowClass:x=>topThemes.has(x.theme) && D.themes.find(t=>t.theme===x.theme).symbol===x.symbol ? "bench" : ""});
+    $("#group-more").textContent = showAll ? "Show top 25" : `Show all ${groups.length} groups`;
+  };
+  $("#group-more").onclick = () => { showAll = !showAll; drawGroups(); };
+  drawGroups();
+
+  // leaders
+  const S = D.settings;
+  $("#leader-rule").textContent = `Top ${S.top_themes} themes · RS ≥ ${S.min_rs_rating} · above 50-DMA · price ≥ $${S.min_price} · $vol ≥ $${(S.min_dollar_volume/1e6).toFixed(0)}M`;
+  const counts = {}; D.leaders.forEach(l => counts[l.theme] = (counts[l.theme]||0)+1);
+  let activeTheme = null;
+  $("#themechips").innerHTML = `<button class="on" data-t="">All<b>${D.leaders.length}</b></button>` +
+    D.themes.filter(t=>t.top).map(t=>`<button data-t="${esc(t.theme)}"><span class="sdot" style="background:${STYLE_HEX[t.style]}"></span>${esc(t.theme)}<b>${counts[t.theme]||0}</b></button>`).join("");
+  const lcols = [
+    {h:"Ticker", k:"symbol", l:1, f:x=>symTd(x, x.exchange)},
+    {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}${x.new?'<span class="flag new">NEW</span>':''}</td>`},
+    {h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip" title="${esc(x.themes.join(' · '))}"><span class="sdot" style="background:${STYLE_HEX[x.style]}"></span>${esc(x.theme)}</span></td>`},
+    {h:"RS", k:"rs_rating", f:ratingTd},
+    {h:"Δ1W", k:"rs_chg_1w", f:x=>chgTd(x.rs_chg_1w)},
+    {h:"RS Win 1M", k:"rs_win_1m", f:x=>winTd(x.rs_win_1m)},
+    {h:"Price 1M", f:x=>`<td>${spark(x.spark_px)}</td>`},
+    {h:"Price", k:"price", f:x=>`<td>${x.price?.toFixed(2)}</td>`},
+    {h:"1W", k:"chg_1w", f:x=>pctCell(x.chg_1w, 8)},
+    {h:"1M", k:"chg_1m", f:x=>pctCell(x.chg_1m, 20)},
+    {h:"3M", k:"chg_3m", f:x=>pctCell(x.chg_3m, 50)},
+    {h:"Off High", k:"off_high", f:x=>offTd(x.off_high)},
+    {h:"ADR%", k:"adr", f:x=>`<td style="color:${x.adr>=3?'#ede6d8':'#6b645a'}">${fmt(x.adr,1,false)}</td>`},
+    {h:"$Vol M", k:"dollar_vol", f:x=>`<td>${x.dollar_vol>=1000?(x.dollar_vol/1000).toFixed(1)+'B':x.dollar_vol?.toFixed(0)}</td>`},
+    {h:"ATR ext", k:"atr_ext", tip:"ATRs above the 50-DMA (Jeff: avoid > 4)", f:x=>`<td class="${x.atr_ext>4?'dn':''}">${fmt(x.atr_ext,1,false)}</td>`},
+    {h:"RVol", k:"rvol", f:x=>`<td style="color:${x.rvol>=1.5?'#e8c070':'#a59c8f'}">${fmt(x.rvol,2,false)}</td>`},
+    {h:"Flags", l:1, f:x=>`<td class="l">${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}</td>`},
+  ];
+  const drawLeaders = () => {
+    const q = $("#q").value.trim().toUpperCase();
+    const rows = D.leaders.filter(l =>
+      (!activeTheme || l.theme===activeTheme) && (!q || l.symbol.includes(q) || (l.name||"").toUpperCase().includes(q)) &&
+      (!$("#f-tt").checked || l.trend_template) && (!$("#f-nh").checked || l.near_high) &&
+      (!$("#f-ext").checked || !l.extended) && (!$("#f-new").checked || l.new));
+    $("#count").textContent = `${rows.length} of ${D.leaders.length}`;
+    table($("#leader-tbl"), lcols, rows, {sort:"rs_rating"});
+  };
+  $("#themechips").querySelectorAll("button").forEach(b=>b.onclick=()=>{activeTheme=b.dataset.t||null; $("#themechips").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); drawLeaders();});
+  ["#q","#f-tt","#f-nh","#f-ext","#f-new"].forEach(s=>$(s).addEventListener("input", drawLeaders));
+  drawLeaders();
+
+  let rt; window.addEventListener("resize", ()=>{clearTimeout(rt); rt=setTimeout(()=>{drawCharts(); drawRRG();},150);});
+}
+render();
+</script>
+</body>
+</html>

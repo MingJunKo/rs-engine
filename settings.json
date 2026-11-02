@@ -1,0 +1,12 @@
+{
+  "benchmark": "RSP",
+  "min_dollar_volume": 10000000,
+  "min_price": 5,
+  "min_rs_rating": 80,
+  "require_above_50dma": true,
+  "top_themes": 8,
+  "max_leaders": 60,
+  "telegram_top_n": 15,
+  "telegram_daily": false,
+  "dashboard_url": ""
+}

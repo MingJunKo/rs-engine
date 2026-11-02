@@ -1,0 +1,122 @@
+symbol,name,category,theme,style
+RSP,S&P 500 Equal Weight,Index,Benchmark,neutral
+SPY,S&P 500,Index,S&P 500,neutral
+QQQ,Nasdaq-100,Index,Nasdaq-100,growth
+QQQE,Nasdaq-100 Equal Weight,Index,Nasdaq-100 EW,growth
+IWM,Russell 2000,Index,Small Caps,cyclical
+DIA,Dow 30,Index,Dow 30,neutral
+SPMO,S&P 500 Momentum,Index,Momentum,growth
+TLT,20+ Year Treasury Bonds,Index,Long Bonds,defensive
+IJS,Small-Cap 600 Value,Segment,Small Value,cyclical
+IJR,Small-Cap 600,Segment,Small Cap,cyclical
+IJT,Small-Cap 600 Growth,Segment,Small Growth,growth
+IJJ,MidCap 400 Value,Segment,Mid Value,cyclical
+IJH,MidCap 400,Segment,Mid Cap,cyclical
+IJK,MidCap 400 Growth,Segment,Mid Growth,growth
+IVE,Large-Cap 500 Value,Segment,Large Value,cyclical
+IVV,S&P 500,Segment,Large Cap,neutral
+IVW,Large-Cap 500 Growth,Segment,Large Growth,growth
+RSPT,Equal Weight Technology,EW Sector,Technology,growth
+RSPD,Equal Weight Discretionary,EW Sector,Consumer Discretionary,growth
+RSPC,Equal Weight Communication,EW Sector,Communication Services,growth
+RSPF,Equal Weight Financials,EW Sector,Financials,cyclical
+RSPN,Equal Weight Industrials,EW Sector,Industrials,cyclical
+RSPM,Equal Weight Materials,EW Sector,Materials,cyclical
+RSPG,Equal Weight Energy,EW Sector,Energy,cyclical
+RSPH,Equal Weight Health Care,EW Sector,Health Care,defensive
+RSPS,Equal Weight Staples,EW Sector,Consumer Staples,defensive
+RSPU,Equal Weight Utilities,EW Sector,Utilities,defensive
+RSPR,Equal Weight Real Estate,EW Sector,Real Estate,defensive
+XLK,Technology,SPDR Sector,Technology,growth
+XLY,Consumer Discretionary,SPDR Sector,Consumer Discretionary,growth
+XLC,Communication Services,SPDR Sector,Communication Services,growth
+XLF,Financials,SPDR Sector,Financials,cyclical
+XLI,Industrials,SPDR Sector,Industrials,cyclical
+XLB,Materials,SPDR Sector,Materials,cyclical
+XLE,Energy,SPDR Sector,Energy,cyclical
+XLV,Health Care,SPDR Sector,Health Care,defensive
+XLP,Consumer Staples,SPDR Sector,Consumer Staples,defensive
+XLU,Utilities,SPDR Sector,Utilities,defensive
+XLRE,Real Estate,SPDR Sector,Real Estate,defensive
+XSD,Semiconductors (Equal),Group,Semiconductors,growth
+SMH,Semiconductors (VanEck),Group,Semiconductors,growth
+SOXX,Semiconductors (iShares),Group,Semiconductors,growth
+DRAM,Memory,Group,Semiconductors,growth
+IGV,Software (Expanded Tech),Group,Software & Cloud,growth
+XSW,Software (Equal),Group,Software & Cloud,growth
+WCLD,Cloud Computing (WisdomTree),Group,Software & Cloud,growth
+CLOU,Cloud Computing (Global X),Group,Software & Cloud,growth
+SKYY,Cloud Computing (First Trust),Group,Software & Cloud,growth
+BUG,Cybersecurity (Global X),Group,Cybersecurity,growth
+HACK,Cybersecurity (ETFMG),Group,Cybersecurity,growth
+CIBR,Cybersecurity (First Trust),Group,Cybersecurity,growth
+AIQ,Artificial Intelligence,Group,AI & Robotics,growth
+CHAT,Generative AI,Group,AI & Robotics,growth
+BOTZ,Robotics & AI,Group,AI & Robotics,growth
+ROBO,Robotics & Automation,Group,AI & Robotics,growth
+NCLD,Neocloud / GPU-as-a-Service,Group,AI Infrastructure,growth
+LYTE,Photonics / Optics,Group,AI Infrastructure,growth
+IDGT,Digital Infra & Data Centers,Group,AI Infrastructure,growth
+QTUM,Quantum Computing,Group,Quantum,growth
+IBUY,Global E-commerce,Group,Internet & E-commerce,growth
+IPAY,Digital Payments & Fintech,Group,Fintech,growth
+CARZ,Automobiles,Group,Autos & EV,growth
+ARKX,Space Exploration,Group,Space,growth
+UFO,Space Industry,Group,Space,growth
+IBIT,Bitcoin,Group,Crypto,growth
+ETH,Ethereum,Group,Crypto,growth
+KWEB,China Internet,Group,China,growth
+FXI,China Large-Caps,Group,China,growth
+KBE,Large-cap Banking,Group,Banks,cyclical
+KRE,Regional Banks,Group,Banks,cyclical
+KIE,Insurance,Group,Insurance,cyclical
+KCE,Capital Markets,Group,Capital Markets,cyclical
+ITB,Homebuilders,Group,Homebuilders,cyclical
+XHB,Homebuilders (Equal),Group,Homebuilders,cyclical
+ITA,Aerospace & Defense,Group,Aerospace & Defense,cyclical
+XAR,Aerospace & Defense (Equal),Group,Aerospace & Defense,cyclical
+PPA,Aerospace & Defense (Invesco),Group,Aerospace & Defense,cyclical
+SHLD,Global Defense Tech,Group,Aerospace & Defense,cyclical
+PAVE,U.S. Infrastructure,Group,Infrastructure,cyclical
+IFRA,Infrastructure (iShares),Group,Infrastructure,cyclical
+IGF,Global Infrastructure Assets,Group,Infrastructure,defensive
+GRID,Smart Grid Infrastructure,Group,Infrastructure,cyclical
+IYT,Transportation,Group,Transports,cyclical
+XTN,Trucking,Group,Transports,cyclical
+JETS,Airlines,Group,Airlines,cyclical
+BOAT,Global Shipping,Group,Shipping,cyclical
+PEJ,Leisure & Travel,Group,Leisure & Travel,cyclical
+BETZ,Sports Betting,Group,Leisure & Travel,cyclical
+XRT,Retail,Group,Retail,cyclical
+XOP,Oil & Gas E&P,Group,Oil & Gas E&P,cyclical
+FCG,Natural Gas E&P,Group,Oil & Gas E&P,cyclical
+OIH,Oil Services,Group,Oil Services,cyclical
+XES,Oil & Gas Equip & Services,Group,Oil Services,cyclical
+AMLP,Energy MLPs,Group,Midstream,cyclical
+USO,Crude Oil,Group,Crude Oil,cyclical
+XME,Metals & Mining,Group,Metals & Mining,cyclical
+SLX,Steel,Group,Metals & Mining,cyclical
+COPX,Copper Miners,Group,Metals & Mining,cyclical
+GDX,Gold Miners,Group,Gold & Silver,defensive
+SIL,Silver Miners,Group,Gold & Silver,defensive
+GLD,Gold,Group,Gold & Silver,defensive
+URNM,Uranium Miners,Group,Uranium,cyclical
+TAN,Solar,Group,Solar,growth
+MOO,Agricultural Producers,Group,Agriculture,cyclical
+IBB,Biotech Megacap,Group,Biotech,defensive
+XBI,Biotech (Equal),Group,Biotech,growth
+PBE,Dynamic Biotech,Group,Biotech,defensive
+ARKG,ARK Genomics,Group,Biotech,growth
+PPH,Large-Cap Pharmaceutical,Group,Pharma,defensive
+XPH,Pharmaceuticals (Equal),Group,Pharma,defensive
+XHS,Healthcare Facilities & Services,Group,Health Services,defensive
+IHF,Health Care Providers,Group,Health Services,defensive
+IHI,Medical Devices,Group,Medical Devices,defensive
+XHE,Health Equipment (Equal),Group,Medical Devices,defensive
+SCHH,U.S. REITs,Group,REITs,defensive
+IYR,Real Estate (iShares),Group,REITs,defensive
+PHO,Water Purification & Infrastructure,Group,Water,defensive
+CGW,Water (Invesco),Group,Water,defensive
+PBJ,Food & Beverage,Group,Food & Beverage,defensive
+HYG,High Yield Corporate Bonds,Macro,Credit,neutral
+IEF,7-10 Year Treasuries,Macro,Treasuries,neutral
