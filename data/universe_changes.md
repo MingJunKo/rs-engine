@@ -1,0 +1,56 @@
+# Universe refresh
+
+- XLK (SPDR): +2 −1 | added P, TWLO | removed APP
+- XLC (SPDR): +3 −4 | added APP, RDDT, SKYD | removed EA, PSKY, TTD, WBD
+- XLF (SPDR): +1 −0 | added BNY
+- XLI (SPDR): +4 −1 | added BE, DD, FERG, HONA | removed BLDR
+- XLB (SPDR): +0 −2 | removed CTVA, DD
+- XLV (SPDR): +1 −0 | added ILMN
+- XLP (SPDR): +2 −2 | added BF.B, VYLR | removed CAG, TAP
+- XLU (SPDR): +1 −0 | added AES
+- XLRE (SPDR): +1 −2 | added VMRK | removed AVB, EQR
+- XSD (SPDR): +1 −2 | added IONQ | removed QRVO, SKYT
+- DRAM (Yahoo top-10): +1 −0 | added FGXXX
+- XSW (SPDR): +129 −0 | added ACIW, ACN, ADBE, ADEA, ADSK, AGYS, AI, AIP, ALKT, ALRM, AMPL, APPF, APPN, APPS, ASAN
+- WCLD (Yahoo top-10): +2 −0 | added DOCN, TWLO
+- AIQ (Yahoo top-10): +1 −0 | added SPCX
+- ROBO (Yahoo top-10): +1 −0 | added CELT
+- NCLD (Yahoo top-10): +1 −0 | added FGXXX
+- QTUM (Yahoo top-10): +1 −0 | added PLTR
+- IBUY (Yahoo top-10): +10 −0 | added ABNB, CART, DASH, ETSY, HIMS, LQDT, MSM, PYPL, SPOT, W
+- IPAY (Yahoo top-10): +10 −0 | added AFRM, AXP, COF, COIN, CPAY, MA, PYPL, V, WSE, XYZ
+- UFO (Yahoo top-10): +10 −0 | added ASTS, ECHO, GRMN, IRDM, PL, RKLB, SIRI, SPCX, TRMB, VSAT
+- FXI: no data, kept 0 holdings
+- KBE (SPDR): +82 −0 | added ABCB, AGM, APO, ASB, AUB, AX, BAC, BANC, BANF, BANR, BBT, BKU, BNY, BOH, BOKF
+- KRE (SPDR): +117 −0 | added ACNB, AMAL, AMTB, AROW, BANF, BANR, BBT, BCAL, BFC, BFST, BHB, BHRB, BMRC, BOH, BUSE
+- KIE (SPDR): +29 −0 | added AGO, AIZ, ALL, AXS, BHF, BRO, CNO, ERIE, FAF, FNF, GL, GNW, HIG, HMN, KNSL
+- KCE (SPDR): +66 −0 | added AAMI, AMG, AMP, APAM, ARES, BEN, BGC, BLK, BNY, BTGO, BX, CBOE, CG, CME, CNS
+- ITB (Yahoo top-10): +10 −0 | added DHI, HD, LEN, LII, LOW, MAS, NVR, PHM, SHW, TOL
+- XHB (SPDR): +3 −4 | added SN, SSD, W | removed AAON, BLD, BZH, TMHC
+- XAR (SPDR): +25 −0 | added ACHR, AIR, ARXS, ATRO, AVEX, BETA, CDRE, CRS, DCO, DRS, FLY, HXL, LOAR, LUNR, MRCY
+- SHLD (Yahoo top-10): +7 −0 | added BA.L, GD, LHX, LMT, NOC, PLTR, RTX
+- IGF (Yahoo top-10): +4 −0 | added NEE, PAC, SO, WMB
+- GRID (Yahoo top-10): +1 −0 | added NG.L
+- XTN (SPDR): +44 −0 | added AAL, ALGT, ALK, ARCB, CAR, CHRW, CSX, CVLG, DAL, EXPD, FDX, FDXF, FIP, FWRD, GNK
+- BOAT (Yahoo top-10): +2 −0 | added FRO, INSW
+- PEJ (Yahoo top-10): +10 −0 | added ABNB, AMC, DAL, EXPE, LYV, MAR, PRSU, SBUX, SYY, VIK
+- BETZ (Yahoo top-10): +4 −0 | added FGXXX, LNW, RSI, SGHC
+- XRT (SPDR): +49 −0 | added AAP, ABG, ACI, AMZN, AN, ANF, ARKO, AZO, BBW, BOOT, BURL, CAL, CASY, CHWY, COST
+- XES (SPDR): +35 −0 | added AESI, AROC, BKR, CLB, FET, FLOC, FTI, HAL, HOS, HP, INVX, KGS, LBRT, NBR, NE
+- AMLP (Yahoo top-10): +10 −0 | added CQP, EPD, ET, GEL, HESM, MPLX, PAA, SUN, USAC, WES
+- XME (SPDR): +0 −1 | removed LTBR
+- COPX (Yahoo top-10): +2 −0 | added ANTO.L, GLEN.L
+- SIL (Yahoo top-10): +1 −0 | added FRES.L
+- URNM (Yahoo top-10): +2 −0 | added KAP, YCA.L
+- MOO (Yahoo top-10): +7 −0 | added ADM, BG, CF, CTVA, DE, TSN, ZTS
+- XBI (SPDR): +18 −6 | added AKTS, ASMB, AURA, BBOT, CBIO, CLYM, COAG, DSGN, EDIT, FTH, KLRA, MNPR, NGNE, NKTR, SGMT | removed APGE, CATX, CPRX, MPLT, NUVL, SION
+- PBE (Yahoo top-10): +10 −0 | added AMGN, BIIB, GILD, ILMN, MRNA, NTRA, NVAX, REGN, RPRX, VRTX
+- ARKG (Yahoo top-10): +10 −0 | added ABSI, CDNA, CRSP, GH, ILMN, NTRA, PSNL, TEM, TWST, TXG
+- XPH (SPDR): +61 −0 | added ACRS, ALMS, AMLX, AMPH, AMRX, ANIP, ANRO, AQST, ARVN, AVLN, AXSM, BIOA, BMY, COLL, CORT
+- XHS (SPDR): +61 −0 | added ACHC, ADUS, AGL, AHCO, ALHC, AMN, ASTH, AVAH, BKD, BLLN, BTSG, CAH, CHE, CI, CLOV
+- IHF (Yahoo top-10): +10 −0 | added CI, CNC, CVS, DGX, ELV, HCA, HUM, LH, UNH, VEEV
+- XHE (SPDR): +5 −1 | added CBLL, DCTH, KIDS, MMED, SENS | removed AVNS
+- CGW (Yahoo top-10): +2 −0 | added SVT.L, UU.L
+- PBJ (Yahoo top-10): +10 −0 | added ADM, CHEF, CTVA, KDP, KO, KR, MNST, SBUX, SYY, WMK
+
+Total: 1797 unique stocks across 86 ETFs.
