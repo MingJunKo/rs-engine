@@ -224,6 +224,29 @@ def next_earnings(ticker: str, asof) -> tuple:
     return None, np.nan
 
 
+def _clean_json(o, path="payload", bad=None):
+    """Replace NaN/inf (and numpy scalars) with JSON-safe values; logs where they were found."""
+    top = bad is None
+    bad = [] if top else bad
+    if isinstance(o, dict):
+        o = {k: _clean_json(v, f"{path}.{k}", bad) for k, v in o.items()}
+    elif isinstance(o, (list, tuple)):
+        o = [_clean_json(v, f"{path}[]", bad) for v in o]
+    elif isinstance(o, (np.bool_,)):
+        o = bool(o)
+    elif isinstance(o, (np.integer,)):
+        o = int(o)
+    elif isinstance(o, (float, np.floating)):
+        o = float(o)
+        if not np.isfinite(o):
+            bad.append(path)
+            o = None
+    if top and bad:
+        from collections import Counter
+        log("  cleaned non-finite values: " + ", ".join(f"{k} x{n}" for k, n in Counter(bad).most_common(8)))
+    return o
+
+
 def pct(a, b):
     return (a / b - 1) * 100
 
@@ -381,8 +404,13 @@ def run(demo: bool, notify: bool):
     leaders["setup"] = ((leaders.pivot_dist >= -6) & (leaders.tightness <= 2.5)
                         & (leaders.atr_ext.between(0, 4)))
     leaders["earnings"], leaders["er_days"] = None, np.nan
-    if not demo:
-        leaders["earnings"], leaders["er_days"] = zip(*[next_earnings(t, asof) for t in leaders.index])
+    if not demo and len(leaders):
+        try:
+            er = [next_earnings(t, asof) for t in leaders.index]
+            leaders["earnings"] = [e[0] for e in er]
+            leaders["er_days"] = [e[1] for e in er]
+        except Exception as e:
+            log(f"  earnings lookup skipped ({e})")
     else:
         rng_ = np.random.default_rng(3)
         leaders["er_days"] = rng_.integers(1, 80, len(leaders))
@@ -490,7 +518,7 @@ def run(demo: bool, notify: bool):
             v = float(v)
         except (TypeError, ValueError):
             return None
-        return None if np.isnan(v) else (int(round(v)) if d == 0 else round(v, d))
+        return None if not np.isfinite(v) else (int(round(v)) if d == 0 else round(v, d))
 
     def clean_list(xs):
         return [None if (x is None or (isinstance(x, float) and np.isnan(x))) else x for x in xs]
@@ -540,6 +568,7 @@ def run(demo: bool, notify: bool):
     }
 
     tpl = (ROOT / "templates" / "dashboard.html").read_text()
+    payload = _clean_json(payload)
     html = tpl.replace("/*__DATA__*/null", json.dumps(payload, separators=(",", ":"), allow_nan=False)
                        .replace("</", "<\\/"))
     (DOCS / "index.html").write_text(html)
