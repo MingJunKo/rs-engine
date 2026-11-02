@@ -166,6 +166,16 @@ tr.sel td{background:var(--gold-bg)!important}
 #tvbox{flex:1;min-height:0}
 #drawer .hint{padding:7px 16px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);border-top:.5px solid var(--border)}
 #cal{height:420px}
+.notes{margin-top:22px;border:.5px solid var(--border);border-radius:7px;background:var(--surface);padding:6px 0}
+.notes .nh{padding:8px 18px 6px;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.note{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:8px 18px;border-top:.5px solid var(--border);font-size:13.5px;line-height:1.6;color:var(--t2)}
+.note b{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:400;padding-top:3px}
+.note.Setups b{color:var(--gold)}
+.wk{display:inline-block;width:30px;height:20px;line-height:20px;text-align:center;border-radius:3px;font-family:"DM Mono",monospace;font-size:10px;color:#0b0b0a}
+.wk.off{background:transparent;border:.5px dashed var(--border-2);color:var(--t4)}
+.hist-note{font-size:12px;color:var(--t3);margin:6px 0 10px}
+.chip-d{display:inline-block;font-family:"DM Mono",monospace;font-size:11px;padding:2px 8px;margin:0 4px 4px 0;border-radius:3px;background:var(--dn-bg);color:var(--dn)}
+@media (max-width:700px){.note{grid-template-columns:1fr;gap:2px}}
 @media (max-width:900px){#drawer{width:100vw}}
 @media (max-width:900px){
   .wrap{padding:0 16px}
@@ -179,7 +189,7 @@ tr.sel td{background:var(--gold-bg)!important}
 <nav><div class="wrap">
   <div class="brand">MJ — <em>RS Engine</em></div>
   <a href="#regime">Regime</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
-  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#method">Method</a>
+  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#history">History</a><a href="#method">Method</a>
   <div class="asof" id="nav-asof"></div>
 </div></nav>
 
@@ -189,6 +199,7 @@ tr.sel td{background:var(--gold-bg)!important}
     <h1>Where is the money <em>going?</em></h1>
     <div class="regime"><div id="badge"></div><p class="verdict" id="verdict"></p></div>
     <div class="demo" id="demo"></div>
+    <div class="notes" id="notes"></div>
   </header>
 
   <section id="regime">
@@ -274,6 +285,15 @@ tr.sel td{background:var(--gold-bg)!important}
         <div><b>TT</b> trend template · <b>NH</b> within 15% of high · <b>NEW</b> joined the list this week.</div>
       </div></details>
     </div>
+  </section>
+
+  <section id="history">
+    <div class="sec-head"><h2>Leader history</h2><div class="line"></div><p id="hist-rule"></p></div>
+    <p class="hist-note" id="hist-note"></p>
+    <div id="hist-dropped"></div>
+    <div class="controls"><label><input type="checkbox" id="h-on"> Currently on the list</label>
+      <label><input type="checkbox" id="h-off"> Dropped off</label></div>
+    <div class="tbl-wrap"><table class="t" id="hist-tbl"></table></div>
   </section>
 
   <section id="method">
@@ -437,6 +457,26 @@ const LETF = {QQQ:"TQQQ / SQQQ",SPY:"SPXL / SPXS",IWM:"TNA / TZA",DIA:"UDOW / SD
   IBIT:"BITX / SBIT",KWEB:"CWEB",FXI:"YINN / YANG",ITA:"DFEN",XHB:"NAIL",ITB:"NAIL",WCLD:"CLDL",USO:"UCO / SCO",PPH:"PILL",PEJ:"OOTO",
   IYT:"TPOR",XTN:"TPOR",ROBO:"UBOT",ETH:"ETHU"};
 
+/* leader history */
+function drawHistory(){
+  const H = D.history; if (!H || !H.rows) { $("#history").remove(); return; }
+  const W = H.weeks || [];
+  $("#hist-rule").textContent = `Last ${W.length} week${W.length===1?'':'s'} · cell = RS at week's end`;
+  $("#hist-note").textContent = H.log_start ? `Log started ${H.log_start}. Every stock that made the leaders list in the window — how long it stayed, and how it has done since it first appeared.` : "";
+  $("#hist-dropped").innerHTML = (H.dropped||[]).length ? `<span style="font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.14em;color:var(--t3);margin-right:8px">DROPPED THIS WEEK</span>` + H.dropped.map(t=>`<span class="chip-d">${esc(t)}</span>`).join("") : "";
+  const cols = [
+    {h:"Ticker", k:"symbol", l:1, f:x=>symTd(x, x.exchange)},
+    {h:"Theme", k:"theme", l:1, f:x=>`<td class="l" style="color:var(--t2)">${esc(x.theme||'')}</td>`},
+    {h:"First seen", k:"first_seen_iso", f:x=>`<td style="color:var(--t3)">${esc(x.first_seen)}</td>`},
+    {h:"Days on", k:"days_on", tip:"Daily runs it appeared in, within the window", f:x=>`<td>${x.days_on}</td>`},
+    {h:"Since 1st seen", k:"ret_since", tip:"Price change since the first day it made the list", f:x=>`<td class="${x.ret_since>0?'up':x.ret_since<0?'dn':''}">${x.ret_since==null?'–':fmt(x.ret_since)+'%'}</td>`},
+    ...W.map((w,i)=>({h:w, tip:`Week ending ${w}`, f:x=>{const v=x.weeks[i]; return `<td>${v==null?'<span class="wk off">·</span>':`<span class="wk" style="background:${ratingColor(v)}">${v}</span>`}</td>`;}})),
+    {h:"Status", k:"on_now", l:1, f:x=>`<td class="l" style="color:${x.on_now?'#8fcf8a':'#6b645a'}">${x.on_now?'On list':'Dropped'}</td>`},
+  ];
+  const go = () => table($("#hist-tbl"), cols, H.rows.filter(r => (!$("#h-on").checked || r.on_now) && (!$("#h-off").checked || !r.on_now)), {sort:"days_on"});
+  ["#h-on","#h-off"].forEach(s => $(s).onchange = go); go();
+}
+
 /* chart drawer */
 let curRows = [], curIdx = -1, curTable = null, tvLoaded = null;
 function loadTV(){ return tvLoaded ||= new Promise((ok, no) => { const s = document.createElement("script");
@@ -508,6 +548,10 @@ function render(){
   $("#eyebrow").textContent = `Market close ${D.asof} · ${D.universe.etfs} ETFs · ${D.universe.stocks} stocks`;
   $("#badge").innerHTML = `<span class="badge ${D.regime.tone}">${esc(D.regime.label)}</span>`;
   $("#verdict").textContent = D.regime.verdict;
+  if (D.notes && D.notes.length) $("#notes").innerHTML = `<div class="nh">Desk notes</div>` +
+    D.notes.map(n => `<div class="note ${esc(n.tag)}"><b>${esc(n.tag)}</b><span>${esc(n.text)}</span></div>`).join("");
+  else $("#notes").remove();
+  drawHistory();
   if (D.demo) $("#demo").textContent = "SIMULATED DATA — layout preview only. Real data appears once the engine runs on GitHub.";
   $("#footer").innerHTML = `Generated ${D.generated} · Not investment advice · <a href="data/leaders.csv">leaders.csv</a> · <a href="data/sectors.csv">sectors.csv</a> · <a href="data/stocks.csv">stocks.csv</a> · <a href="data/tradingview_leaders.txt">TradingView list</a>`;
 
