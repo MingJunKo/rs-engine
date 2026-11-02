@@ -53,13 +53,12 @@ def build_message(p: dict, settings: dict) -> str:
         for x in setups[:10]:
             er = f" · ER {e(x['earnings'])}" if x.get("earnings") else ""
             lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {x['pivot_dist']:+.1f}% from pivot{er}")
-    soon = [x["symbol"] for x in p["leaders"] if x.get("er_soon")]
-    if soon:
-        lines += ["", "⚠ Earnings within 7 days: " + ", ".join(soon)]
-
-    new = [x["symbol"] for x in p["leaders"] if x["new"]]
-    if new:
-        lines += ["", "New this week: " + ", ".join(new)]
+    notes = [x for x in p.get("notes", []) if x["tag"] not in ("Regime", "Setups")]
+    if notes:
+        lines += ["", "<b>Desk notes</b>"] + [f"• <b>{e(x['tag'])}</b> — {e(x['text'])}" for x in notes]
+    reg = next((x for x in p.get("notes", []) if x["tag"] == "Regime"), None)
+    if reg and "Sizing:" in reg["text"]:
+        lines += ["", "<i>Sizing: " + e(reg["text"].split("Sizing:")[1].strip()) + "</i>"]
     url = settings.get("dashboard_url")
     if url:
         lines += ["", f'<a href="{e(url)}">Open dashboard</a>']
