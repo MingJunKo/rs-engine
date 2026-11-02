@@ -209,6 +209,21 @@ def quadrant(pt):
     return ("Leading" if y >= 100 else "Weakening") if x >= 100 else ("Improving" if y >= 100 else "Lagging")
 
 
+def next_earnings(ticker: str, asof) -> tuple:
+    """Next earnings date from Yahoo (best effort). Returns ('12 Nov', days_away) or (None, nan)."""
+    try:
+        import yfinance as yf
+        cal = yf.Ticker(yf_symbol(ticker)).calendar or {}
+        dates = [pd.Timestamp(d) for d in cal.get("Earnings Date", []) if d is not None]
+        future = [d for d in dates if d.normalize() >= asof.normalize()]
+        if future:
+            d = min(future)
+            return d.strftime("%d %b"), (d.normalize() - asof.normalize()).days
+    except Exception:
+        pass
+    return None, np.nan
+
+
 def pct(a, b):
     return (a / b - 1) * 100
 
@@ -245,6 +260,12 @@ def run(demo: bool, notify: bool):
     if BENCH not in close:
         sys.exit(f"Benchmark {BENCH} has no data — aborting.")
     close = close.loc[close[BENCH].notna()]
+    if not demo:                                   # run during the US session? drop today's partial bar
+        from zoneinfo import ZoneInfo
+        now_et = dt.datetime.now(ZoneInfo("America/New_York"))
+        if close.index[-1].date() == now_et.date() and now_et.time() < dt.time(16, 15):
+            close = close.iloc[:-1]
+            log("  US market still open — using the previous close")
     high, low, vol = high.reindex(close.index), low.reindex(close.index), vol.reindex(close.index)
     asof = close.index[-1]
     log(f"Data as of {asof.date()}, {close.shape[1]} tickers with prices")
@@ -283,6 +304,11 @@ def run(demo: bool, notify: bool):
         df["dollar_vol"] = (c * v).rolling(20).mean().iloc[-1]
         df["rvol"] = v.iloc[-1] / v.rolling(50).mean().shift(1).iloc[-1]
         df["atr_ext"] = (c.iloc[-1] - sma50.iloc[-1]) / a.iloc[-1]
+        hi20 = h.rolling(20).max()
+        df["pivot_dist"] = pct(c.iloc[-1], hi20.iloc[-1])                       # % below the 20-day high
+        rng10 = (h.rolling(10).max() - l.rolling(10).min()).iloc[-1] / c.iloc[-1] * 100
+        df["tightness"] = rng10 / df["adr"]                                      # 10-day range in ADRs
+        df["vol_dryup"] = v.rolling(10).mean().iloc[-1] / v.rolling(50).mean().iloc[-1]
         df["trend_template"] = (
             (c.iloc[-1] > sma150.iloc[-1]) & (c.iloc[-1] > sma200.iloc[-1]) &
             (sma150.iloc[-1] > sma200.iloc[-1]) & (sma200.iloc[-1] > sma200.iloc[-22]) &
@@ -344,12 +370,24 @@ def run(demo: bool, notify: bool):
             & (stk.rs_rating >= SETTINGS["min_rs_rating"]))
     if SETTINGS.get("require_above_50dma", True):
         elig &= stk.above_50
+    elig &= stk.adr >= SETTINGS.get("min_adr", 2.5)      # drops pinned / takeover / ultra-low-vol names
     leaders = stk[elig & in_top].copy()
     leaders["theme"] = leaders.all_themes.apply(
         lambda l: sorted([x for x in l if x in top_themes], key=lambda x: top_themes.index(x))[0])
     leaders = leaders.sort_values(["rs_rating", "rs_score"], ascending=False).head(SETTINGS["max_leaders"])
     leaders["near_high"] = leaders.off_high >= -15
     leaders["extended"] = leaders.atr_ext > 4
+    # Setup = buyable shape: near a pivot, tight, not extended (a screen, not a signal)
+    leaders["setup"] = ((leaders.pivot_dist >= -6) & (leaders.tightness <= 2.5)
+                        & (leaders.atr_ext.between(0, 4)))
+    leaders["earnings"], leaders["er_days"] = None, np.nan
+    if not demo:
+        leaders["earnings"], leaders["er_days"] = zip(*[next_earnings(t, asof) for t in leaders.index])
+    else:
+        rng_ = np.random.default_rng(3)
+        leaders["er_days"] = rng_.integers(1, 80, len(leaders))
+        leaders["earnings"] = [(asof + pd.Timedelta(days=int(d))).strftime("%d %b") for d in leaders.er_days]
+    leaders["er_soon"] = leaders.er_days <= 7
 
     # NEW vs the snapshot from about a week ago
     HIST.mkdir(parents=True, exist_ok=True)
@@ -474,6 +512,9 @@ def run(demo: bool, notify: bool):
                 "adr": rnd(r.adr), "dollar_vol": rnd(r.dollar_vol / 1e6, 1), "rvol": rnd(r.rvol, 2),
                 "atr_ext": rnd(r.atr_ext), "trend_template": bool(r.trend_template),
                 "near_high": bool(r.near_high), "extended": bool(r.extended), "new": bool(r.new),
+                "setup": bool(r.setup), "pivot_dist": rnd(r.pivot_dist), "tightness": rnd(r.tightness),
+                "vol_dryup": rnd(r.vol_dryup, 2), "earnings": r.earnings, "er_days": rnd(r.er_days, 0),
+                "er_soon": bool(r.er_soon),
                 "price": rnd(r.price, 2), "spark_px": clean_list(r.spark_px)}
 
     etf_sorted = etf_df.sort_values(["category", "rs_rating"], ascending=[True, False])
@@ -482,7 +523,8 @@ def run(demo: bool, notify: bool):
         "generated": dt.datetime.now(SGT).strftime("%d %b %Y %H:%M SGT"),
         "demo": demo,
         "benchmark": BENCH,
-        "settings": {k: SETTINGS[k] for k in ("min_dollar_volume", "min_price", "min_rs_rating", "top_themes")},
+        "settings": {**{k: SETTINGS[k] for k in ("min_dollar_volume", "min_price", "min_rs_rating", "top_themes")},
+                     "min_adr": SETTINGS.get("min_adr", 2.5)},
         "regime": {"label": regime, "tone": tone, "verdict": verdict, "risk_on": risk_on_n, "gauges_n": len(gauges),
                    "breadth": breadth_now, "breadth_chg": round(breadth_now - breadth_1m, 1) + 0.0},
         "gauges": gauges,
@@ -511,7 +553,8 @@ def run(demo: bool, notify: bool):
             df_[c_] = df_[c_].round().astype("Int64")
     etf_sorted[cols_e].round(2).rename_axis("symbol").to_csv(DATA_OUT / "sectors.csv")
     cols_s = ["name", "theme", "rs_rating", "rs_chg_1w", "rs_win_1m", "rs_score", "price", "chg_1w", "chg_1m",
-              "chg_3m", "off_high", "adr", "dollar_vol", "rvol", "atr_ext", "trend_template", "near_high",
+              "chg_3m", "off_high", "adr", "dollar_vol", "rvol", "atr_ext", "pivot_dist", "tightness", "vol_dryup",
+              "setup", "earnings", "trend_template", "near_high",
               "extended", "new", "industry"]
     leaders[cols_s].round(2).rename_axis("ticker").to_csv(DATA_OUT / "leaders.csv")
     allc = ["name", "theme", "rs_rating", "rs_chg_1w", "rs_win_1m", "rs_score", "price", "chg_1w", "chg_1m",

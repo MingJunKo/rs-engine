@@ -29,7 +29,8 @@ def build_message(p: dict, settings: dict) -> str:
     if bm:
         lines.append("1M: " + " · ".join(bm))
 
-    spdr = sorted([x for x in p["etfs"] if x["category"] == "SPDR Sector"], key=lambda x: -x["rs_rating"])
+    spdr = sorted([x for x in p["etfs"] if x["category"] == "SPDR Sector" and x["rs_rating"] is not None],
+                  key=lambda x: -x["rs_rating"])
     if spdr:
         lines += ["", "<b>Sectors</b>",
                   "Leading: " + ", ".join(f"{x['symbol']} {x['rs_rating']}" for x in spdr[:3]),
@@ -45,6 +46,16 @@ def build_message(p: dict, settings: dict) -> str:
         flags = "".join([" 🆕" if x["new"] else "", " ✓TT" if x["trend_template"] else "",
                          " ⚠ext" if x["extended"] else ""])
         lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {e(x['theme'])}{flags}")
+
+    setups = [x for x in p["leaders"] if x.get("setup") and not x.get("er_soon")]
+    if setups:
+        lines += ["", f"<b>Setups — near pivot, tight, not extended</b> ({len(setups)})"]
+        for x in setups[:10]:
+            er = f" · ER {e(x['earnings'])}" if x.get("earnings") else ""
+            lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {x['pivot_dist']:+.1f}% from pivot{er}")
+    soon = [x["symbol"] for x in p["leaders"] if x.get("er_soon")]
+    if soon:
+        lines += ["", "⚠ Earnings within 7 days: " + ", ".join(soon)]
 
     new = [x["symbol"] for x in p["leaders"] if x["new"]]
     if new:

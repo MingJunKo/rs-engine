@@ -112,7 +112,7 @@ All on github.com: click the file → pencil icon → edit → **Commit changes*
   - `theme`: groups with the same theme compete as one (only the strongest ETF of a theme is used), so XLE/XOP/FCG no longer crowd out the top-N.
   - `style`: `growth`, `cyclical`, `defensive` — drives the rotation charts.
 - **Add stocks:** `config/universe.csv`, one line per `ticker,etf`. Or just add the ETF and run **Refresh universe**.
-- **Change filters:** `config/settings.json` — `min_dollar_volume`, `min_price`, `min_rs_rating`, `require_above_50dma`, `top_themes`, `max_leaders`, `telegram_top_n`, `benchmark`.
+- **Change filters:** `config/settings.json` — `min_dollar_volume`, `min_price`, `min_rs_rating`, `require_above_50dma`, `top_themes`, `max_leaders`, `telegram_top_n`, `benchmark`, `min_adr` (default 2.5 — drops pinned / low-volatility names).
 
 ---
 
@@ -128,7 +128,7 @@ All on github.com: click the file → pencil icon → edit → **Commit changes*
 
 **Regime.** Risk-On when ≥5 gauges are risk-on; Risk-Off when ≤1 and universe breadth < 40%; Defensive Rotation when defensives led the past month; otherwise Mixed.
 
-**Leaders.** Stocks in the top themes (themes that have holdings), RS ≥ `min_rs_rating`, above the 50-DMA, price and $-volume above the floors. Flags: **TT** Minervini trend template, **NH** within 15% of the 52-week high, **EXT** more than 4 ATRs above the 50-DMA, **NEW** not on the list a week ago.
+**Leaders.** Stocks in the top themes (themes that have holdings), RS ≥ `min_rs_rating`, above the 50-DMA, ADR ≥ `min_adr`, price and $-volume above the floors. Flags: **TT** Minervini trend template, **NH** within 15% of the 52-week high, **EXT** more than 4 ATRs above the 50-DMA, **NEW** not on the list a week ago, **SETUP** within 6% of the 20-day high, 10-day range ≤ 2.5 ADRs and 0–4 ATRs above the 50-DMA, **ER** earnings within 7 days.
 
 ---
 
