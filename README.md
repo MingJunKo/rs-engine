@@ -154,6 +154,17 @@ Peer multiples answer the useful question ("is this priced far above its group?"
 Secrets for the 13F job: `SEC_USER_AGENT` (required by the SEC: your name and an email, e.g. `MJ mj@example.com`)
 and optionally `OPENFIGI_KEY` (free at openfigi.com; makes the first CUSIP→ticker mapping much faster).
 
+## Early turners
+
+A watchlist of groups **outside** the top themes whose RS is turning up fast: RS up ≥ 12 in a week (or ≥ 8 in
+3 days), back above the 20-day, confirmed by breadth rising ≥ 10 pts or an Improving/Leading rotation quadrant.
+Under each group: its liquid members above the 50-day with RS ≥ 70 and rising. **RS FIRST** = the RS line is at a
+3-month high while price is still > 5% below its high, often the earliest tell.
+
+Telegram: the full section is in the Saturday summary; on weekdays you get a short alert only when a **new** group
+starts turning. Thresholds can be tuned in `config/settings.json` under `"turners"` (min_rs_jump_1w, min_rs_jump_3d,
+min_breadth_rise, min_group_rs, min_stock_rs, max_groups, max_stocks).
+
 ## Model book
 
 `https://<username>.github.io/rs-engine/modelbook/` — every US stock (all ~6,000 listings plus your universe) that broke out of a base of 3+ weeks and then gained 100% within 126 sessions, over the last 5 years. For each winner: what it looked like the day before the breakout (RS, base depth and length, tightness, volume dry-up, breakout volume, gap, ADR, trend template, RS line), and how the run behaved (gain, length, heat before the peak). The **What mattered** table compares every trait against all breakouts, so you can see which traits actually raised the odds. Click any winner to study its chart with the base, breakout and peak marked; notes and a *Studied* tick save in your browser (Export notes downloads them).

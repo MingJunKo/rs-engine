@@ -53,6 +53,21 @@ def build_message(p: dict, settings: dict) -> str:
         for x in setups[:10]:
             er = f" · ER {e(x['earnings'])}" if x.get("earnings") else ""
             lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {x['pivot_dist']:+.1f}% from pivot{er}")
+    tg = p.get("turners") or []
+    if tg:
+        lines += ["", f"<b>Early turners — watchlist, not buys</b> ({len(tg)})",
+                  "<i>Groups outside the top themes whose RS is turning up fast</i>"]
+        for g in tg:
+            br = (f" · breadth {g['breadth']}% ({g['breadth_chg']:+d})" if g.get("breadth") is not None
+                  and g.get("breadth_chg") is not None else "")
+            lines += ["", f"<b>{e(g['theme'])}</b> ({e(g['etf'])}) RS {g['rs']} ({(g['rs_chg_1w'] or 0):+d} 1W){br} · {e(g['quadrant'] or '')}"]
+            if not g["stocks"]:
+                lines.append("  <i>no stock passes the filters yet</i>")
+            for x in g["stocks"]:
+                tags = "".join([" 📈RS-first" if x.get("rs_first") else (" RS-high" if x.get("rs_line_hi") else ""),
+                                " ◆setup" if x.get("setup") else "", " ★leader" if x.get("leader") else ""])
+                lines.append(f"  <code>{x['symbol']:<6}</code> {x['rs_rating']} ({(x['rs_chg_1w'] or 0):+d}) · "
+                             f"{(x['off_high'] or 0):+.0f}% off high{tags}")
     notes = [x for x in p.get("notes", []) if x["tag"] not in ("Regime", "Setups")]
     if notes:
         lines += ["", "<b>Desk notes</b>"] + [f"• <b>{e(x['tag'])}</b> — {e(x['text'])}" for x in notes]
@@ -65,6 +80,17 @@ def build_message(p: dict, settings: dict) -> str:
     return "\n".join(lines)
 
 
+def _chunks(msg: str, limit: int = 3900) -> list[str]:
+    """Telegram caps a message at 4096 characters: split at section breaks (blank lines)."""
+    out, cur = [], ""
+    for block in msg.split("\n\n"):
+        if cur and len(cur) + len(block) + 2 > limit:
+            out.append(cur); cur = block
+        else:
+            cur = f"{cur}\n\n{block}" if cur else block
+    return out + ([cur] if cur else [])
+
+
 def send_summary(payload: dict, tv_file: Path, settings: dict) -> None:
     token, chat = os.environ.get("TELEGRAM_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
     msg = build_message(payload, settings)
@@ -73,9 +99,10 @@ def send_summary(payload: dict, tv_file: Path, settings: dict) -> None:
         print(msg)
         return
     api = f"https://api.telegram.org/bot{token}"
-    r = requests.post(f"{api}/sendMessage", timeout=30, data={
-        "chat_id": chat, "text": msg, "parse_mode": "HTML", "disable_web_page_preview": "true"})
-    print("Telegram message:", r.status_code, r.text[:200] if r.status_code != 200 else "ok")
+    for part in _chunks(msg):
+        r = requests.post(f"{api}/sendMessage", timeout=30, data={
+            "chat_id": chat, "text": part, "parse_mode": "HTML", "disable_web_page_preview": "true"})
+        print("Telegram message:", r.status_code, r.text[:200] if r.status_code != 200 else "ok")
     if tv_file.exists() and tv_file.stat().st_size > 5:
         with open(tv_file, "rb") as f:
             r = requests.post(f"{api}/sendDocument", timeout=60,
