@@ -63,7 +63,9 @@ section{padding:30px 0 6px}
 .gauge::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--dn);opacity:.7}
 .gauge.on::before{background:var(--up)}
 .gauge .lbl{font-size:12.5px;font-weight:500;color:var(--t1)}
-.gauge .note{font-size:10px;color:var(--t3);line-height:1.35;height:41px;overflow:hidden;margin-top:2px}
+.gauge .gnote{font-size:10px;color:var(--t3);line-height:1.35;min-height:27px;margin-top:2px;overflow-wrap:anywhere}
+.gauge .read{font-size:10.5px;color:var(--t2);line-height:1.4;margin-top:7px;padding-top:7px;border-top:.5px solid var(--border)}
+.gauge .read b{font-weight:500;color:var(--t1)}
 .gauge .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px}
 .pill{font-family:"DM Mono",monospace;font-size:8.5px;letter-spacing:.12em;padding:2px 7px;border-radius:2px;text-transform:uppercase}
 .pill.on{color:var(--up);background:var(--up-bg)}.pill.off{color:var(--dn);background:var(--dn-bg)}
@@ -205,6 +207,12 @@ tr.sel td{background:var(--gold-bg)!important}
   <section id="regime">
     <div class="sec-head"><h2>Risk appetite</h2><div class="line"></div><p>Ratio vs its 50-day average · 6 months</p></div>
     <div class="gauges" id="gauges"></div>
+    <details class="fold" style="margin-top:12px"><summary>How to read these <span>— 30 seconds</span></summary><div class="body guide">
+      <div><b>The line</b> is one group divided by another. Rising = the first is beating the second. The dotted line is its 50-day average.</div>
+      <div><b>RISK-ON</b> = above its average <i>and</i> higher than a month ago. Anything else is RISK-OFF. The % is the ratio's change over a month.</div>
+      <div><b>Read them together.</b> 5+ risk-on = broad appetite: press size. 1 or fewer = defensive tape: smaller and fewer trades. In between = be selective.</div>
+      <div><b>For breakouts</b>, watch Momentum, Equal vs Cap and Small vs Large first: they show whether leaders are being rewarded and whether the move is broad. Credit often turns before stocks do.</div>
+    </div></details>
     <details class="fold" id="cal-fold" style="margin-top:12px"><summary>Economic calendar <span>— US events this week (Jeff's rule: no new entries right before major data)</span></summary>
       <div class="body"><div id="cal"></div></div></details>
   </section>
@@ -556,11 +564,24 @@ function render(){
   $("#footer").innerHTML = `Generated ${D.generated} · Not investment advice · <a href="data/leaders.csv">leaders.csv</a> · <a href="data/sectors.csv">sectors.csv</a> · <a href="data/stocks.csv">stocks.csv</a> · <a href="data/tradingview_leaders.txt">TradingView list</a>`;
 
   // gauges
+  const GMEAN = {
+    "Growth vs Defensive":     ["tech, discretionary, comms vs staples, utilities, health, REITs", "money is chasing growth", "money is hiding in defensives"],
+    "Cyclical vs Defensive":   ["financials, industrials, materials, energy vs defensives", "investors expect the economy to hold up", "cyclicals lag on growth worries"],
+    "Discretionary vs Staples":["XLY / XLP: wants vs needs", "consumers' wants are in favour", "the market prefers needs over wants"],
+    "Equal vs Cap Weight":     ["RSP / SPY: the average stock vs the index", "the average stock is joining in (healthy breadth)", "the rally is narrow, carried by a few mega-caps"],
+    "Small vs Large":          ["IWM / SPY: small caps vs large", "appetite for smaller, riskier names", "money prefers size and quality"],
+    "Momentum vs Market":      ["SPMO / RSP: recent winners vs the average stock", "leaders keep leading, so breakouts tend to work", "leaders are being sold, so breakouts fail more often"],
+    "Credit Appetite":         ["HYG / IEF: junk bonds vs Treasuries", "credit is calm", "credit stress is building, which often leads stocks lower"],
+  };
+  const gRead = g => { const m = GMEAN[g.label]; if (!m) return "";
+    const up = g.chg_1m >= 0, st = g.above_ma ? (up ? "Above average and rising" : "Above average but fading") : (up ? "Below average but turning up" : "Below average and falling");
+    return `<b>${st}</b>: ${g.above_ma === up ? (up ? m[1] : m[2]) : (up ? "early sign that " + m[1] : "watch for signs that " + m[2])}.`; };
   $("#gauges").innerHTML = D.gauges.map((g,i) => `<div class="gauge ${g.risk_on?'on':''}">
-      <div class="lbl">${esc(g.label)}</div><div class="note">${esc(g.note)}</div>
+      <div class="lbl">${esc(g.label)}</div><div class="gnote">${esc((GMEAN[g.label]||[g.note])[0])}</div>
       <div id="g${i}" style="margin-top:8px"></div>
       <div class="row"><span class="pill ${g.risk_on?'on':'off'}">${g.risk_on?'Risk-on':'Risk-off'}</span>
-      <span class="chg ${g.chg_1m>=0?'up':'dn'}">${fmt(g.chg_1m)}% <span style="color:var(--t4)">1M</span></span></div></div>`).join("");
+      <span class="chg ${g.chg_1m>=0?'up':'dn'}">${fmt(g.chg_1m)}% <span style="color:var(--t4)">1M</span></span></div>
+      <div class="read">${gRead(g)}</div></div>`).join("");
   D.gauges.forEach((g,i) => {
     const el = $("#g"+i), w = el.clientWidth || 170, h = 44;
     const vals = g.series, ma = g.ma, all = vals.concat(ma.filter(v=>v!=null));
