@@ -4,6 +4,13 @@
  "setups": [
   "VEEV"
  ],
+ "turners": [
+  "IPAY",
+  "MOO",
+  "PEJ",
+  "IYR",
+  "XLRE"
+ ],
  "prev": {
   "date": "2026-10-30",
   "regime": "Defensive Rotation",
