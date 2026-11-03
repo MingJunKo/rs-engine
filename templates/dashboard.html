@@ -179,7 +179,9 @@ tr.sel td{background:var(--gold-bg)!important}
 #tvbox{flex:1;min-height:0}
 #drawer .hint{padding:7px 16px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);border-top:.5px solid var(--border)}
 #cal{height:420px}
-.funnel{display:grid;grid-template-columns:repeat(7,1fr);border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:16px;overflow:hidden}
+.funnel{position:relative;display:grid;grid-template-columns:repeat(7,1fr);border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:16px;overflow:hidden}
+.funnel canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.funnel .st{z-index:1}
 .funnel .st{position:relative;padding:11px 12px 12px;border-left:.5px solid var(--border);min-width:0}
 .funnel .st:first-child{border-left:0}
 .funnel .lb{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -610,6 +612,50 @@ function drawFunnel(){
     <div class="lb">${esc(s.label)}</div><div class="n">${s.n.toLocaleString()}</div>
     <div class="ch">${s.chg_1w==null?'&nbsp;':`<span class="${s.chg_1w>0?'up':s.chg_1w<0?'dn':''}">${s.chg_1w>0?'+':''}${s.chg_1w}</span> 1W`}</div>
     ${line(s.hist)}<div class="bar"><i style="width:${Math.max(4, Math.sqrt(s.n/top)*100).toFixed(1)}%"></i></div></div>`).join('');
+  funnelBalls(el, F);
+}
+
+/* the funnel, animated: each ball ≈ a slice of the universe, flowing left → right. At each stage the share
+   that fails drops out of the bottom; the share that reaches the end turns gold. Runs only while on screen. */
+function funnelBalls(el, F){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !window.IntersectionObserver) return;
+  const cv = document.createElement("canvas"); el.prepend(cv);
+  const ctx = cv.getContext("2d"), N = F.map(s => s.n), top = N[0] || 1, K = N.length;
+  // probability a ball leaves at stage k (fails the filter of stage k+1); the rest reach the last stage
+  const leave = N.map((n,k) => k < K-1 ? Math.max(0, n - N[k+1]) / top : n / top);
+  let W = 0, H = 0, balls = [], run = false, last = 0, spawnAcc = 0, setupAcc = 0, dpr = 1;
+  const size = () => { const r = el.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); };
+  const cols = () => getComputedStyle(el).gridTemplateColumns.split(" ").length;
+  const halfH = x => { const c = cols(); if (c < K) return H*0.42;            // phone layout: plain band
+    const st = Math.min(K-1, Math.floor(x / (W/K))); return H*0.42 * Math.max(0.12, Math.sqrt(N[st]/top)); };
+  const pick = () => { let u = Math.random(), k = 0; for (; k < K-1; k++) { if ((u -= leave[k]) < 0) break; } return k; };
+  const spawn = gold => balls.push({x: -4, r: Math.random()*2-1, v: (W / 7) * (0.8 + Math.random()*0.4), out: gold ? K-1 : pick(),
+    gold, vy: 0, fy: 0, a: 1, rad: gold ? 3.2 : 1.6 + Math.random()*0.9});
+  const frame = t => {
+    if (!run) return; const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
+    spawnAcc += dt * 9; while (spawnAcc > 1) { spawn(false); spawnAcc--; }
+    if (N[K-1] > 0 && (setupAcc += dt) > 7 / Math.min(3, N[K-1])) { spawn(true); setupAcc = 0; }
+    ctx.clearRect(0, 0, W, H); const sw = W / K, mid = H * 0.55;
+    balls = balls.filter(b => {
+      const exitX = (b.out + 1) * sw - 6;
+      if (b.x < exitX || b.out === K-1) b.x += b.v * dt; else { b.vy += 140 * dt; b.fy += b.vy * dt; b.x += b.v * dt * 0.25; b.a -= dt * 0.9; }
+      if (b.out === K-1 && b.x > W - 10) { b.x = W - 10; b.a -= dt * (b.gold ? 0.35 : 0.8); }
+      const y = mid + b.r * halfH(Math.min(b.x, exitX)) + b.fy;
+      if (b.a <= 0 || y > H + 6) return false;
+      const reached = b.x > (K-2) * sw;
+      ctx.globalAlpha = Math.max(0, b.a) * (b.gold ? 0.95 : reached ? 0.55 : 0.28);
+      ctx.fillStyle = b.gold ? "#e8c070" : reached ? "#c9a55a" : "#a59c8f";
+      if (b.gold) { ctx.shadowColor = "#e8c070"; ctx.shadowBlur = 8; }
+      ctx.beginPath(); ctx.arc(b.x, y, b.rad, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+      return true; });
+    ctx.globalAlpha = 1; requestAnimationFrame(frame);
+  };
+  size(); addEventListener("resize", size);
+  new IntersectionObserver(([e]) => { const on = e.isIntersecting && !document.hidden;
+    if (on && !run) { run = true; last = 0; requestAnimationFrame(frame); } else if (!on) run = false; }).observe(el);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) run = false;
+    else if (el.getBoundingClientRect().top < innerHeight && !run) { run = true; last = 0; requestAnimationFrame(frame); } });
 }
 
 /* early turners */
