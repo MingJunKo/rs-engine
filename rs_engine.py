@@ -599,10 +599,16 @@ def run(demo: bool, notify: bool):
     confirm = (tg_.breadth_chg_1w >= T.get("min_breadth_rise", 10)) | tg_.quadrant.isin(["Improving", "Leading"])
     tg_ = tg_[jump & confirm & tg_.above_20 & (tg_.rs_rating >= T.get("min_group_rs", 40))]
     tg_["turn_score"] = tg_.rs_chg_1w.clip(lower=0) + tg_.rs_chg_3d.clip(lower=0) + tg_.breadth_chg_1w.fillna(0).clip(lower=0) / 2
-    tg_ = tg_.sort_values("turn_score", ascending=False).groupby("theme").head(1).head(T.get("max_groups", 5))
-    turners = []
+    tg_ = tg_.sort_values("turn_score", ascending=False).groupby("theme").head(1)
+    turners, seen_ = [], []
     for e_, g_ in tg_.iterrows():
         mem_ = [t for t in members.get(e_, []) if t in stk.index]
+        # skip near-duplicate groups (e.g. IYR vs XLRE): mostly the same stocks as one already listed
+        if any(len(set(mem_) & s_) > 0.5 * min(len(mem_), len(s_)) for s_ in seen_ if s_ and mem_):
+            continue
+        if len(turners) >= T.get("max_groups", 5):
+            break
+        seen_.append(set(mem_))
         cand = stk.loc[mem_]
         cand = cand[(cand.price >= SETTINGS["min_price"]) & (cand.dollar_vol >= SETTINGS["min_dollar_volume"])
                     & cand.above_50 & (cand.rs_rating >= T.get("min_stock_rs", 70)) & (cand.rs_chg_1w > 0)]
