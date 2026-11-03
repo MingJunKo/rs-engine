@@ -416,12 +416,39 @@ def canslim(stk: pd.DataFrame, market_ok: bool) -> dict:
 # ════════════════════════════════════════════════════════════════════
 #  ENGINE
 # ════════════════════════════════════════════════════════════════════
+def broad_universe(known: set, names: pd.DataFrame, demo: bool) -> list[str]:
+    """Every US common stock that isn't already in an ETF's holdings and is liquid enough to trade.
+    Re-screened weekly (3 months of prices for ~4,000 names), cached in config/broad.csv."""
+    if not SETTINGS.get("broad_universe", True):
+        return []
+    cache = CFG_DIR / "broad.csv"
+    fresh = cache.exists() and time.time() - cache.stat().st_mtime < 6 * 86400
+    if demo or fresh or not len(names):
+        return sorted(set(pd.read_csv(cache).ticker) - known) if cache.exists() else []
+    n = names.fillna("")
+    bad = n.name.str.contains(r"Warrant|\bUnits?\b|\bRights?\b|Preferred|Notes due|Debenture|Depositary Shares? Each|%|"
+                              r"\bETF\b|\bETN\b|\bFund\b|\bTrust\b", case=False, regex=True) | n.industry.eq("Blank Checks")
+    cand = sorted(set(n.ticker[n.ticker.str.fullmatch(r"[A-Z]{1,5}(\.[A-Z])?") & ~bad]) - known)
+    log(f"  broad universe: screening {len(cand)} US common stocks outside your ETF holdings")
+    px = download_yahoo(cand, period="3mo", want=("Close", "Volume"))
+    c, v = px["Close"], px["Volume"]
+    dv = (c * v).tail(20).mean()
+    keep = c.columns[(c.iloc[-1] >= SETTINGS["min_price"] * 0.8) & (dv >= SETTINGS["min_dollar_volume"] * 0.5)]
+    pd.DataFrame({"ticker": sorted(keep)}).to_csv(cache, index=False)
+    log(f"  broad universe: {len(keep)} liquid names added")
+    return sorted(keep)
+
+
 def run(demo: bool, notify: bool):
     etfs = pd.read_csv(CFG_DIR / "etfs.csv")
     uni = pd.read_csv(CFG_DIR / "universe.csv")
     uni["ticker"] = uni["ticker"].str.strip().str.upper()
     etf_set = set(etfs.symbol)
-    stocks = sorted(set(uni.ticker) - etf_set)
+    names = pd.DataFrame(columns=["ticker", "name", "exchange", "sector", "industry"]) if demo else fetch_names()
+    if demo and (CFG_DIR / "names.csv").exists():
+        names = pd.read_csv(CFG_DIR / "names.csv")
+    extras = broad_universe(set(uni.ticker) | etf_set, names, demo)
+    stocks = sorted((set(uni.ticker) - etf_set) | set(extras))
     meta = etfs.set_index("symbol")
 
     # style for each stock: SPDR sector membership first, else first member ETF
@@ -432,14 +459,12 @@ def run(demo: bool, notify: bool):
         stock_style[t] = meta.loc[m[0], "style"] if m[0] in meta.index else "neutral"
 
     all_tickers = list(etfs.symbol) + stocks
-    log(f"Universe: {len(etfs)} ETFs, {len(stocks)} stocks")
+    log(f"Universe: {len(etfs)} ETFs, {len(stocks)} stocks ({len(extras)} outside ETF holdings)")
     if demo:
         styles = {**meta["style"].to_dict(), **stock_style}
         px = demo_prices(all_tickers, styles)
-        names = pd.DataFrame(columns=["ticker", "name", "exchange", "sector", "industry"])
     else:
         px = download_yahoo(all_tickers)
-        names = fetch_names()
 
     close, high, low, vol = (px[k].ffill(limit=3) for k in ("Close", "High", "Low", "Volume"))
     if BENCH not in close:
@@ -558,6 +583,37 @@ def run(demo: bool, notify: bool):
     stk["name"] = [nm.name.get(t, t) if len(nm) else t for t in stk.index]
     stk["industry"] = [nm.industry.get(t, "") if len(nm) else "" for t in stk.index]
     stk["exchange"] = [nm.exchange.get(t, "") if len(nm) else "" for t in stk.index]
+    stk["sector"] = [nm.sector.get(t, "") if len(nm) and "sector" in nm else "" for t in stk.index]
+
+    # stocks found outside ETF holdings get a theme from their industry: the theme most of that industry's
+    # ETF-held stocks belong to (industry-group themes preferred; sector theme as a fallback)
+    stk["broad"] = stk.etfs.str.len() == 0
+    if stk.broad.any():
+        from collections import Counter
+        cat_of = meta.category.to_dict()
+        def vote(key):                     # industry → industry-group theme, only when most of the industry agrees
+            out = {}
+            for k, g in stk[~stk.broad & stk[key].astype(bool)].groupby(key):
+                cg = Counter()
+                for l in g.etfs:
+                    gth = {etf_theme[e] for e in l if cat_of.get(e) == "Group" and e in etf_theme}
+                    for x in gth: cg[x] += 1 / len(gth)
+                if cg and cg.most_common(1)[0][1] >= max(2, 0.3 * len(g)):
+                    out[k] = cg.most_common(1)[0][0]
+            return out
+        ind_th = vote("industry")
+        SEC = {"Technology": "Technology", "Health Care": "Health Care", "Finance": "Financials",
+               "Consumer Discretionary": "Consumer Discretionary", "Industrials": "Industrials", "Real Estate": "Real Estate",
+               "Energy": "Energy", "Utilities": "Utilities", "Basic Materials": "Materials",
+               "Telecommunications": "Communication Services", "Consumer Staples": "Consumer Staples"}
+        new_th = {t: [x for x in (ind_th.get(stk.at[t, "industry"]), SEC.get(stk.at[t, "sector"])) if x]
+                  for t in stk.index[stk.broad]}
+        stk["all_themes"] = [sorted(new_th[t]) if t in new_th else l for t, l in stk.all_themes.items()]
+        stk["theme"] = [(sorted(new_th[t], key=lambda x: -theme_score.get(x, 0))[0] if new_th[t] else "")
+                        if t in new_th else th for t, th in stk.theme.items()]
+        th_style = theme_tbl.set_index("theme")["style"].to_dict()
+        stk.loc[stk.broad, "style"] = stk.loc[stk.broad, "theme"].map(th_style).fillna("neutral")
+        log(f"  broad stocks: {int(stk.broad.sum())}, of which {sum(bool(v) for v in new_th.values())} mapped to a theme")
 
     in_top = stk.all_themes.apply(lambda l: bool(set(l) & set(top_themes)))
     elig = ((stk.price >= SETTINGS["min_price"]) & (stk.dollar_vol >= SETTINGS["min_dollar_volume"])
@@ -639,6 +695,7 @@ def run(demo: bool, notify: bool):
     turners, seen_ = [], []
     for e_, g_ in tg_.iterrows():
         mem_ = [t for t in members.get(e_, []) if t in stk.index]
+        mem_ += [t for t in stk.index[stk.broad] if g_.theme in stk.at[t, "all_themes"]]
         # skip near-duplicate groups (e.g. IYR vs XLRE): mostly the same stocks as one already listed
         if any(len(set(mem_) & s_) > 0.5 * min(len(mem_), len(s_)) for s_ in seen_ if s_ and mem_):
             continue
@@ -810,7 +867,7 @@ def run(demo: bool, notify: bool):
                 "near_high": bool(r.near_high), "extended": bool(r.extended), "new": bool(r.new),
                 "setup": bool(r.setup), "pivot_dist": rnd(r.pivot_dist), "tightness": rnd(r.tightness),
                 "vol_dryup": rnd(r.vol_dryup, 2), "earnings": r.earnings, "er_days": rnd(r.er_days, 0),
-                "er_soon": bool(r.er_soon), "cs": r.cs, "cs_n": int(r.cs_n),
+                "er_soon": bool(r.er_soon), "broad": bool(r.broad), "cs": r.cs, "cs_n": int(r.cs_n),
                 "funds": rnd(r.funds, 0), "funds_chg": rnd(r.funds_chg),
                 "price": rnd(r.price, 2), "spark_px": clean_list(r.spark_px)}
 
@@ -820,6 +877,7 @@ def run(demo: bool, notify: bool):
                 "rs_chg_1w": rnd(r.rs_chg_1w, 0), "rs_win_1m": rnd(r.rs_win_1m, 0), "chg_1m": rnd(r.chg_1m),
                 "off_high": rnd(r.off_high), "adr": rnd(r.adr), "atr_ext": rnd(r.atr_ext), "pivot_dist": rnd(r.pivot_dist),
                 "tightness": rnd(r.tightness), "price": rnd(r.price, 2), "rs_line_hi": bool(r.rs_line_hi),
+                "dollar_vol": rnd(r.dollar_vol / 1e6, 1), "broad": bool(r.broad),
                 "rs_first": bool(r.rs_line_hi and r.off_high < -5), "setup": bool(r.setup_all),
                 "leader": t in leaders.index, "cs": r.cs, "funds": rnd(r.funds, 0), "funds_chg": rnd(r.funds_chg),
                 "spark_px": clean_list(r.spark_px)}

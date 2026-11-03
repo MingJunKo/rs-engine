@@ -154,6 +154,16 @@ Peer multiples answer the useful question ("is this priced far above its group?"
 Secrets for the 13F job: `SEC_USER_AGENT` (required by the SEC: your name and an email, e.g. `MJ mj@example.com`)
 and optionally `OPENFIGI_KEY` (free at openfigi.com; makes the first CUSIP→ticker mapping much faster).
 
+## Universe
+
+Two sources, combined: (1) the holdings of your ETFs (`config/universe.csv`, refreshed monthly) and (2) every other
+US common stock that is liquid enough (price ≥ ~$4, 20-day $ volume ≥ ~$5M), screened weekly into `config/broad.csv`.
+The second group catches names no thematic ETF holds yet (smaller caps, recent listings). They get a theme from their
+industry (the theme most ETF-held stocks in that industry belong to) plus their sector, shown with a ≈ in the Theme
+column. Turn it off with `"broad_universe": false` in `config/settings.json`.
+
+The Price ≥ and $Vol ≥ selectors above the Leaders table tighten liquidity on the page without changing the scan.
+
 ## Early turners
 
 A watchlist of groups **outside** the top themes whose RS is turning up fast: RS up ≥ 12 in a week (or ≥ 8 in

@@ -308,6 +308,8 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
       <label><input type="checkbox" id="f-new"> New this week</label>
       <label><input type="checkbox" id="f-setup"> Setups only</label>
       <label><input type="checkbox" id="f-er"> Hide earnings ≤ 7d</label>
+      <label title="Minimum share price (also applies to Early turners)">Price ≥ <select id="f-px"><option value="0">any</option><option value="10">$10</option><option value="20">$20</option><option value="50">$50</option></select></label>
+      <label title="Minimum average daily dollar volume, 20 days (also applies to Early turners)">$Vol ≥ <select id="f-dv"><option value="0">any</option><option value="20">$20M</option><option value="50">$50M</option><option value="100">$100M</option></select></label>
       <span class="count" id="count"></span>
     </div>
     <div class="tbl-wrap"><table class="t" id="leader-tbl"></table></div>
@@ -688,9 +690,12 @@ function funnelArt(box, F){
   box.closest(".funnel").querySelector(".ftog").addEventListener("click", () => { if (box.closest('.closed')) run = false; else { size(); if (vis) go(); } });
 }
 
+/* page-wide liquidity filter (Leaders + Early turners), remembered per device */
+const liqOK = x => (x.price==null || x.price >= +($("#f-px")?.value||0)) && (x.dollar_vol==null || x.dollar_vol >= +($("#f-dv")?.value||0));
+
 /* early turners */
 function drawTurners(){
-  const T = D.turners || [], el = $("#turn-wrap");
+  const T = (D.turners || []).map(g => ({...g, stocks: g.stocks.filter(liqOK)})), el = $("#turn-wrap");
   if (!T.length) { el.innerHTML = `<div class="turn-none">No group is turning up strongly enough right now. That's normal in a stable market; this fills in when rotation starts.</div>`; return; }
   const flags = x => `${x.rs_first?'<span class="flag rsf" title="RS line at a 3-month high while price is still >5% below its high">RS FIRST</span>':x.rs_line_hi?'<span class="flag rsh" title="RS line at a 3-month high">RS HIGH</span>':''}${x.setup?'<span class="flag setup">SETUP</span>':''}${x.leader?'<span class="flag new">LEADER</span>':''}${x.atr_ext>4?'<span class="flag ext">EXT</span>':''}`;
   el.innerHTML = T.map((g,i) => `<div class="turn"><div class="th"><span class="sdot" style="background:${STYLE_HEX[g.style]}"></span><span class="nm">${esc(g.theme)}</span>
@@ -890,7 +895,7 @@ function render(){
 
   // leaders
   const S = D.settings;
-  $("#leader-rule").textContent = `Top ${S.top_themes} themes · RS ≥ ${S.min_rs_rating} · above 50-DMA · ADR ≥ ${S.min_adr}% · price ≥ $${S.min_price} · $vol ≥ $${(S.min_dollar_volume/1e6).toFixed(0)}M`;
+  $("#leader-rule").textContent = `${D.universe.stocks.toLocaleString()} stocks scanned · Top ${S.top_themes} themes · RS ≥ ${S.min_rs_rating} · above 50-DMA · ADR ≥ ${S.min_adr}% · price ≥ $${S.min_price} · $vol ≥ $${(S.min_dollar_volume/1e6).toFixed(0)}M`;
   document.querySelectorAll(".guide div").forEach(d => d.innerHTML = d.innerHTML.replace("${MIN_ADR}", S.min_adr));
   $("#cal-fold").addEventListener("toggle", function once(){ if (!this.open || $("#cal").childElementCount) return;
     const s = document.createElement("script"); s.async = true; s.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
@@ -904,7 +909,7 @@ function render(){
   const lcols = [
     {h:"Ticker", k:"symbol", l:1, f:x=>symTd(x, x.exchange)},
     {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}${x.new?'<span class="flag new">NEW</span>':''}</td>`},
-    {h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip" title="${esc(x.themes.join(' · '))}"><span class="sdot" style="background:${STYLE_HEX[x.style]}"></span>${esc(x.theme)}</span></td>`},
+    {h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip" title="${x.broad?'Not held by your ETFs: theme assigned from its industry ('+esc(x.industry)+') · ':''}${esc(x.themes.join(' · '))}">${x.broad?'<span style="color:var(--t4);margin-right:3px">≈</span>':''}<span class="sdot" style="background:${STYLE_HEX[x.style]}"></span>${esc(x.theme)}</span></td>`},
     {h:"RS", k:"rs_rating", f:ratingTd},
     {h:"Δ1W", k:"rs_chg_1w", f:x=>chgTd(x.rs_chg_1w)},
     {h:"RS Win 1M", k:"rs_win_1m", f:x=>winTd(x.rs_win_1m)},
@@ -932,12 +937,14 @@ function render(){
       (!activeTheme || l.theme===activeTheme) && (!q || l.symbol.includes(q) || (l.name||"").toUpperCase().includes(q)) &&
       (!$("#f-tt").checked || l.trend_template) && (!$("#f-nh").checked || l.near_high) &&
       (!$("#f-ext").checked || !l.extended) && (!$("#f-new").checked || l.new) &&
-      (!$("#f-setup").checked || l.setup) && (!$("#f-er").checked || !l.er_soon));
+      (!$("#f-setup").checked || l.setup) && (!$("#f-er").checked || !l.er_soon) && liqOK(l));
     $("#count").textContent = `${rows.length} of ${D.leaders.length}`;
     table($("#leader-tbl"), lcols, rows, {sort:"rs_rating"});
   };
   $("#themechips").querySelectorAll("button").forEach(b=>b.onclick=()=>{activeTheme=b.dataset.t||null; $("#themechips").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); drawLeaders();});
   ["#q","#f-tt","#f-nh","#f-ext","#f-new","#f-setup","#f-er"].forEach(s=>$(s).addEventListener("input", drawLeaders));
+  ["#f-px","#f-dv"].forEach(s=>{ const el=$(s); try { el.value = localStorage.getItem("rs_"+s.slice(1)) || "0"; } catch(e) {}
+    el.addEventListener("change", ()=>{ try { localStorage.setItem("rs_"+s.slice(1), el.value); } catch(e) {} drawLeaders(); drawTurners(); }); });
   drawLeaders();
 
   drawTurners(); drawFunnel();

@@ -240,6 +240,9 @@ def main():
     uni = ROOT / "config" / "universe.csv"
     if uni.exists():
         keep = set(pd.read_csv(uni).ticker.str.upper())
+        broad = ROOT / "config" / "broad.csv"            # liquid stocks outside the ETF holdings
+        if broad.exists():
+            keep |= set(pd.read_csv(broad).ticker.str.upper())
         tot = tot[tot.ticker.isin(keep)]
     tot[["ticker", "period", "holders", "shares"]].sort_values(["ticker", "period"]).to_csv(OUT, index=False)
     log(f"Wrote {OUT}: {tot.ticker.nunique()} tickers × {len(periods)} quarters")
