@@ -79,6 +79,8 @@ Groups like PEJ (Leisure), BETZ, AMLP, IPAY, BOAT start with no holdings — the
 | Tue–Fri 6:30am, only if something changed | Short Telegram alert: regime change or new setups (turn off with `"telegram_alerts": false`) |
 | 1st of the month | Universe refresh from the ETF issuers |
 | 3rd of the month | Model book rebuilt (every US stock that doubled after a breakout) |
+| Wed + Sat 3:30am | Fundamentals refreshed (EPS, sales, valuation) for stale names |
+| 6th of the month | 13F fund counts, if the SEC has published a new quarter |
 | Any time | Actions → RS Engine → Run workflow |
 
 Want Telegram every day? Set `"telegram_daily": true` in `config/settings.json`.
@@ -133,6 +135,24 @@ All on github.com: click the file → pencil icon → edit → **Commit changes*
 **Leaders.** Stocks in the top themes (themes that have holdings), RS ≥ `min_rs_rating`, above the 50-DMA, ADR ≥ `min_adr`, price and $-volume above the floors. Flags: **TT** Minervini trend template, **NH** within 15% of the 52-week high, **EXT** more than 4 ATRs above the 50-DMA, **NEW** not on the list a week ago, **SETUP** within 6% of the 20-day high, 10-day range ≤ 2.5 ADRs and 0–4 ATRs above the 50-DMA, **ER** earnings within 7 days.
 
 ---
+
+## CANSLIM, funds and valuation
+
+Each stock carries seven small letters, **C A N S L I M**, lit when it passes:
+C latest quarter EPS ≥ +25% YoY · A 3-year EPS growth ≥ 25%/yr · N within 15% of the high ·
+S up-day volume ≥ 1.2× down-day volume (50d) · L RS ≥ 80 · I more 13F holders than last quarter ·
+M most risk-appetite gauges risk-on. A faint letter means no data yet.
+
+**Funds** = institutions holding the stock (SEC 13F, latest filed quarter) and the change vs the quarter
+before. Opening a chart shows the detail strip: quarterly EPS growth (and whether it is accelerating),
+sales growth, surprise, 3-year EPS growth, the 8-quarter fund trend, forward P/E and P/S vs the median of
+the stock's theme, float, market cap and up/down volume. The strip loads only when you open a chart.
+
+There is deliberately no DCF: for multi-week momentum trades it mostly reflects its own assumptions.
+Peer multiples answer the useful question ("is this priced far above its group?") in one line.
+
+Secrets for the 13F job: `SEC_USER_AGENT` (required by the SEC: your name and an email, e.g. `MJ mj@example.com`)
+and optionally `OPENFIGI_KEY` (free at openfigi.com; makes the first CUSIP→ticker mapping much faster).
 
 ## Model book
 

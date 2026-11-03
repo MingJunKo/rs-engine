@@ -304,6 +304,115 @@ def pct(a, b):
     return (a / b - 1) * 100
 
 
+def _growth(now, prev):
+    """% growth that stays meaningful when the base is tiny or negative."""
+    if now is None or prev is None:
+        return None
+    if prev <= 0:
+        return 999.0 if now > 0 else None          # turned profitable → treated as a pass, shown as "turn"
+    return (now / prev - 1) * 100
+
+
+def _yoy_series(rows, max_gap=45):
+    """rows = [[date, value, ...], ...] oldest→newest. YoY % for each row that has a row ~1 year earlier."""
+    pts = [(pd.Timestamp(r[0]), r[1]) for r in rows if r[1] is not None]
+    out = []
+    for d, v in pts:
+        prev = [pv for pd_, pv in pts if abs((d - pd_).days - 365) <= max_gap]
+        if prev:
+            out.append((d, v, _growth(v, prev[0])))
+    return out
+
+
+def canslim(stk: pd.DataFrame, market_ok: bool) -> dict:
+    """Adds cs / cs_n / funds / funds_chg columns to stk and returns per-ticker detail for the drawer.
+
+    Each letter is 1 (pass), 0 (fail) or '-' (no data):
+      C  latest quarter EPS ≥ +25% YoY                 A  3-year annual EPS growth ≥ 25%/yr
+      N  within 15% of the 52-week high                S  up-volume ÷ down-volume (50d) ≥ 1.2
+      L  RS rating ≥ 80                                I  more 13F holders than the quarter before
+      M  at least half the risk-appetite gauges are risk-on
+    """
+    fpath, ipath = ROOT / "data" / "fundamentals.json", ROOT / "data" / "institutions.csv"
+    F = json.loads(fpath.read_text()) if fpath.exists() else {}
+    inst = pd.read_csv(ipath) if ipath.exists() else pd.DataFrame(columns=["ticker", "period", "holders", "shares"])
+    periods = sorted(inst.period.unique())[-8:]
+    hold = {t: g.set_index("period").holders.reindex(periods).tolist() for t, g in inst.groupby("ticker")} if len(inst) else {}
+
+    det, letters, n_ok, funds, fchg = {}, [], [], [], []
+    for t, r in stk.iterrows():
+        f = F.get(t, {})
+        d = {}
+        # C — current quarterly EPS, plus sales and acceleration
+        ey = _yoy_series(f.get("eps_q") or [])
+        C = None
+        if ey:
+            C = ey[-1][2] is not None and ey[-1][2] >= 25
+            d["eps"] = [[x[0].strftime("%b %y"), round(x[2]) if x[2] is not None else None] for x in ey[-4:]]
+            q = (f.get("eps_q") or [])[-1]
+            if q[1] is not None and q[2] not in (None, 0):
+                d["surprise"] = round((q[1] - q[2]) / abs(q[2]) * 100)
+        sy = _yoy_series(f.get("sales_q") or [])
+        if sy:
+            d["sales"] = [[x[0].strftime("%b %y"), round(x[2]) if x[2] is not None else None] for x in sy[-3:]]
+        # A — annual EPS growth over up to 3 years
+        A = None
+        ea = [x for x in (f.get("eps_a") or []) if x[1] is not None][-4:]
+        if len(ea) >= 3:
+            a0, a1, yrs = ea[0][1], ea[-1][1], len(ea) - 1
+            if a0 > 0 and a1 > 0:
+                cagr = ((a1 / a0) ** (1 / yrs) - 1) * 100
+                d["eps_cagr"] = round(cagr)
+                A = cagr >= 25 and all(ea[i + 1][1] >= ea[i][1] * 0.95 for i in range(yrs))
+            else:
+                A = False
+            d["eps_a"] = ea
+        # N, S, L — from prices
+        N = None if pd.isna(r.off_high) else bool(r.off_high >= -15)
+        S_ = None if pd.isna(r.ud_ratio) else bool(r.ud_ratio >= 1.2)
+        L = None if pd.isna(r.rs_rating) else bool(r.rs_rating >= 80)
+        # I — 13F holders trend
+        I, fn, fc = None, np.nan, np.nan
+        h = [x for x in hold.get(t, []) if pd.notna(x)]
+        if len(h) >= 2:
+            fn, fc = h[-1], (h[-1] / h[-2] - 1) * 100 if h[-2] else np.nan
+            I = bool(h[-1] > h[-2])
+            d["funds"] = [None if pd.isna(x) else int(x) for x in hold[t]]
+        elif len(h) == 1:
+            fn = h[0]
+        M = bool(market_ok)
+        vals = [C, A, N, S_, L, I, M]
+        letters.append("".join("-" if v is None else "1" if v else "0" for v in vals))
+        n_ok.append(sum(v is True for v in vals))
+        funds.append(fn); fchg.append(fc)
+        for k in ("fpe", "ps", "float_m", "mcap_b", "inst_pct"):
+            if f.get(k) is not None:
+                d[k] = f[k]
+        if not pd.isna(r.ud_ratio):
+            d["ud"] = round(float(r.ud_ratio), 2)
+        if f.get("updated"):
+            d["upd"] = f["updated"]
+        det[t] = d
+    stk["cs"], stk["cs_n"], stk["funds"], stk["funds_chg"] = letters, n_ok, funds, fchg
+
+    # valuation context: median forward P/E and P/S of the stock's theme peers (profitable, sane values)
+    vals = pd.DataFrame({"theme": stk.theme,
+                         "fpe": [F.get(t, {}).get("fpe") for t in stk.index],
+                         "ps": [F.get(t, {}).get("ps") for t in stk.index]}, index=stk.index)
+    vals["fpe"] = pd.to_numeric(vals.fpe, errors="coerce").where(lambda x: (x > 0) & (x < 400))
+    vals["ps"] = pd.to_numeric(vals.ps, errors="coerce").where(lambda x: (x > 0) & (x < 200))
+    med = vals.groupby("theme").agg(fpe=("fpe", "median"), ps=("ps", "median"), n=("ps", "count"))
+    for t, th in stk.theme.items():
+        if th in med.index and med.at[th, "n"] >= 4:
+            det[t]["peer"] = [th, round(float(med.at[th, "fpe"]), 1) if pd.notna(med.at[th, "fpe"]) else None,
+                              round(float(med.at[th, "ps"]), 1) if pd.notna(med.at[th, "ps"]) else None, int(med.at[th, "n"])]
+    det = {t: d for t, d in det.items() if d}
+    det["_meta"] = {"periods": [pd.Timestamp(p).strftime("%b %y") for p in periods],
+                    "fund_stocks": len(F), "inst_stocks": len(hold), "market_ok": bool(market_ok)}
+    log(f"  CANSLIM: fundamentals for {len(F)} stocks, 13F for {len(hold)} ({periods[-1] if periods else 'none'})")
+    return det
+
+
 # ════════════════════════════════════════════════════════════════════
 #  ENGINE
 # ════════════════════════════════════════════════════════════════════
@@ -385,6 +494,8 @@ def run(demo: bool, notify: bool):
         rng10 = (h.rolling(10).max() - l.rolling(10).min()).iloc[-1] / c.iloc[-1] * 100
         df["tightness"] = rng10 / df["adr"]                                      # 10-day range in ADRs
         df["vol_dryup"] = v.rolling(10).mean().iloc[-1] / v.rolling(50).mean().iloc[-1]
+        d1 = c.diff().tail(50)                                                   # up/down volume, 50 days
+        df["ud_ratio"] = v.tail(50).where(d1 > 0).sum() / v.tail(50).where(d1 < 0).sum().replace(0, np.nan)
         df["trend_template"] = (
             (c.iloc[-1] > sma150.iloc[-1]) & (c.iloc[-1] > sma200.iloc[-1]) &
             (sma150.iloc[-1] > sma200.iloc[-1]) & (sma200.iloc[-1] > sma200.iloc[-22]) &
@@ -448,6 +559,7 @@ def run(demo: bool, notify: bool):
         elig &= stk.above_50
     elig &= stk.adr >= SETTINGS.get("min_adr", 2.5)      # drops pinned / takeover / ultra-low-vol names
     leaders = stk[elig & in_top].copy()
+    stk["setup_all"] = ((stk.pivot_dist >= -6) & (stk.tightness <= 2.5) & (stk.atr_ext.between(0, 4)))
     leaders["theme"] = leaders.all_themes.apply(
         lambda l: sorted([x for x in l if x in top_themes], key=lambda x: top_themes.index(x))[0])
     leaders = leaders.sort_values(["rs_rating", "rs_score"], ascending=False).head(SETTINGS["max_leaders"])
@@ -588,6 +700,11 @@ def run(demo: bool, notify: bool):
                                   "rows": [{"symbol": t, "name": meta.loc[t, "theme"], "style": meta.loc[t, "style"],
                                             "values": [None if pd.isna(x) else int(x) for x in w[t]]} for t in tg]}
 
+    # ── CANSLIM + fund ownership + valuation context ───────────────
+    cs_detail = canslim(stk, risk_on_n >= len(gauges) / 2)
+    for c_ in ("cs", "cs_n", "funds", "funds_chg"):
+        leaders[c_] = stk.loc[leaders.index, c_]
+
     # ════════════════════════════════════════════════════════════════
     #  OUTPUTS
     # ════════════════════════════════════════════════════════════════
@@ -621,7 +738,8 @@ def run(demo: bool, notify: bool):
                 "near_high": bool(r.near_high), "extended": bool(r.extended), "new": bool(r.new),
                 "setup": bool(r.setup), "pivot_dist": rnd(r.pivot_dist), "tightness": rnd(r.tightness),
                 "vol_dryup": rnd(r.vol_dryup, 2), "earnings": r.earnings, "er_days": rnd(r.er_days, 0),
-                "er_soon": bool(r.er_soon),
+                "er_soon": bool(r.er_soon), "cs": r.cs, "cs_n": int(r.cs_n),
+                "funds": rnd(r.funds, 0), "funds_chg": rnd(r.funds_chg),
                 "price": rnd(r.price, 2), "spark_px": clean_list(r.spark_px)}
 
     etf_sorted = etf_df.sort_values(["category", "rs_rating"], ascending=[True, False])
@@ -642,11 +760,21 @@ def run(demo: bool, notify: bool):
                     "has_stocks": r.theme in themes_with_stocks}
                    for t, r in theme_tbl.iterrows()],
         "leaders": [stk_rec(t, r) for t, r in leaders.iterrows()],
+        # every stock in the universe, compact, so any ETF row can expand to its holdings
+        "stocks": {t: [r["name"], r.exchange, rnd(r.rs_rating, 0), rnd(r.rs_chg_1w, 0), rnd(r.chg_1m), rnd(r.off_high),
+                       rnd(r.adr), rnd(r.atr_ext), int(bool(r.above_50)), int(bool(r.trend_template)),
+                       int(bool(r.setup_all)), int(t in leaders.index), rnd(r.rs_win_1m, 0),
+                       r.cs, rnd(r.funds, 0), rnd(r.funds_chg)]
+                   for t, r in stk.iterrows()},
+        "members": {e: sorted(set(g)) for e, g in uni[uni.ticker.isin(S)].groupby("etf").ticker},
+        "weights": ({e: {r.ticker: float(r.weight) for r in g.itertuples() if pd.notna(r.weight)}
+                     for e, g in uni[uni.ticker.isin(S)].groupby("etf")} if "weight" in uni.columns else {}),
         "notes": desk_notes(regime, risk_on_n, len(gauges), breadth_now, style_chg, leaders, dropped),
         "history": {"weeks": hist_week_labels, "rows": history, "dropped": dropped,
                     "log_start": first_seen.min().strftime("%d %b %Y") if len(first_seen) else None},
         "heatmaps": heatmaps,
         "universe": {"etfs": len(E), "stocks": len(S)},
+        "fund_meta": cs_detail.pop("_meta", {}),
     }
 
     tpl = (ROOT / "templates" / "dashboard.html").read_text()
@@ -655,6 +783,8 @@ def run(demo: bool, notify: bool):
                        .replace("</", "<\\/"))
     (DOCS / "index.html").write_text(html)
     (DOCS / ".nojekyll").write_text("")
+    (DOCS / "data").mkdir(parents=True, exist_ok=True)
+    (DOCS / "data" / "fund.json").write_text(json.dumps(_clean_json(cs_detail), separators=(",", ":"), allow_nan=False))
 
     # CSVs for Google Sheets
     cols_e = ["category", "theme", "name", "rs_rating", "rs_chg_1w", "rank", "rank_chg", "rs_win_1m", "rs_1m",
@@ -669,7 +799,7 @@ def run(demo: bool, notify: bool):
               "extended", "new", "industry"]
     leaders[cols_s].round(2).rename_axis("ticker").to_csv(DATA_OUT / "leaders.csv")
     allc = ["name", "theme", "rs_rating", "rs_chg_1w", "rs_win_1m", "rs_score", "price", "chg_1w", "chg_1m",
-            "chg_3m", "off_high", "adr", "dollar_vol", "atr_ext", "trend_template", "above_50"]
+            "chg_3m", "off_high", "adr", "dollar_vol", "atr_ext", "trend_template", "above_50", "cs", "funds", "funds_chg"]
     out_all = stk[allc].copy()
     out_all["etfs"] = stk.etfs.apply(lambda l: " ".join(l))
     out_all.sort_values("rs_rating", ascending=False).round(2).rename_axis("ticker").to_csv(DATA_OUT / "stocks.csv")
