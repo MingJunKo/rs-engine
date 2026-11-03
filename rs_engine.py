@@ -566,6 +566,23 @@ def run(demo: bool, notify: bool):
         elig &= stk.above_50
     elig &= stk.adr >= SETTINGS.get("min_adr", 2.5)      # drops pinned / takeover / ultra-low-vol names
     leaders = stk[elig & in_top].copy()
+
+    # ── Selection funnel: how many stocks survive each filter (last 40 sessions) ──
+    n_hist = 40
+    c_s, h_s, l_s, v_s = close[S], high[S], low[S], vol[S]
+    st_liq = (c_s >= SETTINGS["min_price"]) & ((c_s * v_s).rolling(20).mean() >= SETTINGS["min_dollar_volume"])
+    st_a50 = st_liq & (c_s > c_s.rolling(50).mean())
+    st_rs = st_a50 & (stk_rating >= SETTINGS["min_rs_rating"])
+    st_adr = st_rs & ((h_s / l_s - 1).rolling(20).mean() * 100 >= SETTINGS.get("min_adr", 2.5))
+    funnel_hist = {k: [int(x) for x in m.tail(n_hist).sum(axis=1)] for k, m in
+                   (("universe", c_s.notna()), ("liquid", st_liq), ("above50", st_a50), ("rs", st_rs), ("adr", st_adr))}
+    funnel_now = {"universe": int(stk.price.notna().sum()),
+                  "liquid": int(((stk.price >= SETTINGS["min_price"]) & (stk.dollar_vol >= SETTINGS["min_dollar_volume"])).sum())}
+    funnel_now["above50"] = int(((stk.price >= SETTINGS["min_price"]) & (stk.dollar_vol >= SETTINGS["min_dollar_volume"]) & stk.above_50).sum())
+    funnel_now["rs"] = int((((stk.price >= SETTINGS["min_price"]) & (stk.dollar_vol >= SETTINGS["min_dollar_volume"]) & stk.above_50)
+                            & (stk.rs_rating >= SETTINGS["min_rs_rating"])).sum())
+    funnel_now["adr"] = int(elig.sum())
+    funnel_now["theme"] = int((elig & in_top).sum())
     stk["setup_all"] = ((stk.pivot_dist >= -6) & (stk.tightness <= 2.5) & (stk.atr_ext.between(0, 4)))
     leaders["theme"] = leaders.all_themes.apply(
         lambda l: sorted([x for x in l if x in top_themes], key=lambda x: top_themes.index(x))[0])
@@ -588,6 +605,23 @@ def run(demo: bool, notify: bool):
         leaders["er_days"] = rng_.integers(1, 80, len(leaders))
         leaders["earnings"] = [(asof + pd.Timedelta(days=int(d))).strftime("%d %b") for d in leaders.er_days]
     leaders["er_soon"] = leaders.er_days <= 7
+
+    funnel_now["setups"] = int((leaders.setup & ~leaders.er_soon).sum())
+    HIST.mkdir(parents=True, exist_ok=True)
+    fpath_ = HIST / "funnel.csv"
+    frow = pd.DataFrame([{"date": asof.strftime("%Y-%m-%d"), **funnel_now}])
+    flog = pd.read_csv(fpath_) if fpath_.exists() else pd.DataFrame(columns=frow.columns)
+    flog = pd.concat([flog[flog.date != frow.date[0]], frow]).sort_values("date").tail(400)
+    flog.to_csv(fpath_, index=False)
+    for k in ("theme", "setups"):                 # these depend on the day's top themes: from the daily log
+        funnel_hist[k] = [int(x) for x in flog[k].dropna().tail(n_hist)]
+    for k in ("universe", "liquid", "above50", "rs", "adr"):
+        funnel_hist[k][-1] = funnel_now[k]
+    funnel = [{"key": k, "label": lbl, "n": funnel_now[k], "hist": funnel_hist[k],
+               "chg_1w": (funnel_now[k] - funnel_hist[k][-6]) if len(funnel_hist[k]) >= 6 else None}
+              for k, lbl in (("universe", "Universe"), ("liquid", "Liquid"), ("above50", "Above 50-day"),
+                             ("rs", f"RS ≥ {SETTINGS['min_rs_rating']}"), ("adr", f"ADR ≥ {SETTINGS.get('min_adr', 2.5)}%"),
+                             ("theme", "In a top theme"), ("setups", "Setups"))]
 
     # ── Early turners: groups outside the top themes whose RS is turning up fast ──
     # Watchlist only. A group qualifies when its RS jumped (1 week or 3 days), it is back above its
@@ -825,6 +859,7 @@ def run(demo: bool, notify: bool):
                     "log_start": first_seen.min().strftime("%d %b %Y") if len(first_seen) else None},
         "heatmaps": heatmaps,
         "universe": {"etfs": len(E), "stocks": len(S)},
+        "funnel": funnel,
         "fund_meta": cs_detail.pop("_meta", {}),
     }
 
