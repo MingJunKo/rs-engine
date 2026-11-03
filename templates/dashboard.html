@@ -179,20 +179,23 @@ tr.sel td{background:var(--gold-bg)!important}
 #tvbox{flex:1;min-height:0}
 #drawer .hint{padding:7px 16px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);border-top:.5px solid var(--border)}
 #cal{height:420px}
-.funnel{position:relative;display:grid;grid-template-columns:repeat(7,1fr);border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:16px;overflow:hidden}
-.funnel canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.funnel .st{z-index:1}
-.funnel .st{position:relative;padding:11px 12px 12px;border-left:.5px solid var(--border);min-width:0}
-.funnel .st:first-child{border-left:0}
-.funnel .lb{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.funnel .n{font-family:"DM Mono",monospace;font-size:20px;color:var(--t1);margin:3px 0 1px;line-height:1.1}
-.funnel .st.last .n{color:var(--gold-bright)}
-.funnel .ch{font-family:"DM Mono",monospace;font-size:10px;color:var(--t4)}
-.funnel svg{display:block;margin-top:6px;width:100%;height:18px}
-.funnel .bar{position:absolute;left:0;right:0;bottom:0;height:2px;display:flex;justify-content:center}
-.funnel .bar i{display:block;height:2px;background:var(--gold-dim);border-radius:1px}
-.funnel .st.last .bar i{background:var(--gold)}
-@media (max-width:900px){.funnel{grid-template-columns:repeat(4,1fr)}.funnel .lb{white-space:normal;line-height:1.3;min-height:2.6em}.funnel .n{font-size:17px}.funnel .st:nth-child(5){border-left:0}.funnel .st:nth-child(n+5){border-top:.5px solid var(--border)}}
+.funnel{position:relative;display:grid;grid-template-columns:minmax(260px,32%) 1fr;border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:16px;overflow:hidden}
+.funnel .fv{position:relative;height:224px;border-right:.5px solid var(--border);background:radial-gradient(ellipse at 50% 35%,rgba(201,165,90,.06),transparent 70%)}
+.funnel .fv canvas{position:absolute;inset:0;width:100%;height:100%}
+.funnel .rows{display:grid;grid-template-rows:repeat(7,1fr);height:224px;padding:12px 0}
+.funnel .rw{display:grid;grid-template-columns:minmax(110px,1.3fr) 80px 70px minmax(80px,2fr);align-items:center;gap:12px;padding:0 16px;font-family:"DM Mono",monospace;border-top:.5px dashed rgba(255,255,255,.035)}
+.funnel .rw:first-child{border-top:0}
+.funnel .lb{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.funnel .n{font-size:15px;color:var(--t1);text-align:right}
+.funnel .rw.last .n,.funnel .rw.last .lb{color:var(--gold-bright)}
+.funnel .ch{font-size:10px;color:var(--t4);text-align:right}
+.funnel svg{display:block;width:100%;height:16px}
+.funnel .ftog{position:absolute;top:8px;left:10px;z-index:2;background:transparent;border:0;color:var(--t4);font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.14em;cursor:pointer;padding:2px 4px}
+.funnel .ftog:hover{color:var(--gold)}
+.funnel .mini{display:none;grid-column:1/-1;padding:7px 16px 8px 82px;font-family:"DM Mono",monospace;font-size:11px;color:var(--t3);white-space:nowrap;overflow-x:auto}
+.funnel .mini b{color:var(--t1);font-weight:500}.funnel .mini i{font-style:normal;color:var(--t4);margin:0 6px}.funnel .mini b.g{color:var(--gold-bright)}
+.funnel.closed .fv,.funnel.closed .rows{display:none}.funnel.closed .mini{display:block}
+@media (max-width:900px){.funnel{grid-template-columns:1fr}.funnel .fv{height:180px;border-right:0;border-bottom:.5px solid var(--border)}.funnel .rows{height:auto;grid-template-rows:none}.funnel .rw{grid-template-columns:1.4fr 64px 56px 1fr;padding:6px 14px;gap:8px}}
 .turn{border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:12px;overflow:hidden}
 .turn .th{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 14px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
 .turn .th .nm{font-family:inherit;font-size:13px;color:var(--t1);font-weight:500}
@@ -597,65 +600,92 @@ document.addEventListener('click', e=>{
   const m=e.target.closest('.hold-more'); if(m){ const tr=m.closest('tr.hold-row').previousElementSibling; toggleHoldings(tr.querySelector('.xbtn'), m.dataset.all==='1'); }
 });
 
-/* selection funnel: how many stocks survive each filter */
+/* selection funnel: a literal funnel whose width at each tier = that stage's count (sqrt-scaled).
+   Balls ≈ slices of the universe fall in; those failing a stage spill off the sides; survivors reach the spout,
+   and today's setups glow gold. Pauses off-screen, respects reduced motion, collapsible (remembered per device). */
 function drawFunnel(){
   const F = D.funnel, el = $("#funnel"); if (!F || !F.length) { el.remove(); return; }
-  const top = F[0].n || 1;
-  const line = h => { if (!h || h.length < 2) return '<svg></svg>'; const mn = Math.min(...h), mx = Math.max(...h), r = (mx-mn)||1, w = 100, ht = 18;
+  const line = h => { if (!h || h.length < 2) return '<svg></svg>'; const mn = Math.min(...h), mx = Math.max(...h), r = (mx-mn)||1, w = 100, ht = 16;
     const pts = h.map((v,i)=>`${(i/(h.length-1)*w).toFixed(1)},${(ht-2-(v-mn)/r*(ht-4)).toFixed(1)}`).join(' ');
-    const up = h[h.length-1] >= h[0];
-    return `<svg viewBox="0 0 ${w} ${ht}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${up?'#5bbf7a':'#d4706a'}" stroke-width="1.2" vector-effect="non-scaling-stroke" opacity=".75"/></svg>`; };
+    return `<svg viewBox="0 0 ${w} ${ht}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${h[h.length-1]>=h[0]?'#5bbf7a':'#d4706a'}" stroke-width="1.2" vector-effect="non-scaling-stroke" opacity=".7"/></svg>`; };
   const tips = {universe:"Stocks in your universe with prices", liquid:"Price ≥ min and 20-day $ volume ≥ min", above50:"…and above the 50-day average",
     rs:"…and RS rating at or above your minimum", adr:"…and average daily range at or above your minimum", theme:"…and in one of the top themes (the list shows the strongest of these)",
     setups:"Leaders near a pivot, tight, not extended, no earnings this week"};
-  el.innerHTML = F.map((s,i) => `<div class="st${i===F.length-1?' last':''}" title="${esc(tips[s.key]||'')} · line = last ${s.hist.length} sessions">
-    <div class="lb">${esc(s.label)}</div><div class="n">${s.n.toLocaleString()}</div>
-    <div class="ch">${s.chg_1w==null?'&nbsp;':`<span class="${s.chg_1w>0?'up':s.chg_1w<0?'dn':''}">${s.chg_1w>0?'+':''}${s.chg_1w}</span> 1W`}</div>
-    ${line(s.hist)}<div class="bar"><i style="width:${Math.max(4, Math.sqrt(s.n/top)*100).toFixed(1)}%"></i></div></div>`).join('');
-  funnelBalls(el, F);
+  el.innerHTML = `<button class="ftog" title="Collapse / expand">▾ FUNNEL</button><div class="fv"></div><div class="rows">${F.map((s,i) =>
+    `<div class="rw${i===F.length-1?' last':''}" title="${esc(tips[s.key]||'')} · line = last ${s.hist.length} sessions"><span class="lb">${esc(s.label)}</span>
+     <span class="n">${s.n.toLocaleString()}</span><span class="ch">${s.chg_1w==null?'':`<span class="${s.chg_1w>0?'up':s.chg_1w<0?'dn':''}">${s.chg_1w>0?'+':''}${s.chg_1w}</span> 1W`}</span>${line(s.hist)}</div>`).join('')}</div>
+    <div class="mini">${F.map((s,i)=>`<b class="${i===F.length-1?'g':''}" title="${esc(s.label)}">${s.n.toLocaleString()}</b>`).join('<i>›</i>')}</div>`;
+  const tog = el.querySelector(".ftog"), set = c => { el.classList.toggle("closed", c); tog.textContent = (c ? "▸" : "▾") + " FUNNEL"; };
+  let closed = false; try { closed = localStorage.getItem("rs_funnel_closed") === "1"; } catch(e) {}
+  set(closed); tog.onclick = () => { closed = !closed; set(closed); try { localStorage.setItem("rs_funnel_closed", closed ? "1" : "0"); } catch(e) {} };
+  funnelArt(el.querySelector(".fv"), F);
 }
 
-/* the funnel, animated: each ball ≈ a slice of the universe, flowing left → right. At each stage the share
-   that fails drops out of the bottom; the share that reaches the end turns gold. Runs only while on screen. */
-function funnelBalls(el, F){
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !window.IntersectionObserver) return;
-  const cv = document.createElement("canvas"); el.prepend(cv);
-  const ctx = cv.getContext("2d"), N = F.map(s => s.n), top = N[0] || 1, K = N.length;
-  // probability a ball leaves at stage k (fails the filter of stage k+1); the rest reach the last stage
-  const leave = N.map((n,k) => k < K-1 ? Math.max(0, n - N[k+1]) / top : n / top);
-  let W = 0, H = 0, balls = [], run = false, last = 0, spawnAcc = 0, setupAcc = 0, dpr = 1;
-  const size = () => { const r = el.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
-    W = r.width; H = r.height; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); };
-  const cols = () => getComputedStyle(el).gridTemplateColumns.split(" ").length;
-  const halfH = x => { const c = cols(); if (c < K) return H*0.42;            // phone layout: plain band
-    const st = Math.min(K-1, Math.floor(x / (W/K))); return H*0.42 * Math.max(0.12, Math.sqrt(N[st]/top)); };
-  const pick = () => { let u = Math.random(), k = 0; for (; k < K-1; k++) { if ((u -= leave[k]) < 0) break; } return k; };
-  const spawn = gold => balls.push({x: -4, r: Math.random()*2-1, v: (W / 7) * (0.8 + Math.random()*0.4), out: gold ? K-1 : pick(),
-    gold, vy: 0, fy: 0, a: 1, rad: gold ? 3.2 : 1.6 + Math.random()*0.9});
-  const frame = t => {
-    if (!run) return; const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
-    spawnAcc += dt * 9; while (spawnAcc > 1) { spawn(false); spawnAcc--; }
-    if (N[K-1] > 0 && (setupAcc += dt) > 7 / Math.min(3, N[K-1])) { spawn(true); setupAcc = 0; }
-    ctx.clearRect(0, 0, W, H); const sw = W / K, mid = H * 0.55;
+function funnelArt(box, F){
+  const cv = document.createElement("canvas"); box.appendChild(cv);
+  const ctx = cv.getContext("2d"), N = F.map(s => s.n), K = N.length, top = N[0] || 1;
+  const leave = N.map((n,k) => k < K-1 ? Math.max(0, n - N[k+1]) / top : n / top);   // where each ball drops out
+  let W = 0, H = 0, dpr = 1, balls = [], run = false, last = 0, acc = 0, gacc = 3, t0 = 0;
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const geo = () => { const pad = W < 560 ? 26 : 12, tierH = (H - pad - 12) / K;                       // one tier per row on the right;
+    const maxHW = Math.min(W*0.42, 150), hw = N.map(n => Math.max(5, Math.sqrt(n/top) * maxHW));   // the last tier is the spout
+    return {pad, tierH, hw, cx: W/2, spoutY: pad + tierH*(K-1) + 4, endY: H - 12}; };
+  const halfAt = (g, y) => { const k = Math.min(K-1, Math.max(0, (y - g.pad) / g.tierH)), i = Math.floor(k), f = k - i;
+    const a = g.hw[i], b = g.hw[Math.min(K-1, i+1)]; return a + (b - a) * Math.min(1, f * 1.6); };   // eased taper
+  const shape = g => { const L = [], R = [];
+    for (let y = g.pad; y <= g.spoutY; y += 2) { const h = halfAt(g, y); L.push([g.cx - h, y]); R.push([g.cx + h, y]); }
+    const sh = Math.max(4, g.hw[K-1]); L.push([g.cx - sh, g.endY]); R.push([g.cx + sh, g.endY]); return [L, R]; };
+  const size = () => { const r = box.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
+    cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); if (still) paint(0); };
+  const pick = () => { let u = Math.random(), k = 0; for (; k < K-1; k++) if ((u -= leave[k]) < 0) break; return k; };
+  const spawn = gold => balls.push({r: (Math.random()*2-1)*0.9, y: 4, vy: 0, out: gold ? K : pick(), gold,
+    free: false, x: 0, vx: 0, a: 1, rad: gold ? 3.4 : 1.5 + Math.random()*1.0});
+  function paint(dt){
+    const g = geo(); ctx.clearRect(0,0,W,H);
+    // glass body
+    const [L, R] = shape(g); ctx.beginPath(); L.forEach(([x,y],i)=> i?ctx.lineTo(x,y):ctx.moveTo(x,y)); R.reverse().forEach(([x,y])=>ctx.lineTo(x,y)); ctx.closePath();
+    const gr = ctx.createLinearGradient(g.cx - g.hw[0], 0, g.cx + g.hw[0], 0);
+    gr.addColorStop(0, "rgba(201,165,90,.02)"); gr.addColorStop(.5, "rgba(201,165,90,.075)"); gr.addColorStop(1, "rgba(201,165,90,.02)");
+    ctx.fillStyle = gr; ctx.fill(); ctx.strokeStyle = "rgba(201,165,90,.38)"; ctx.lineWidth = 1; ctx.stroke();
+    // rim highlight + tier rings
+    ctx.strokeStyle = "rgba(237,230,216,.14)"; ctx.beginPath(); ctx.ellipse(g.cx, g.pad, g.hw[0], 3.5, 0, 0, 6.283); ctx.stroke();
+    for (let k = 1; k < K; k++) { const y = g.pad + g.tierH*k, h = halfAt(g, y);
+      ctx.strokeStyle = "rgba(237,230,216,.07)"; ctx.beginPath(); ctx.ellipse(g.cx, y, h, Math.max(1, h*0.035), 0, 0, 6.283); ctx.stroke(); }
+    // balls
+    const sp = (H / 3.2);                                         // ~3 s from rim to spout
     balls = balls.filter(b => {
-      const exitX = (b.out + 1) * sw - 6;
-      if (b.x < exitX || b.out === K-1) b.x += b.v * dt; else { b.vy += 140 * dt; b.fy += b.vy * dt; b.x += b.v * dt * 0.25; b.a -= dt * 0.9; }
-      if (b.out === K-1 && b.x > W - 10) { b.x = W - 10; b.a -= dt * (b.gold ? 0.35 : 0.8); }
-      const y = mid + b.r * halfH(Math.min(b.x, exitX)) + b.fy;
-      if (b.a <= 0 || y > H + 6) return false;
-      const reached = b.x > (K-2) * sw;
-      ctx.globalAlpha = Math.max(0, b.a) * (b.gold ? 0.95 : reached ? 0.55 : 0.28);
-      ctx.fillStyle = b.gold ? "#e8c070" : reached ? "#c9a55a" : "#a59c8f";
-      if (b.gold) { ctx.shadowColor = "#e8c070"; ctx.shadowBlur = 8; }
-      ctx.beginPath(); ctx.arc(b.x, y, b.rad, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
-      return true; });
-    ctx.globalAlpha = 1; requestAnimationFrame(frame);
-  };
-  size(); addEventListener("resize", size);
-  new IntersectionObserver(([e]) => { const on = e.isIntersecting && !document.hidden;
-    if (on && !run) { run = true; last = 0; requestAnimationFrame(frame); } else if (!on) run = false; }).observe(el);
-  document.addEventListener("visibilitychange", () => { if (document.hidden) run = false;
-    else if (el.getBoundingClientRect().top < innerHeight && !run) { run = true; last = 0; requestAnimationFrame(frame); } });
+      if (!b.free) {
+        b.vy = sp * (0.85 + 0.3 * Math.abs(Math.sin(b.r*9)));  b.y += b.vy * dt;
+        const exitY = g.pad + g.tierH * (b.out + 1) - 3;
+        if (b.out < K && b.y >= exitY) { b.free = true; b.x = g.cx + b.r * halfAt(g, b.y); b.vx = (b.r >= 0 ? 1 : -1) * (30 + Math.random()*40); b.vy *= 0.4; }
+        else b.x = g.cx + b.r * halfAt(g, Math.min(b.y, g.spoutY)) * (b.y > g.spoutY ? 0.4 : 1);
+        if (b.out === K && b.y > g.endY - 4) { b.y = g.endY - 4 + Math.sin((performance.now()-t0)/300)*0.8; b.a -= dt * (b.gold ? 0.18 : 0.7); }
+        if (b.out === K-1 && b.y > g.spoutY) { b.a -= dt * 1.2; }
+      } else { b.vy += 260 * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.a -= dt * 0.8; }
+      if (b.a <= 0 || b.y > H + 8) return false;
+      const deep = b.y > g.pad + g.tierH * (K-2);
+      ctx.globalAlpha = b.a * (b.gold ? 1 : b.free ? 0.22 : deep ? 0.7 : 0.42);
+      ctx.fillStyle = b.gold ? "#f0cd7c" : deep ? "#c9a55a" : "#b9b0a2";
+      if (b.gold) { ctx.shadowColor = "#e8c070"; ctx.shadowBlur = 10; }
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.rad, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0; return true; });
+    ctx.globalAlpha = 1;
+    if (N[K-1] > 0) {                                             // today's setups: a soft glow at the spout
+      const p = 0.55 + 0.45 * Math.sin((performance.now()-t0)/700);
+      const rg = ctx.createRadialGradient(g.cx, g.endY - 2, 0, g.cx, g.endY - 2, 16);
+      rg.addColorStop(0, `rgba(232,192,112,${0.35*p})`); rg.addColorStop(1, "rgba(232,192,112,0)"); ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(g.cx, g.endY - 2, 16, 0, 6.283); ctx.fill(); }
+  }
+  const frame = t => { if (!run) return; const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
+    acc += dt * 14; while (acc > 1) { spawn(false); acc--; }
+    if (N[K-1] > 0 && (gacc += dt) > 6 / Math.min(3, N[K-1])) { spawn(true); gacc = 0; }
+    paint(dt); requestAnimationFrame(frame); };
+  t0 = performance.now(); size(); addEventListener("resize", size);
+  if (still || !window.IntersectionObserver) { paint(0); return; }
+  const go = () => { if (!run) { run = true; last = 0; requestAnimationFrame(frame); } };
+  let vis = false;
+  new IntersectionObserver(([e]) => { vis = e.isIntersecting; if (vis && !document.hidden && !box.closest('.closed')) go(); else run = false; }).observe(box);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) run = false; else if (vis) go(); });
+  box.closest(".funnel").querySelector(".ftog").addEventListener("click", () => { if (box.closest('.closed')) run = false; else { size(); if (vis) go(); } });
 }
 
 /* early turners */
