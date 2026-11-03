@@ -179,6 +179,13 @@ tr.sel td{background:var(--gold-bg)!important}
 #tvbox{flex:1;min-height:0}
 #drawer .hint{padding:7px 16px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);border-top:.5px solid var(--border)}
 #cal{height:420px}
+.turn{border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:12px;overflow:hidden}
+.turn .th{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 14px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
+.turn .th .nm{font-family:inherit;font-size:13px;color:var(--t1);font-weight:500}
+.turn .th b{color:var(--t1);font-weight:500}
+.turn .empty{padding:10px 14px;font-size:12px;color:var(--t4)}
+.flag.rsf{color:#0b0b0a;background:#7c9cff}.flag.rsh{color:#7c9cff;background:rgba(124,156,255,.12)}
+.turn-none{padding:16px;border:.5px dashed var(--border-2);border-radius:7px;color:var(--t3);font-size:13px}
 /* CANSLIM letters + fundamentals strip */
 .cs{font-family:"DM Mono",monospace;font-size:10px;white-space:nowrap;cursor:help}
 .cs i{font-style:normal;display:inline-block;width:7.5px;text-align:center;color:#4a453e}
@@ -214,7 +221,7 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
 <nav><div class="wrap">
   <div class="brand">MJ — <em>RS Engine</em></div>
   <a href="#regime">Regime</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
-  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#history">History</a><a href="modelbook/" style="color:var(--gold)">Model book →</a><a href="#method">Method</a>
+  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#turners">Turning</a><a href="#history">History</a><a href="modelbook/" style="color:var(--gold)">Model book →</a><a href="#method">Method</a>
   <div class="asof" id="nav-asof"></div>
 </div></nav>
 
@@ -318,6 +325,17 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
         <div><b>Funds</b> — number of institutions holding it (SEC 13F, latest filed quarter) and the change vs the quarter before. Rising sponsorship = the "I". Open the chart for the 8-quarter trend.</div>
       </div></details>
     </div>
+  </section>
+
+  <section id="turners">
+    <div class="sec-head"><h2>Early turners</h2><div class="line"></div><p>Groups outside the top themes whose RS is turning up · watchlist, not buys</p></div>
+    <div id="turn-wrap"></div>
+    <details class="fold" style="margin-top:12px"><summary>How a group qualifies</summary><div class="body guide">
+      <div><b>Group</b> — not in the top themes, RS ≥ 40 and back above its 20-day, with RS up ≥ 12 in a week or ≥ 8 in 3 days, confirmed by breadth up ≥ 10 pts in a week or an Improving/Leading rotation quadrant.</div>
+      <div><b>Stocks</b> — members above their 50-day with RS ≥ 70 and rising, liquid. Sorted with RS-line highs first.</div>
+      <div><b>RS FIRST</b> — the RS line is at a 3-month high while price is still more than 5% below its high: the stock is outperforming before it breaks out. Often the earliest tell.</div>
+      <div><b>How to use</b> — put them on alert and wait for a proper setup. Many turns fail after a week; the ones that persist usually show up in Leaders within a few weeks.</div>
+    </div></details>
   </section>
 
   <section id="history">
@@ -564,6 +582,25 @@ document.addEventListener('click', e=>{
   const m=e.target.closest('.hold-more'); if(m){ const tr=m.closest('tr.hold-row').previousElementSibling; toggleHoldings(tr.querySelector('.xbtn'), m.dataset.all==='1'); }
 });
 
+/* early turners */
+function drawTurners(){
+  const T = D.turners || [], el = $("#turn-wrap");
+  if (!T.length) { el.innerHTML = `<div class="turn-none">No group is turning up strongly enough right now. That's normal in a stable market; this fills in when rotation starts.</div>`; return; }
+  const flags = x => `${x.rs_first?'<span class="flag rsf" title="RS line at a 3-month high while price is still >5% below its high">RS FIRST</span>':x.rs_line_hi?'<span class="flag rsh" title="RS line at a 3-month high">RS HIGH</span>':''}${x.setup?'<span class="flag setup">SETUP</span>':''}${x.leader?'<span class="flag new">LEADER</span>':''}${x.atr_ext>4?'<span class="flag ext">EXT</span>':''}`;
+  el.innerHTML = T.map((g,i) => `<div class="turn"><div class="th"><span class="sdot" style="background:${STYLE_HEX[g.style]}"></span><span class="nm">${esc(g.theme)}</span>
+      <span class="open" data-sym="${esc(g.etf)}" style="cursor:pointer;color:var(--t2)">${esc(g.etf)}</span>
+      <span>RS <span class="rating" style="background:${ratingColor(g.rs)}">${g.rs}</span></span>
+      <span>1W <b class="${g.rs_chg_1w>0?'up':'dn'}">${fmt(g.rs_chg_1w,0)}</b></span><span>3D <b class="${g.rs_chg_3d>0?'up':'dn'}">${fmt(g.rs_chg_3d,0)}</b></span>
+      ${g.breadth!=null?`<span>Breadth <b>${g.breadth}%</b> <span class="${g.breadth_chg>0?'up':g.breadth_chg<0?'dn':''}">${fmt(g.breadth_chg,0)}</span></span>`:''}
+      <span class="q ${esc(g.quadrant)}">${esc(g.quadrant||'')}</span></div>
+      ${g.stocks.length ? `<div class="tbl-wrap" style="border:0;border-radius:0"><table class="t" id="turn-t${i}"><thead><tr><th class="l">Ticker</th><th class="l">Name</th><th>RS</th><th>Δ1W</th><th>Price 1M</th><th>1M</th><th>Off high</th><th>ADR</th><th>ATR ext</th><th>Pivot</th><th class="l">CANSLIM</th><th>Funds</th><th class="l">Flags</th></tr></thead><tbody>
+      ${g.stocks.map(x=>`<tr>${symTd(x, x.exchange)}<td class="nm l">${esc(x.name)}</td>${ratingTd(x)}${chgTd(x.rs_chg_1w)}<td>${spark(x.spark_px)}</td>${pctCell(x.chg_1m,20)}${offTd(x.off_high)}<td>${fmt(x.adr,1,false)}%</td><td class="${x.atr_ext>4?'dn':''}">${fmt(x.atr_ext,1,false)}</td><td style="color:${x.pivot_dist>=-6?'#ede6d8':'#6b645a'}">${fmt(x.pivot_dist,1)}%</td>${csTd(x)}${fundsTd(x)}<td class="l">${flags(x)}</td></tr>`).join('')}
+      </tbody></table></div>` : `<div class="empty">No stock in this group passes the filters yet (above 50-day, RS ≥ 70 and rising). Watch the group; names usually follow.</div>`}</div>`).join("");
+  T.forEach((g,i) => { const t = $("#turn-t"+i); if (t) t._rows = g.stocks.map(x => ({...x, theme:g.theme})); });
+  // the ETF name in each header opens its chart too
+  el.querySelectorAll(".th .open").forEach((o,i) => { o.closest(".th")._rows = [{symbol:T[i].etf, name:T[i].name, theme:T[i].theme, rs_rating:T[i].rs}]; });
+}
+
 /* leader history */
 function drawHistory(){
   const H = D.history; if (!H || !H.rows) { $("#history").remove(); return; }
@@ -620,7 +657,7 @@ function showChart(){
 function closeChart(){ $("#drawer").classList.remove("open"); $("#drawer").setAttribute("aria-hidden","true");
   document.querySelectorAll("tr.sel").forEach(r=>r.classList.remove("sel")); curIdx = -1; }
 function step(d){ if (curIdx < 0) return; curIdx = Math.max(0, Math.min(curRows.length-1, curIdx + d)); showChart(); }
-document.addEventListener("click", e => { const o = e.target.closest(".open[data-sym]"); if (o) openChart(o.closest("table"), o.dataset.sym); });
+document.addEventListener("click", e => { const o = e.target.closest(".open[data-sym]"); if (o) openChart(o.closest("table") || o.closest(".th"), o.dataset.sym); });
 document.addEventListener("keydown", e => {
   if (!$("#drawer").classList.contains("open") || e.target.matches("input,select,textarea")) return;
   if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); step(1); }
@@ -644,7 +681,7 @@ const etfCols = (withTheme) => [
   {h:"1M", k:"chg_1m", f:x=>pctCell(x.chg_1m, 12)},
   {h:"3M", k:"chg_3m", f:x=>pctCell(x.chg_3m, 25)},
   {h:"Off 52W H", k:"off_high", f:x=>offTd(x.off_high)},
-  {h:"Breadth", k:"breadth_50", tip:"% of holdings above 50-DMA", f:x=>`<td>${x.breadth_50==null?'–':x.breadth_50+'%'}</td>`},
+  {h:"Breadth", k:"breadth_50", tip:"% of its stocks (in your universe) above their 50-day average · small number = change over 1 week", f:x=>`<td>${x.breadth_50==null?'–':x.breadth_50+'%'}${x.breadth_chg_1w?`<small style="margin-left:4px;font-size:9.5px" class="${x.breadth_chg_1w>0?'up':'dn'}">${x.breadth_chg_1w>0?'+':''}${x.breadth_chg_1w}</small>`:''}</td>`},
   {h:"Rotation", k:"quadrant", l:1, f:x=>`<td class="l q ${x.quadrant}">${x.quadrant||'–'}</td>`},
   {h:"LETF", l:1, tip:"Leveraged ETFs on this index/sector (Jeff's capital-efficiency tool)", f:x=>`<td class="l letf">${LETF[x.symbol]||''}</td>`},
   ...(withTheme ? [{h:"Stocks", l:1, tip:"Whether this theme has holdings in your stock universe", f:x=>{const t=(D.themes.find(z=>z.theme===x.theme)||{}); return `<td class="l" style="color:${t.has_stocks?'#6b645a':'#c9a55a'}">${t.has_stocks?'✓':'add holdings'}</td>`;}}] : []),
@@ -797,6 +834,7 @@ function render(){
   ["#q","#f-tt","#f-nh","#f-ext","#f-new","#f-setup","#f-er"].forEach(s=>$(s).addEventListener("input", drawLeaders));
   drawLeaders();
 
+  drawTurners();
   let rt; window.addEventListener("resize", ()=>{clearTimeout(rt); rt=setTimeout(()=>{drawCharts(); drawRRG();},150);});
 }
 render();

@@ -480,6 +480,10 @@ def run(demo: bool, notify: bool):
         df["rs_rating"] = rating.iloc[-1]
         df["rs_rating_1w"] = rating.iloc[-6]
         df["rs_chg_1w"] = df.rs_rating - df.rs_rating_1w
+        df["rs_chg_3d"] = df.rs_rating - rating.iloc[-4]
+        rl = c.div(b_close, axis=0)
+        df["rs_line_hi"] = rl.iloc[-1] >= rl.tail(63).max() * 0.995                # RS line at a 3-month high
+        df["above_20"] = c.iloc[-1] > c.rolling(20).mean().iloc[-1]
         df["rs_score"] = W3M * (df.chg_3m - bret(63)) + W1M * (df.chg_1m - bret(21)) + W1W * (df.chg_1w - bret(5))
         df["rs_win_1m"] = (excess.tail(20) > 0).sum() / 20 * 100
         df["rs_1m"] = pct(c.iloc[-1] / b_close.iloc[-1], c.iloc[-22] / b_close.iloc[-22])
@@ -519,6 +523,9 @@ def run(demo: bool, notify: bool):
     a50_now = above50.iloc[-1]
     members = uni[uni.ticker.isin(S)].groupby("etf").ticker.apply(list)
     etf_df["breadth_50"] = [round(a50_now[members[e]].mean() * 100) if e in members else np.nan for e in E]
+    a50_5d = above50.iloc[-6]
+    etf_df["breadth_chg_1w"] = [round((a50_now[members[e]].mean() - a50_5d[members[e]].mean()) * 100) if e in members else np.nan
+                                for e in E]
 
     # rank within category, now and 1 week ago
     for col, src in (("rank", "rs_rating"), ("rank_1w", "rs_rating_1w")):
@@ -581,6 +588,29 @@ def run(demo: bool, notify: bool):
         leaders["er_days"] = rng_.integers(1, 80, len(leaders))
         leaders["earnings"] = [(asof + pd.Timedelta(days=int(d))).strftime("%d %b") for d in leaders.er_days]
     leaders["er_soon"] = leaders.er_days <= 7
+
+    # ── Early turners: groups outside the top themes whose RS is turning up fast ──
+    # Watchlist only. A group qualifies when its RS jumped (1 week or 3 days), it is back above its
+    # 20-day, and the move is confirmed by rising breadth or an Improving/Leading rotation quadrant.
+    T = SETTINGS.get("turners", {})
+    tg_ = etf_df[etf_df.category.isin(["Group", "SPDR Sector"]) & etf_df.index.isin(members.index)
+                 & ~etf_df.theme.isin(top_themes) & etf_df.rs_rating.notna()].copy()
+    jump = (tg_.rs_chg_1w >= T.get("min_rs_jump_1w", 12)) | (tg_.rs_chg_3d >= T.get("min_rs_jump_3d", 8))
+    confirm = (tg_.breadth_chg_1w >= T.get("min_breadth_rise", 10)) | tg_.quadrant.isin(["Improving", "Leading"])
+    tg_ = tg_[jump & confirm & tg_.above_20 & (tg_.rs_rating >= T.get("min_group_rs", 40))]
+    tg_["turn_score"] = tg_.rs_chg_1w.clip(lower=0) + tg_.rs_chg_3d.clip(lower=0) + tg_.breadth_chg_1w.fillna(0).clip(lower=0) / 2
+    tg_ = tg_.sort_values("turn_score", ascending=False).groupby("theme").head(1).head(T.get("max_groups", 5))
+    turners = []
+    for e_, g_ in tg_.iterrows():
+        mem_ = [t for t in members.get(e_, []) if t in stk.index]
+        cand = stk.loc[mem_]
+        cand = cand[(cand.price >= SETTINGS["min_price"]) & (cand.dollar_vol >= SETTINGS["min_dollar_volume"])
+                    & cand.above_50 & (cand.rs_rating >= T.get("min_stock_rs", 70)) & (cand.rs_chg_1w > 0)]
+        cand = cand.assign(_k=cand.rs_line_hi.astype(int)).sort_values(["_k", "rs_rating"], ascending=False)
+        turners.append({"etf": e_, "theme": g_.theme, "name": g_["name"], "style": g_["style"],
+                        "rs": g_.rs_rating, "rs_chg_1w": g_.rs_chg_1w, "rs_chg_3d": g_.rs_chg_3d,
+                        "breadth": g_.breadth_50, "breadth_chg": g_.breadth_chg_1w, "quadrant": g_.quadrant,
+                        "stocks": list(cand.index[:T.get("max_stocks", 5)])})
 
     # NEW vs the snapshot from about a week ago
     HIST.mkdir(parents=True, exist_ok=True)
@@ -726,7 +756,7 @@ def run(demo: bool, notify: bool):
                 "chg_1d": rnd(r.chg_1d), "chg_1w": rnd(r.chg_1w), "chg_1m": rnd(r.chg_1m), "chg_3m": rnd(r.chg_3m),
                 "off_high": rnd(r.off_high), "above_50": bool(r.above_50), "breadth_50": rnd(r.breadth_50, 0),
                 "quadrant": r.quadrant, "rrg": r.rrg, "spark_px": clean_list(r.spark_px),
-                "spark_rs": clean_list(r.spark_rs)}
+                "spark_rs": clean_list(r.spark_rs), "breadth_chg_1w": rnd(r.breadth_chg_1w, 0)}
 
     def stk_rec(t, r):
         return {"symbol": t, "name": r["name"], "theme": r.theme, "themes": r.all_themes, "industry": r.industry,
@@ -741,6 +771,20 @@ def run(demo: bool, notify: bool):
                 "er_soon": bool(r.er_soon), "cs": r.cs, "cs_n": int(r.cs_n),
                 "funds": rnd(r.funds, 0), "funds_chg": rnd(r.funds_chg),
                 "price": rnd(r.price, 2), "spark_px": clean_list(r.spark_px)}
+
+    def turn_rec(t):
+        r = stk.loc[t]
+        return {"symbol": t, "name": r["name"], "exchange": r.exchange, "rs_rating": rnd(r.rs_rating, 0),
+                "rs_chg_1w": rnd(r.rs_chg_1w, 0), "rs_win_1m": rnd(r.rs_win_1m, 0), "chg_1m": rnd(r.chg_1m),
+                "off_high": rnd(r.off_high), "adr": rnd(r.adr), "atr_ext": rnd(r.atr_ext), "pivot_dist": rnd(r.pivot_dist),
+                "tightness": rnd(r.tightness), "price": rnd(r.price, 2), "rs_line_hi": bool(r.rs_line_hi),
+                "rs_first": bool(r.rs_line_hi and r.off_high < -5), "setup": bool(r.setup_all),
+                "leader": t in leaders.index, "cs": r.cs, "funds": rnd(r.funds, 0), "funds_chg": rnd(r.funds_chg),
+                "spark_px": clean_list(r.spark_px)}
+
+    turners_out = [{**{k: (rnd(v, 0) if k in ("rs", "rs_chg_1w", "rs_chg_3d", "breadth", "breadth_chg") else v)
+                       for k, v in g.items() if k != "stocks"},
+                    "stocks": [turn_rec(t) for t in g["stocks"]]} for g in turners]
 
     etf_sorted = etf_df.sort_values(["category", "rs_rating"], ascending=[True, False])
     payload = {
@@ -760,6 +804,7 @@ def run(demo: bool, notify: bool):
                     "has_stocks": r.theme in themes_with_stocks}
                    for t, r in theme_tbl.iterrows()],
         "leaders": [stk_rec(t, r) for t, r in leaders.iterrows()],
+        "turners": turners_out,
         # every stock in the universe, compact, so any ETF row can expand to its holdings
         "stocks": {t: [r["name"], r.exchange, rnd(r.rs_rating, 0), rnd(r.rs_chg_1w, 0), rnd(r.chg_1m), rnd(r.off_high),
                        rnd(r.adr), rnd(r.atr_ext), int(bool(r.above_50)), int(bool(r.trend_template)),
@@ -809,6 +854,10 @@ def run(demo: bool, notify: bool):
     for th_name, g in leaders.groupby("theme", sort=False):
         lines.append(f"###{th_name}")
         lines.append(",".join(f"{r.exchange}:{t}" if r.exchange else t for t, r in g.iterrows()))
+    for g in turners:
+        if g["stocks"]:
+            lines.append(f"###Turning: {g['theme']}")
+            lines.append(",".join(f"{stk.at[t, 'exchange']}:{t}" if stk.at[t, "exchange"] else t for t in g["stocks"]))
     (DATA_OUT / "tradingview_leaders.txt").write_text("\n".join(lines) + "\n")
 
     # history snapshots (one row-set per day)
@@ -846,7 +895,14 @@ def run(demo: bool, notify: bool):
         if fresh:
             alert.append("New setups: " + ", ".join(
                 f"{t} (RS {int(leaders.at[t, 'rs_rating'])}, {leaders.at[t, 'pivot_dist']:+.1f}% from pivot)" for t in fresh[:8]))
-    new_state = {"date": d, "regime": regime, "setups": setups_now}
+        turn_old = set(old_state.get("turners", []))
+        fresh_t = [g for g in turners if g["etf"] not in turn_old] if "turners" in old_state else []
+        if fresh_t:
+            alert.append("Early turner" + ("s" if len(fresh_t) > 1 else "") + ": " + "; ".join(
+                f"{g['theme']} ({g['etf']}, RS {int(g['rs'])}, {int(g['rs_chg_1w']):+d} in a week"
+                + (f", breadth {int(g['breadth'])}% {int(g['breadth_chg']):+d}" if pd.notna(g['breadth_chg']) else "") + ")"
+                + (" → watch " + ", ".join(g["stocks"][:4]) if g["stocks"] else "") for g in fresh_t[:4]))
+    new_state = {"date": d, "regime": regime, "setups": setups_now, "turners": [g["etf"] for g in turners]}
     new_state["prev"] = (old_state if old_state.get("date") != d else None) or None
     new_state["prev"] = {k: v for k, v in (new_state["prev"] or {}).items() if k != "prev"} or None
     state_path.write_text(json.dumps(new_state, indent=1))
