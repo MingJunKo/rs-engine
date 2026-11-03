@@ -210,12 +210,54 @@ def quadrant(pt):
     return ("Leading" if y >= 100 else "Weakening") if x >= 100 else ("Improving" if y >= 100 else "Lagging")
 
 
-def next_earnings(ticker: str, asof) -> tuple:
-    """Next earnings date from Yahoo (best effort). Returns ('12 Nov', days_away) or (None, nan)."""
+def earnings_calendar(asof, days: int = 60) -> dict:
+    """Upcoming US earnings dates for every listed stock, from Nasdaq's public calendar (one request per
+    weekday). Cached for the day in data/history/earnings_cal.json; past dates are dropped."""
+    path = HIST / "earnings_cal.json"
+    cal = {}
+    if path.exists():
+        try:
+            cal = json.loads(path.read_text())
+        except ValueError:
+            cal = {}
+    today = asof.normalize()
+    if cal.get("_fetched") == dt.date.today().isoformat():
+        return {k: v for k, v in cal.items() if not k.startswith("_")}
+    import requests
+    got, ok_days = {}, 0
+    for d in pd.bdate_range(today, today + pd.Timedelta(days=days)):
+        try:
+            r = requests.get("https://api.nasdaq.com/api/calendar/earnings", params={"date": d.strftime("%Y-%m-%d")},
+                             headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
+            rows = ((r.json() or {}).get("data") or {}).get("rows") or []
+            ok_days += 1
+            for row in rows:
+                sym = str(row.get("symbol", "")).strip().upper().replace("/", ".")
+                if sym and sym not in got:
+                    got[sym] = d.strftime("%Y-%m-%d")
+        except Exception:
+            continue
+        time.sleep(0.25)
+    if ok_days >= 10:                                 # keep the old calendar if Nasdaq didn't answer
+        keep = {k: v for k, v in cal.items() if not k.startswith("_") and k not in got and v >= today.strftime("%Y-%m-%d")}
+        cal = {**keep, **got, "_fetched": dt.date.today().isoformat()}
+        HIST.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(cal, separators=(",", ":")))
+        log(f"  earnings calendar: {len(got)} upcoming reports over {ok_days} days")
+    else:
+        log("  earnings calendar: Nasdaq unavailable, using the cached calendar")
+    return {k: v for k, v in cal.items() if not k.startswith("_") and v >= today.strftime("%Y-%m-%d")}
+
+
+def next_earnings(ticker: str, asof, cal: dict | None = None) -> tuple:
+    """Next earnings date: Nasdaq calendar first, Yahoo as a fallback. Returns ('12 Nov', days_away) or (None, nan)."""
+    if cal and ticker in cal:
+        d = pd.Timestamp(cal[ticker])
+        return d.strftime("%d %b"), (d.normalize() - asof.normalize()).days
     try:
         import yfinance as yf
-        cal = yf.Ticker(yf_symbol(ticker)).calendar or {}
-        dates = [pd.Timestamp(d) for d in cal.get("Earnings Date", []) if d is not None]
+        c = yf.Ticker(yf_symbol(ticker)).calendar or {}
+        dates = [pd.Timestamp(d) for d in c.get("Earnings Date", []) if d is not None]
         future = [d for d in dates if d.normalize() >= asof.normalize()]
         if future:
             d = min(future)
@@ -651,7 +693,8 @@ def run(demo: bool, notify: bool):
     leaders["earnings"], leaders["er_days"] = None, np.nan
     if not demo and len(leaders):
         try:
-            er = [next_earnings(t, asof) for t in leaders.index]
+            ecal = earnings_calendar(asof)
+            er = [next_earnings(t, asof, ecal) for t in leaders.index]
             leaders["earnings"] = [e[0] for e in er]
             leaders["er_days"] = [e[1] for e in er]
         except Exception as e:
