@@ -78,6 +78,7 @@ Groups like PEJ (Leisure), BETZ, AMLP, IPAY, BOAT start with no holdings — the
 | Saturday 6:30am | + Telegram summary and TradingView file (Friday close) |
 | Tue–Fri 6:30am, only if something changed | Short Telegram alert: regime change or new setups (turn off with `"telegram_alerts": false`) |
 | 1st of the month | Universe refresh from the ETF issuers |
+| 3rd of the month | Model book rebuilt (every US stock that doubled after a breakout) |
 | Any time | Actions → RS Engine → Run workflow |
 
 Want Telegram every day? Set `"telegram_daily": true` in `config/settings.json`.
@@ -132,6 +133,12 @@ All on github.com: click the file → pencil icon → edit → **Commit changes*
 **Leaders.** Stocks in the top themes (themes that have holdings), RS ≥ `min_rs_rating`, above the 50-DMA, ADR ≥ `min_adr`, price and $-volume above the floors. Flags: **TT** Minervini trend template, **NH** within 15% of the 52-week high, **EXT** more than 4 ATRs above the 50-DMA, **NEW** not on the list a week ago, **SETUP** within 6% of the 20-day high, 10-day range ≤ 2.5 ADRs and 0–4 ATRs above the 50-DMA, **ER** earnings within 7 days.
 
 ---
+
+## Model book
+
+`https://<username>.github.io/rs-engine/modelbook/` — every US stock (all ~6,000 listings plus your universe) that broke out of a base of 3+ weeks and then gained 100% within 126 sessions, over the last 5 years. For each winner: what it looked like the day before the breakout (RS, base depth and length, tightness, volume dry-up, breakout volume, gap, ADR, trend template, RS line), and how the run behaved (gain, length, heat before the peak). The **What mattered** table compares every trait against all breakouts, so you can see which traits actually raised the odds. Click any winner to study its chart with the base, breakout and peak marked; notes and a *Studied* tick save in your browser (Export notes downloads them).
+
+Settings (optional) in `config/settings.json`: `"modelbook": {"period": "5y", "min_gain": 100, "horizon_days": 126, "min_price": 5, "min_dollar_volume": 5000000, "chart_max": 500}`. Rebuilds on the 3rd of each month, or **Actions → Model Book → Run workflow**.
 
 ## Running it on your own computer (optional)
 

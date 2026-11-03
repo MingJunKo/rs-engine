@@ -50,11 +50,12 @@ def yf_symbol(t: str) -> str:
     return t.replace(".", "-")
 
 
-def download_yahoo(tickers: list[str], period: str = "2y") -> dict[str, pd.DataFrame]:
+def download_yahoo(tickers: list[str], period: str = "2y",
+                   want=("Close", "High", "Low", "Volume")) -> dict[str, pd.DataFrame]:
     """Batch-download daily OHLCV. Returns wide frames keyed by field."""
     import yfinance as yf
 
-    fields = {"Close": {}, "High": {}, "Low": {}, "Volume": {}}
+    fields = {f: {} for f in want}
     chunk = 120
     for i in range(0, len(tickers), chunk):
         part = tickers[i:i + chunk]
@@ -683,7 +684,10 @@ def run(demo: bool, notify: bool):
     # history snapshots (one row-set per day)
     d = asof.strftime("%Y-%m-%d")
     snap_e = etf_df[["category", "rs_rating", "rank", "rs_score"]].assign(date=d).rename_axis("symbol").reset_index()
-    snap_l = leaders[["theme", "rs_rating", "rs_score", "price"]].assign(date=d).rename_axis("ticker").reset_index()
+    snap_cols = ["theme", "rs_rating", "rs_score", "price", "atr_ext", "pivot_dist", "tightness", "adr",
+                 "setup", "extended", "er_soon", "trend_template", "new"]
+    snap_l = (leaders[snap_cols].round(2).assign(date=d, regime=regime, bench_price=round(float(b_close.iloc[-1]), 2))
+              .rename_axis("ticker").reset_index())
     for path, snap in ((HIST / "etf_ratings.csv", snap_e), (lh_path, snap_l)):
         if path.exists():
             old = pd.read_csv(path)

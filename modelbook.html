@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{
+  --ink:#0b0b0a; --surface:#121211; --surface-2:#171716; --surface-3:#1d1d1b;
+  --border:#232320; --border-2:#2e2d29; --gold:#c9a55a; --gold-bright:#e8c070; --gold-dim:#7a6234; --gold-bg:#17130a;
+  --t1:#ede6d8; --t2:#a59c8f; --t3:#6b645a; --t4:#45403a;
+  --up:#5bbf7a; --up-bg:rgba(91,191,122,.14); --dn:#d4706a; --dn-bg:rgba(212,112,106,.14); --blue:#7c9cff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+body{background:var(--ink);color:var(--t1);font-family:Barlow,system-ui,sans-serif;font-weight:300;font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1440px;margin:0 auto;padding:0 28px}
+nav{position:sticky;top:0;z-index:50;background:rgba(11,11,10,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--border)}
+nav .wrap{display:flex;align-items:center;gap:26px;height:48px;overflow-x:auto;scrollbar-width:none}
+nav .brand{font-family:"Playfair Display",serif;font-weight:700;font-size:16px;white-space:nowrap;text-decoration:none}
+nav .brand em{color:var(--gold);font-style:italic}
+nav a{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);text-decoration:none;white-space:nowrap}
+nav a:hover{color:var(--gold)}
+nav .asof{margin-left:auto;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);white-space:nowrap}
+.hero{padding:34px 0 26px;border-bottom:.5px solid var(--border)}
+.eyebrow{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-dim)}
+.hero h1{font-family:"Playfair Display",serif;font-weight:900;font-size:clamp(30px,4.4vw,46px);line-height:1.05;margin:10px 0 14px;letter-spacing:-.5px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.lede{color:var(--t2);font-size:14.5px;line-height:1.65;max-width:900px}
+.lede b{color:var(--t1);font-weight:500}
+.demo{margin-top:12px;font-family:"DM Mono",monospace;font-size:10px;color:var(--dn);letter-spacing:.06em}
+section{padding:30px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+.sec-head h2{font-family:"DM Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.sec-head .line{flex:1;height:.5px;background:var(--border)}
+.sec-head p{font-size:11.5px;color:var(--t3);white-space:nowrap}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:16px 18px;min-width:0}
+.card h3{font-family:"DM Mono",monospace;font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--t2);margin-bottom:4px}
+.card .sub{font-size:11px;color:var(--t3);margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.tile{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:14px 16px}
+.tile .k{font-family:"DM Mono",monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+.tile .v{font-family:"DM Mono",monospace;font-size:24px;font-weight:500;color:var(--t1);margin:6px 0 2px}
+.tile .s{font-size:11px;color:var(--t3);line-height:1.4}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.tbl-wrap{overflow-x:auto;border:.5px solid var(--border);border-radius:7px;background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:12px}
+table.t th{position:sticky;top:0;background:var(--gold-bg);color:var(--gold);font-family:"DM Mono",monospace;font-size:8.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-align:right;padding:9px 10px;border-bottom:.5px solid var(--border-2);white-space:nowrap;cursor:pointer;user-select:none}
+table.t th.l,table.t td.l{text-align:left}
+table.t th:hover{color:var(--gold-bright)}
+table.t td{padding:6px 10px;border-bottom:.5px solid var(--border);text-align:right;white-space:nowrap;font-family:"DM Mono",monospace;font-size:11.5px;color:var(--t2)}
+table.t tr:last-child td{border-bottom:none}
+table.t tr:hover td{background:var(--surface-2)}
+table.t td.sym{color:var(--t1);font-weight:500;position:sticky;left:0;background:var(--surface);z-index:1}
+table.t tr:hover td.sym{background:var(--surface-2)}
+table.t td.nm{font-family:Barlow,sans-serif;font-size:12px;color:var(--t2);max-width:220px;overflow:hidden;text-overflow:ellipsis}
+table.t tr.sel td{background:var(--gold-bg)!important}
+table.t tr.combo td{color:var(--gold-bright)}
+td.sym .open{cursor:pointer}
+td.sym .open:hover{color:var(--gold)}
+.rating{display:inline-block;min-width:30px;text-align:center;padding:2px 6px;border-radius:3px;font-weight:500;color:#0b0b0a}
+.flag{font-size:9px;padding:1px 5px;border-radius:2px;margin-left:3px;letter-spacing:.06em}
+.flag.tt{color:var(--up);background:var(--up-bg)}.flag.ep{color:#0b0b0a;background:var(--gold)}
+.flag.rs{color:var(--blue);background:rgba(124,156,255,.12)}.flag.lead{color:var(--gold-bright);background:var(--gold-bg);border:.5px solid var(--gold-dim)}
+.flag.run{color:var(--t2);border:.5px solid var(--border-2)}
+.liftbar{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
+.liftbar i{display:block;height:8px;border-radius:2px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.controls input[type=search]{background:var(--surface);border:.5px solid var(--border-2);color:var(--t1);padding:6px 10px;border-radius:4px;font-family:"DM Mono",monospace;font-size:11px;width:180px;outline:none}
+.controls label{font-size:11.5px;color:var(--t2);display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.controls select{background:var(--surface);border:.5px solid var(--border-2);color:var(--t1);padding:5px 8px;border-radius:4px;font-size:11.5px;font-family:Barlow,sans-serif}
+.controls .count{margin-left:auto;font-family:"DM Mono",monospace;font-size:10px;color:var(--t3)}
+.btn{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:.5px solid var(--border-2);color:var(--t2);padding:6px 12px;border-radius:3px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{color:var(--gold);border-color:var(--gold-dim)}
+.more{display:block;margin:10px auto 0}
+.bars .row{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;font-size:12px;padding:3px 0;color:var(--t2)}
+.bars .row i{display:block;height:10px;border-radius:2px;background:var(--gold-dim)}
+.bars .row span:last-child{font-family:"DM Mono",monospace;text-align:right;color:var(--t1)}
+.note-p{font-size:12px;color:var(--t3);margin-top:10px;line-height:1.6}
+.note-p b{color:var(--t2);font-weight:500}
+details.fold{background:var(--surface);border:.5px solid var(--border);border-radius:7px;margin-top:12px}
+details.fold>summary{list-style:none;cursor:pointer;padding:11px 16px;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold .body{padding:2px 18px 16px;font-size:12.5px;color:var(--t2);line-height:1.7}
+/* study drawer */
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(1180px,70vw);background:var(--surface);border-left:.5px solid var(--border-2);z-index:80;transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column;box-shadow:-20px 0 40px rgba(0,0,0,.5)}
+#drawer.open{transform:none}
+.dh{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:.5px solid var(--border)}
+.dh .s{font-family:"DM Mono",monospace;font-size:18px;font-weight:500}
+.dh .n{color:var(--t2);font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dstats{display:flex;flex-wrap:wrap;gap:6px 16px;padding:9px 16px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
+.dstats b{color:var(--t1);font-weight:500}
+#chart{flex:1;min-height:0;position:relative}
+.legend{position:absolute;top:8px;left:12px;z-index:3;font-family:"DM Mono",monospace;font-size:10px;color:var(--t3);pointer-events:none}
+.legend span{margin-right:10px}
+.dnotes{border-top:.5px solid var(--border);padding:10px 16px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
+.dnotes textarea{width:100%;min-height:62px;background:var(--surface-2);border:.5px solid var(--border-2);border-radius:4px;color:var(--t1);font-family:Barlow,sans-serif;font-size:13px;padding:8px 10px;resize:vertical;outline:none}
+.dnotes textarea:focus{border-color:var(--gold-dim)}
+.dnotes .side{display:flex;flex-direction:column;gap:8px;font-size:11.5px;color:var(--t2)}
+.hint{padding:6px 16px 10px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4)}
+.studied td.sym .open::after{content:" ✓";color:var(--up);font-size:10px}
+.noted td.sym .open::before{content:"✎ ";color:var(--gold);font-size:10px}
+footer{padding:36px 0 48px;color:var(--t4);font-size:11px;font-family:"DM Mono",monospace}
+@media (max-width:1100px){.tiles{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:900px){.wrap{padding:0 16px}.grid2{grid-template-columns:1fr}.sec-head p{display:none}#drawer{width:100vw}.tiles{grid-template-columns:repeat(2,1fr)}.dnotes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="../">MJ — <em>RS Engine</em></a>
+  <a href="#profile">Profile</a><a href="#edges">What mattered</a><a href="#book">The book</a><a href="../">← Dashboard</a>
+  <span class="asof" id="asof"></span>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>The <em>model book</em></h1>
+    <p class="lede" id="lede"></p>
+    <div class="demo" id="demo"></div>
+  </header>
+
+  <section id="profile">
+    <div class="sec-head"><h2>How a big winner behaves</h2><div class="line"></div><p>From the breakout day to the peak of the run</p></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section id="edges">
+    <div class="sec-head"><h2>What mattered at the breakout</h2><div class="line"></div><p id="base-p"></p></div>
+    <div class="tbl-wrap"><table class="t" id="lift-tbl"></table></div>
+    <p class="note-p"><b>How to read it:</b> each row is every breakout that had that trait. <b>% doubled</b> is how many of them went on to double; <b>× base rate</b> compares that to all breakouts — above 1× means the trait made a doubler more likely. <b>Share of winners</b> is how many of the actual winners had it (a trait can be powerful but rare).</p>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card"><h3>Winners vs all breakouts</h3><div class="sub">Median on the breakout day (winners' middle-half range in grey)</div><table class="t" id="cmp-tbl"></table></div>
+      <div class="card"><h3>When and where</h3><div class="sub">Winning runs by breakout year, and by sector</div><div class="bars" id="by-year"></div><div class="bars" id="by-sector" style="margin-top:14px"></div></div>
+    </div>
+  </section>
+
+  <section id="book">
+    <div class="sec-head"><h2>The book</h2><div class="line"></div><p>Click a ticker to study the chart · ↑ ↓ to flip · notes save in this browser</p></div>
+    <div class="controls">
+      <input type="search" id="q" placeholder="Search ticker / name / industry">
+      <select id="f-year"><option value="">All years</option></select>
+      <select id="f-sector"><option value="">All sectors</option></select>
+      <label><input type="checkbox" id="f-tt"> Trend template</label>
+      <label><input type="checkbox" id="f-rs"> RS ≥ 80</label>
+      <label><input type="checkbox" id="f-ep"> Episodic pivots</label>
+      <label><input type="checkbox" id="f-mkt"> Market uptrend</label>
+      <label><input type="checkbox" id="f-todo"> Not yet studied</label>
+      <button class="btn" id="export">Export notes</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tbl-wrap"><table class="t" id="book-tbl"></table></div>
+    <button class="btn more" id="more"></button>
+    <details class="fold"><summary>+ Method &amp; caveats</summary><div class="body" id="method"></div></details>
+  </section>
+  <footer id="footer"></footer>
+</div>
+
+<aside id="drawer" aria-hidden="true">
+  <div class="dh"><div class="s" id="d-sym"></div><div class="n" id="d-name"></div>
+    <button class="btn" id="d-prev" title="Previous (↑)">↑</button><button class="btn" id="d-next" title="Next (↓)">↓</button>
+    <a class="btn" id="d-tv" target="_blank" rel="noopener">TradingView ↗</a><button class="btn" id="d-close" title="Close (Esc)">✕</button></div>
+  <div class="dstats" id="d-stats"></div>
+  <div id="chart"><div class="legend"><span style="color:#e8c070">SMA 10</span><span style="color:#7c9cff">21</span><span style="color:#d4706a">50</span><span style="color:#5fc9a8">RS line</span><span id="lg-pos"></span></div></div>
+  <div class="dnotes">
+    <textarea id="d-note" placeholder="What do you see? Base shape, VCP contractions, the tell before the breakout, where you'd have bought, where the stop goes…"></textarea>
+    <div class="side"><label><input type="checkbox" id="d-studied"> Studied</label><span id="d-saved" style="color:var(--t4);font-size:10px"></span></div>
+  </div>
+  <div class="hint">↑ ↓ next / previous · Esc close · gold ▲ = breakout · grey ▼ = base high · green ● = peak of the run</div>
+</aside>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d=1, sign=false) => v==null ? "–" : (sign && v>0 ? "+" : "") + Number(v).toFixed(d);
+const tvUrl = (sym, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + sym : sym);
+function ratingColor(r){ if (r==null) return "#2e2d29"; if (r>=90) return "#5bbf7a"; if (r>=80) return "#8fcf8a"; if (r>=70) return "#b8d68f";
+  if (r>=50) return "#d9c98e"; if (r>=30) return "#e0a17a"; return "#d4706a"; }
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+                set(k,v){ try { v==null||v==="" ? localStorage.removeItem(k) : localStorage.setItem(k,v); } catch(e){} } };
+const noteOf = id => store.get("mb-note:" + id) || "";
+const studied = id => store.get("mb-done:" + id) === "1";
+
+function table(el, cols, rows, opts={}){
+  let sortKey = opts.sort, dir = opts.dir || -1;
+  const draw = () => {
+    const r = [...rows];
+    if (sortKey) r.sort((a,b)=>{ const x=a[sortKey], y=b[sortKey]; if (x==null) return 1; if (y==null) return -1;
+      return (typeof x === "string" ? x.localeCompare(y) : x-y) * dir; });
+    const shown = opts.limit ? r.slice(0, opts.limit()) : r;
+    el._rows = r;
+    el.innerHTML = `<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" data-k="${c.k||''}" title="${esc(c.tip||'')}">${c.h}</th>`).join("")}</tr></thead>
+      <tbody>${shown.map(x=>`<tr class="${opts.rowClass ? opts.rowClass(x) : ''}">${cols.map(c=>c.f(x)).join("")}</tr>`).join("")}</tbody>`;
+    el.querySelectorAll("th").forEach(th => th.onclick = () => { const k = th.dataset.k; if (!k) return;
+      dir = (sortKey===k) ? -dir : -1; sortKey = k; draw(); });
+    if (opts.after) opts.after(r, shown);
+  };
+  el._redraw = draw; draw();
+}
+
+/* ── header ── */
+$("#asof").textContent = "Built " + D.generated;
+$("#eyebrow").textContent = `${D.span} · ${D.n_stocks.toLocaleString()} US stocks scanned`;
+$("#lede").innerHTML = `Every breakout from a base of 3+ weeks that went on to <b>gain ${D.rules.min_gain}% within ${D.rules.horizon} sessions</b> — ` +
+  `<b>${D.n_winners.toLocaleString()} winning runs</b> out of ${D.n_events.toLocaleString()} breakouts. ` +
+  `Only ${fmt(D.base_rate,1)}% of breakouts doubled, so the useful question is what the winners had that the rest didn't.`;
+if (D.demo) $("#demo").textContent = "SIMULATED DATA — layout preview only. Real winners appear once the model book runs on GitHub.";
+
+/* ── profile tiles ── */
+const R = D.run || {};
+const tiles = [
+  ["Median run", R.median_gain!=null ? "+"+fmt(R.median_gain,0)+"%" : "–", "Breakout close to the peak of the run"],
+  ["Median length", R.median_days!=null ? fmt(R.median_days,0)+"d" : "–", "Sessions from breakout to peak"],
+  ["To first +20%", R.median_days_to_20!=null ? fmt(R.median_days_to_20,0)+"d" : "–", "Median sessions to get 20% above the breakout"],
+  ["Shakeout, 1st month", R.median_shake20!=null ? fmt(R.median_shake20,1)+"%" : "–", "Median lowest low in the 20 sessions after breakout"],
+  ["Heat before peak", R.median_heat!=null ? fmt(R.median_heat,1)+"%" : "–", "Median deepest dip below the breakout price on the way up"],
+  ["Dipped > 15%", R.pct_heat_gt_15!=null ? fmt(R.pct_heat_gt_15,0)+"%" : "–", "Winners that went 15%+ below the breakout price first"],
+];
+$("#tiles").innerHTML = tiles.map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v">${t[1]}</div><div class="s">${t[2]}</div></div>`).join("");
+
+/* ── lift table ── */
+$("#base-p").textContent = `Base rate: ${fmt(D.base_rate,2)}% of ${D.n_complete.toLocaleString()} breakouts doubled`;
+const maxLift = Math.max(2, ...D.lift.map(x=>x.lift||0));
+table($("#lift-tbl"), [
+  {h:"Trait at breakout", k:"label", l:1, f:x=>`<td class="l" style="font-family:Barlow,sans-serif;font-size:12.5px;color:${x.combo?'#e8c070':'#ede6d8'}">${esc(x.label)}</td>`},
+  {h:"Breakouts", k:"n", f:x=>`<td>${x.n.toLocaleString()}</td>`},
+  {h:"% doubled", k:"hit", f:x=>`<td style="color:#ede6d8">${fmt(x.hit,1)}%</td>`},
+  {h:"× base rate", k:"lift", f:x=>{ const v=x.lift||0, c=v>=1.5?'#5bbf7a':v>=1.1?'#8fcf8a':v<=0.8?'#d4706a':'#a59c8f';
+     return `<td><span class="liftbar"><span style="color:${c}">${fmt(v,2)}×</span><i style="width:${Math.min(v/maxLift,1)*110}px;background:${c}"></i></span></td>`; }},
+  {h:"Share of winners", k:"share", tip:"How many of the winners had this trait", f:x=>`<td>${fmt(x.share,0)}%</td>`},
+], D.lift, {sort:"lift", rowClass:x=>x.combo?'combo':''});
+
+table($("#cmp-tbl"), [
+  {h:"", l:1, f:x=>`<td class="l" style="font-family:Barlow,sans-serif;font-size:12px">${esc(x.label)}</td>`},
+  {h:"Winners", f:x=>`<td style="color:#ede6d8">${fmt(x.win_med,x.d)} <span style="color:#45403a">(${fmt(x.win_q1,x.d)}–${fmt(x.win_q3,x.d)})</span></td>`},
+  {h:"All breakouts", f:x=>`<td>${fmt(x.all_med,x.d)}</td>`},
+], D.compare, {});
+
+const bars = (el, rows, key) => { const m = Math.max(1, ...rows.map(r=>r.n));
+  el.innerHTML = rows.map(r=>`<div class="row"><span>${esc(r[key])}</span><i style="width:${r.n/m*100}%"></i><span>${r.n}</span></div>`).join(""); };
+bars($("#by-year"), D.by_year, "year"); bars($("#by-sector"), D.by_sector, "sector");
+
+/* ── the book ── */
+const B = D.book;
+[...new Set(B.map(b=>b.year))].sort((a,b)=>b-a).forEach(y => $("#f-year").insertAdjacentHTML("beforeend", `<option>${y}</option>`));
+[...new Set(B.map(b=>b.sector))].filter(Boolean).sort().forEach(s => $("#f-sector").insertAdjacentHTML("beforeend", `<option>${esc(s)}</option>`));
+let limit = 150;
+const bcols = [
+  {h:"Ticker", k:"symbol", l:1, f:x=>`<td class="sym l"><span class="open" data-id="${x.id}">${esc(x.symbol)}</span></td>`},
+  {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}</td>`},
+  {h:"Sector", k:"sector", l:1, f:x=>`<td class="l" style="font-family:Barlow,sans-serif;color:#6b645a">${esc(x.theme || x.sector)}</td>`},
+  {h:"Breakout", k:"date", f:x=>`<td style="color:#ede6d8">${x.date}</td>`},
+  {h:"Run", k:"run_gain", tip:"Breakout close to peak", f:x=>`<td class="up" style="font-weight:500">+${x.run_gain}%</td>`},
+  {h:"Days", k:"run_days", f:x=>`<td>${x.run_days}</td>`},
+  {h:"Heat", k:"heat", tip:"Deepest dip below the breakout price before the peak", f:x=>`<td class="${x.heat<-15?'dn':''}">${fmt(x.heat,0)}%</td>`},
+  {h:"RS", k:"rs", f:x=>`<td><span class="rating" style="background:${ratingColor(x.rs)}">${x.rs ?? '–'}</span></td>`},
+  {h:"Base", k:"base_depth", tip:"Base depth % (high to low of the 63 sessions before)", f:x=>`<td>${fmt(x.base_depth,0)}%</td>`},
+  {h:"Len", k:"base_len", tip:"Sessions since the base high", f:x=>`<td>${x.base_len}</td>`},
+  {h:"Tight", k:"tight", tip:"10-day range in ADRs before breakout", f:x=>`<td style="color:${x.tight<=2.5?'#e8c070':''}">${fmt(x.tight,1)}</td>`},
+  {h:"Vol dry", k:"vol_dry", f:x=>`<td style="color:${x.vol_dry<0.8?'#8fcf8a':''}">${fmt(x.vol_dry,2)}</td>`},
+  {h:"BO vol", k:"bo_vol", tip:"Breakout-day volume ÷ 50-day average", f:x=>`<td style="color:${x.bo_vol>=2?'#e8c070':''}">${fmt(x.bo_vol,1)}×</td>`},
+  {h:"Gap", k:"gap", f:x=>`<td class="${x.gap>=5?'up':''}">${fmt(x.gap,1,true)}%</td>`},
+  {h:"ADR", k:"adr", f:x=>`<td>${fmt(x.adr,1)}%</td>`},
+  {h:"Off hi", k:"off_high", tip:"% below the 52-week high the day before", f:x=>`<td>${fmt(x.off_high,0)}%</td>`},
+  {h:"Price", k:"price", f:x=>`<td>${fmt(x.price,2)}</td>`},
+  {h:"Flags", l:1, f:x=>`<td class="l">${x.ep?'<span class="flag ep">EP</span>':''}${x.tt?'<span class="flag tt">TT</span>':''}${x.rsl_nh?'<span class="flag rs">RS↑</span>':''}${x.rs_lead?'<span class="flag lead">LEAD</span>':''}${x.running?'<span class="flag run">RUNNING</span>':''}</td>`},
+];
+function drawBook(){
+  const q = $("#q").value.trim().toLowerCase(), y = $("#f-year").value, s = $("#f-sector").value;
+  const rows = B.filter(b => (!q || (b.symbol+" "+b.name+" "+b.industry+" "+b.theme).toLowerCase().includes(q)) &&
+    (!y || b.year == y) && (!s || b.sector === s) && (!$("#f-tt").checked || b.tt) && (!$("#f-rs").checked || (b.rs||0) >= 80) &&
+    (!$("#f-ep").checked || b.ep) && (!$("#f-mkt").checked || b.mkt_up) && (!$("#f-todo").checked || !studied(b.id)));
+  table($("#book-tbl"), bcols, rows, {sort: drawBook._sort || "run_gain", limit: () => limit,
+    rowClass: x => (studied(x.id)?'studied ':'') + (noteOf(x.id)?'noted':''),
+    after: (all, shown) => { $("#count").textContent = `${all.length.toLocaleString()} of ${B.length.toLocaleString()} winners`;
+      $("#more").style.display = all.length > shown.length ? "block" : "none";
+      $("#more").textContent = `Show more (${(all.length - shown.length).toLocaleString()} left)`; }});
+}
+["#q","#f-year","#f-sector","#f-tt","#f-rs","#f-ep","#f-mkt","#f-todo"].forEach(s => $(s).addEventListener(s==="#q"?"input":"change", () => { limit = 150; drawBook(); }));
+$("#more").onclick = () => { limit += 150; $("#book-tbl")._redraw(); };
+$("#export").onclick = () => {
+  const out = B.filter(b => noteOf(b.id) || studied(b.id)).map(b => ({ticker:b.symbol, breakout:b.date, run:b.run_gain, studied:studied(b.id), note:noteOf(b.id)}));
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], {type:"application/json"}));
+  a.download = "model_book_notes.json"; a.click();
+};
+drawBook();
+
+$("#method").innerHTML = `<p><b>Breakout:</b> a close above the highest close of the prior 63 sessions, after at least 15 sessions below that high (out of a base of 3+ weeks). Price ≥ $${D.rules.min_price} and 50-day $ volume ≥ $${D.rules.min_dvol}M the day before.</p>
+<p><b>Winner:</b> the close reached +${D.rules.min_gain}% within ${D.rules.horizon} sessions. Only the first breakout of each run is listed. The run is then followed until the stock closes 25% below its high (or 18 months), and the high is the peak.</p>
+<p><b>Traits</b> are measured on the day before the breakout (RS rating is IBD-style: 40% 3-month + 20% each 6/9/12-month return, ranked across all stocks), except breakout volume and gap. <b>RS↑</b> = RS line vs SPY at a 52-week high on the breakout day; <b>LEAD</b> = RS line made a new high in the 10 days before while price was still below its high; <b>EP</b> = gap ≥ 10% on ≥ 3× volume.</p>
+<p><b>Caveats:</b> Yahoo has no delisted stocks, so failed breakouts are under-counted and hit rates are flattering — trust the comparisons (× base rate) more than the absolute %. Breakouts in the last ${D.rules.horizon} sessions are excluded from the base rates because their outcome isn't known yet.</p>`;
+$("#footer").textContent = `Model book · built ${D.generated} · data: Yahoo Finance · not investment advice`;
+
+/* ── study drawer ── */
+let cur = -1, rowsNow = [], chart = null;
+function sma(a, n){ const o=[]; let s=0; for (let i=0;i<a.length;i++){ s+=a[i]; if (i>=n) s-=a[i-n]; o.push(i>=n-1 ? s/n : null); } return o; }
+async function openStudy(id){
+  rowsNow = $("#book-tbl")._rows || B; cur = rowsNow.findIndex(r => r.id === id); show();
+}
+async function show(){
+  const x = rowsNow[cur]; if (!x) return;
+  $("#d-sym").textContent = x.symbol; $("#d-name").textContent = `${x.name || ""} · breakout ${x.date}`;
+  $("#d-tv").href = tvUrl(x.symbol, x.exchange);
+  const st = [["Run", "+"+x.run_gain+"% in "+x.run_days+"d"], ["Heat", fmt(x.heat,1)+"%"], ["RS", x.rs], ["Base", fmt(x.base_depth,0)+"% / "+x.base_len+"d"],
+    ["Tight", fmt(x.tight,1)], ["Vol dry", fmt(x.vol_dry,2)], ["BO vol", fmt(x.bo_vol,1)+"×"], ["Gap", fmt(x.gap,1,true)+"%"], ["ADR", fmt(x.adr,1)+"%"],
+    ["Market", x.mkt_up ? "uptrend" : "not in uptrend"], ["Industry", x.industry || x.sector]];
+  $("#d-stats").innerHTML = st.map(s=>`<span>${s[0]} <b>${esc(s[1])}</b></span>`).join("") + `<span style="margin-left:auto">${cur+1} / ${rowsNow.length}</span>`;
+  $("#d-note").value = noteOf(x.id); $("#d-studied").checked = studied(x.id); $("#d-saved").textContent = "";
+  document.querySelectorAll("#book-tbl tr.sel").forEach(r=>r.classList.remove("sel"));
+  const tr = $(`#book-tbl [data-id="${CSS.escape(x.id)}"]`)?.closest("tr"); if (tr) { tr.classList.add("sel"); tr.scrollIntoView({block:"nearest"}); }
+  $("#drawer").classList.add("open"); $("#drawer").setAttribute("aria-hidden","false");
+  const box = $("#chart"); box.querySelectorAll(".tv-lightweight-charts, .msg").forEach(n=>n.remove());
+  if (chart) { chart.remove(); chart = null; }
+  if (!x.chart) { box.insertAdjacentHTML("beforeend", `<p class="msg" style="padding:40px;color:var(--t3)">No stored chart for this one — use TradingView ↗ and go to ${x.date}.</p>`); return; }
+  let d; try { d = await (await fetch(`c/${x.id}.json`)).json(); } catch(e) { box.insertAdjacentHTML("beforeend", `<p class="msg" style="padding:40px;color:var(--t3)">Chart file couldn't load.</p>`); return; }
+  if (rowsNow[cur] !== x || typeof LightweightCharts === "undefined") return;
+  const day = t => new Date(t*86400000).toISOString().slice(0,10);
+  d.t = d.t.map(day); d.m = {base:day(d.m.base), bo:day(d.m.bo), peak:day(d.m.peak)};
+  chart = LightweightCharts.createChart(box, {autoSize:true, layout:{background:{color:"#121211"}, textColor:"#6b645a", fontFamily:"DM Mono, monospace", fontSize:10},
+    grid:{vertLines:{color:"rgba(255,255,255,0.03)"}, horzLines:{color:"rgba(255,255,255,0.03)"}},
+    rightPriceScale:{borderColor:"#232320", mode:1}, timeScale:{borderColor:"#232320"}, crosshair:{mode:0}});
+  const bars = d.t.map((t,i)=>({time:t, open:d.o[i], high:d.h[i], low:d.l[i], close:d.c[i]})).filter(b=>b.close!=null);
+  const cs = chart.addCandlestickSeries({upColor:"#5bbf7a", downColor:"#d4706a", wickUpColor:"#5bbf7a", wickDownColor:"#d4706a", borderVisible:false});
+  cs.setData(bars);
+  const line = (n, col) => { const v = sma(d.c, n); chart.addLineSeries({color:col, lineWidth:1, priceLineVisible:false, lastValueVisible:false})
+    .setData(d.t.map((t,i)=>v[i]==null?null:{time:t, value:v[i]}).filter(Boolean)); };
+  line(10, "#e8c070"); line(21, "#7c9cff"); line(50, "#d4706a");
+  const vs = chart.addHistogramSeries({priceScaleId:"vol", priceFormat:{type:"volume"}, lastValueVisible:false, priceLineVisible:false});
+  chart.priceScale("vol").applyOptions({scaleMargins:{top:0.82, bottom:0}});
+  vs.setData(d.t.map((t,i)=>({time:t, value:d.v[i]*100, color: d.c[i] >= (d.c[i-1]??d.c[i]) ? "rgba(91,191,122,.35)" : "rgba(212,112,106,.35)"})));
+  const rsS = chart.addLineSeries({priceScaleId:"rs", color:"#5fc9a8", lineWidth:1, lineStyle:0, priceLineVisible:false, lastValueVisible:false});
+  chart.priceScale("rs").applyOptions({scaleMargins:{top:0.62, bottom:0.2}, visible:false});
+  rsS.setData(d.t.map((t,i)=>d.rs[i]==null?null:{time:t, value:d.rs[i]}).filter(Boolean));
+  cs.setMarkers([{time:d.m.base, position:"aboveBar", color:"#a59c8f", shape:"arrowDown", text:"Base high"},
+                 {time:d.m.bo, position:"belowBar", color:"#e8c070", shape:"arrowUp", text:"Breakout"},
+                 {time:d.m.peak, position:"aboveBar", color:"#5bbf7a", shape:"circle", text:"Peak +"+x.run_gain+"%"}].sort((a,b)=>a.time.localeCompare(b.time)));
+  cs.createPriceLine({price:x.price, color:"rgba(232,192,112,.45)", lineWidth:1, lineStyle:2, axisLabelVisible:true, title:"BO"});
+  chart.timeScale().fitContent();
+}
+function closeStudy(){ $("#drawer").classList.remove("open"); $("#drawer").setAttribute("aria-hidden","true"); cur = -1;
+  document.querySelectorAll("#book-tbl tr.sel").forEach(r=>r.classList.remove("sel")); }
+function step(dv){ if (cur < 0) return; cur = Math.max(0, Math.min(rowsNow.length-1, cur+dv)); show(); }
+let saveT;
+$("#d-note").addEventListener("input", e => { const x = rowsNow[cur]; if (!x) return; clearTimeout(saveT);
+  saveT = setTimeout(() => { store.set("mb-note:"+x.id, e.target.value.trim()); $("#d-saved").textContent = "saved";
+    const tr = $(`#book-tbl [data-id="${CSS.escape(x.id)}"]`)?.closest("tr"); if (tr) tr.classList.toggle("noted", !!e.target.value.trim()); }, 400); });
+$("#d-studied").onchange = e => { const x = rowsNow[cur]; if (!x) return; store.set("mb-done:"+x.id, e.target.checked ? "1" : null);
+  const tr = $(`#book-tbl [data-id="${CSS.escape(x.id)}"]`)?.closest("tr"); if (tr) tr.classList.toggle("studied", e.target.checked); };
+$("#d-prev").onclick = () => step(-1); $("#d-next").onclick = () => step(1); $("#d-close").onclick = closeStudy;
+document.addEventListener("click", e => { const o = e.target.closest(".open[data-id]"); if (o) openStudy(o.dataset.id); });
+document.addEventListener("keydown", e => { if (!$("#drawer").classList.contains("open") || e.target.matches("input,select,textarea")) return;
+  if (e.key==="ArrowDown"||e.key==="j") { e.preventDefault(); step(1); } else if (e.key==="ArrowUp"||e.key==="k") { e.preventDefault(); step(-1); }
+  else if (e.key==="Escape") closeStudy(); });
+</script>
+</body>
+</html>
