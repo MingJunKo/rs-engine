@@ -9,12 +9,12 @@ ROP,Roper Technologies Inc.,Water,98,1,75.0,22.83,479.54,8.58,35.34,22.4,0.0,2.6
 LLY,Eli Lilly and Company,Health Care,98,21,70.0,21.06,1410.99,10.31,23.46,26.65,-0.46,3.05,3352499583.42,1.54,4.73,-2.67,4.46,1.19,False,,True,True,True,False,Biotechnology: Pharmaceutical Preparations
 EXEL,Exelixis Inc.,Biotech,98,9,65.0,18.78,70.13,7.71,20.11,25.23,0.0,2.87,163415207.52,2.51,5.32,-2.73,4.59,1.11,False,,True,True,True,False,Biotechnology: Biological Products (No Diagnostic Substances)
 GILD,Gilead Sciences Inc.,Health Care,98,11,60.0,18.58,170.33,7.34,17.68,26.65,-0.21,2.62,1007344808.18,1.5,4.18,-3.03,5.36,1.16,False,,False,True,True,False,Biotechnology: Biological Products (No Diagnostic Substances)
-IDXX,IDEXX Laboratories Inc.,Health Care,98,20,55.0,18.09,671.64,17.79,29.56,14.21,-12.4,2.8,355542372.39,3.87,5.91,-0.23,7.05,1.24,False,02 Nov,False,True,True,False,Biotechnology: In Vitro & In Vivo Diagnostic Substances
+IDXX,IDEXX Laboratories Inc.,Health Care,98,20,55.0,18.09,671.64,17.79,29.56,14.21,-12.4,2.8,355542372.39,3.87,5.91,-0.23,7.05,1.24,False,01 Feb,False,True,True,False,Biotechnology: In Vitro & In Vivo Diagnostic Substances
 CDNA,CareDx Inc.,Biotech,97,11,50.0,52.56,85.88,24.28,27.89,82.37,-1.75,6.85,103448728.16,1.74,5.05,-5.49,4.24,1.1,False,,True,True,True,False,Medical Specialities
 BSY,Bentley Systems Incorporated,Water,97,5,65.0,18.87,42.4,6.43,31.55,17.77,-15.95,3.36,91625404.6,1.53,5.55,-2.39,4.77,1.08,False,05 Nov,False,False,True,False,Computer Software: Prepackaged Software
 GEHC,GE HealthCare Technologies Inc.,Health Care,97,12,65.0,14.53,79.55,10.52,23.81,13.29,-9.58,2.65,277372120.97,1.35,5.07,-0.98,5.53,1.16,False,,False,True,True,False,Medical Electronics
 LH,Labcorp Holdings Inc.,Health Care,97,18,65.0,11.53,355.59,7.79,15.27,14.09,-3.41,2.75,253810534.16,1.44,3.16,-4.15,5.75,1.19,False,,True,True,False,False,Medical Specialities
-PNR,Pentair plc. Ordinary Share,Water,95,53,50.0,15.71,70.56,27.78,33.71,3.54,-34.11,3.02,212867472.42,1.62,6.63,-0.44,8.8,1.25,False,,False,False,True,False,Industrial Machinery/Components
+PNR,Pentair plc. Ordinary Share,Water,95,52,50.0,15.71,70.56,27.78,33.71,3.54,-34.11,3.02,212867472.42,1.62,6.63,-0.44,8.8,1.25,False,,False,False,True,False,Industrial Machinery/Components
 AJG,Arthur J. Gallagher & Co.,Insurance,95,10,60.0,13.19,278.89,4.54,23.34,12.73,0.0,2.61,424471028.13,1.85,4.1,-0.94,3.54,1.35,False,28 Jan,False,True,True,False,Specialty Insurers
 HWKN,Hawkins Inc.,Water,95,33,60.0,12.31,152.11,12.31,15.75,13.96,-11.16,2.96,19905443.37,0.8,4.55,-3.86,6.67,1.05,False,27 Jan,False,True,True,False,Specialty Chemicals
 AXGN,Axogen Inc.,Medical Devices,94,53,50.0,18.54,49.85,31.12,33.32,8.46,-3.63,4.4,79604586.12,1.28,3.02,-2.56,7.12,1.57,False,,True,True,False,False,Biotechnology: Electromedical & Electrotherapeutic Apparatus
@@ -28,7 +28,7 @@ PPG,PPG Industries Inc.,Materials,93,42,65.0,9.93,124.89,13.64,18.77,6.68,-3.3,2
 STZ,Constellation Brands Inc.,Consumer Staples,92,7,70.0,11.57,140.67,4.55,25.62,7.89,-13.69,2.67,349315888.01,1.18,4.46,-0.45,3.52,0.94,False,07 Jan,False,True,True,False,Beverages (Production/Distribution)
 DOW,Dow Inc.,Materials,91,-6,60.0,12.83,34.18,0.56,22.2,14.0,-16.58,3.06,271369034.04,1.01,4.27,-1.92,4.9,1.11,False,28 Jan,False,False,True,False,Major Chemicals
 DLTR,Dollar Tree Inc.,Consumer Staples,91,23,65.0,10.88,138.6,10.95,23.57,6.04,-1.85,3.3,240170064.74,1.05,3.88,-0.57,3.69,0.8,False,02 Dec,False,True,False,False,Department/Specialty Retail Stores
-RLI,RLI Corp.,Insurance,91,8,65.0,10.12,67.24,3.61,20.2,9.07,0.0,2.73,59716073.04,0.94,3.76,-0.61,3.8,1.22,False,20 Jan,True,True,False,False,Property-Casualty Insurers
+RLI,RLI Corp.,Insurance,91,7,65.0,10.12,67.24,3.61,20.2,9.07,0.0,2.73,59716073.04,0.94,3.76,-0.61,3.8,1.22,False,20 Jan,True,True,False,False,Property-Casualty Insurers
 KYMR,Kymera Therapeutics Inc.,Biotech,90,23,55.0,17.26,127.51,11.03,18.74,22.15,0.0,5.29,102167088.46,1.65,2.1,-1.41,3.09,1.14,False,,True,True,False,False,Biotechnology: Biological Products (No Diagnostic Substances)
 VRTX,Vertex Pharmaceuticals Incorporated,Health Care,90,32,60.0,10.14,553.15,6.89,9.59,15.55,-1.03,2.76,787109166.21,2.78,1.89,-2.73,4.18,1.37,False,02 Nov,True,True,False,False,Biotechnology: Pharmaceutical Preparations
 STN,Stantec Inc,Water,90,26,50.0,6.37,76.28,7.42,13.09,5.41,-30.71,2.52,24129635.13,1.11,3.32,-1.04,4.55,1.06,False,12 Nov,False,False,False,False,Military/Government/Technical
@@ -53,7 +53,7 @@ VSTM,Verastem Inc.,Biotech,83,-8,45.0,38.48,9.59,-4.1,24.55,65.06,-9.87,9.3,4993
 TEM,Tempus AI Inc.,Biotech,83,22,55.0,34.75,78.48,16.86,2.41,66.8,-12.65,8.97,491356792.73,2.44,1.27,-10.81,3.11,0.96,False,02 Nov,True,True,False,False,Computer Software: Programming Data Processing
 PRGO,Perrigo Company plc,Pharma,83,7,45.0,26.12,15.75,-0.44,10.45,49.11,-18.7,4.09,38144813.95,0.76,1.51,-6.19,1.96,0.78,False,04 Nov,True,False,False,False,Biotechnology: Pharmaceutical Preparations
 ARQT,Arcutis Biotherapeutics Inc.,Biotech,83,5,55.0,16.25,31.26,-1.73,24.24,20.09,-4.75,4.94,68073570.99,0.57,3.46,-6.13,1.55,0.78,False,04 Nov,True,True,False,False,Biotechnology: Pharmaceutical Preparations
-EL,Estee Lauder Companies Inc. (The),Consumer Staples,83,-9,50.0,12.72,104.77,-3.72,13.92,20.88,-11.49,3.65,364113182.42,2.63,1.11,-7.69,2.9,1.28,False,02 Nov,False,True,False,False,Package Goods/Cosmetics
+EL,Estee Lauder Companies Inc. (The),Consumer Staples,83,-9,50.0,12.72,104.77,-3.72,13.92,20.88,-11.49,3.65,364113182.42,2.63,1.11,-7.69,2.9,1.28,False,03 Feb,False,True,False,False,Package Goods/Cosmetics
 MRK,Merck & Company Inc.,Health Care,83,29,50.0,8.08,148.36,5.51,2.81,16.59,-4.61,2.91,1492153014.49,0.89,0.41,-3.67,3.43,1.11,False,,True,True,False,False,Biotechnology: Pharmaceutical Preparations
 PLMR,Palomar Holdings Inc. Common stock,Insurance,83,7,50.0,6.97,145.02,2.71,14.65,6.92,0.0,3.06,32557203.38,1.01,2.69,-0.39,2.8,1.14,False,04 Nov,True,True,False,False,Property-Casualty Insurers
 ATRC,AtriCure Inc.,Medical Devices,82,-7,50.0,27.46,59.88,-1.96,8.6,53.54,-4.16,3.74,40951265.43,1.03,1.85,-4.95,3.28,0.64,False,03 Nov,True,True,False,False,Medical/Dental Instruments
