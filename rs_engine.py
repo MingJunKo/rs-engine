@@ -606,7 +606,8 @@ def run(demo: bool, notify: bool):
         leaders["earnings"] = [(asof + pd.Timedelta(days=int(d))).strftime("%d %b") for d in leaders.er_days]
     leaders["er_soon"] = leaders.er_days <= 7
 
-    funnel_now["setups"] = int((leaders.setup & ~leaders.er_soon).sum())
+    funnel_now["setups"] = int(leaders.setup.sum())            # same count as the table's "Setups only" filter
+    setups_er = int((leaders.setup & leaders.er_soon).sum())
     HIST.mkdir(parents=True, exist_ok=True)
     fpath_ = HIST / "funnel.csv"
     frow = pd.DataFrame([{"date": asof.strftime("%Y-%m-%d"), **funnel_now}])
@@ -618,7 +619,8 @@ def run(demo: bool, notify: bool):
     for k in ("universe", "liquid", "above50", "rs", "adr"):
         funnel_hist[k][-1] = funnel_now[k]
     funnel = [{"key": k, "label": lbl, "n": funnel_now[k], "hist": funnel_hist[k],
-               "chg_1w": (funnel_now[k] - funnel_hist[k][-6]) if len(funnel_hist[k]) >= 6 else None}
+               "chg_1w": (funnel_now[k] - funnel_hist[k][-6]) if len(funnel_hist[k]) >= 6 else None,
+               "note": (f"{setups_er} report ≤ 7d" if k == "setups" and setups_er else None)}
               for k, lbl in (("universe", "Universe"), ("liquid", "Liquid"), ("above50", "Above 50-day"),
                              ("rs", f"RS ≥ {SETTINGS['min_rs_rating']}"), ("adr", f"ADR ≥ {SETTINGS.get('min_adr', 2.5)}%"),
                              ("theme", "In a top theme"), ("setups", "Setups"))]
