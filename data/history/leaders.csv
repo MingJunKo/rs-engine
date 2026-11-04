@@ -119,3 +119,63 @@ CBLL,Medical Devices,86,25.55,26.96,2026-11-02,1.58,-4.36,1.5,5.43,True,False,Tr
 CRL,Health Care,86,25.32,338.54,2026-11-02,2.32,-10.82,4.64,4.81,False,False,True,True,False,Defensive Rotation,219.98
 SLDE,Insurance,86,19.86,27.53,2026-11-02,2.65,-5.54,2.59,3.39,False,False,False,True,False,Defensive Rotation,219.98
 ZYME,Health Care,86,17.25,28.99,2026-11-02,1.52,-1.73,3.25,4.02,False,False,True,True,False,Defensive Rotation,219.98
+GMAB,Biotech,99,62.47,55.52,2026-11-03,7.34,-7.42,7.35,5.13,False,True,True,True,False,Defensive Rotation,219.26
+KIDS,Medical Devices,99,36.65,31.41,2026-11-03,5.67,-3.71,5.93,4.97,False,True,False,True,False,Defensive Rotation,219.26
+GKOS,Medical Devices,99,35.64,233.04,2026-11-03,5.11,-6.32,5.82,5.59,False,True,False,True,False,Defensive Rotation,219.26
+BHC,Health Care,99,30.88,8.14,2026-11-03,4.33,-9.96,6.37,5.47,False,True,False,False,False,Defensive Rotation,219.26
+REGN,Health Care,99,26.63,973.36,2026-11-03,6.22,-0.22,5.98,3.07,False,True,False,False,False,Defensive Rotation,219.26
+NUWE,Health Care,98,387.43,5.91,2026-11-03,6.89,-17.34,5.31,21.75,False,True,False,False,False,Defensive Rotation,219.26
+REPL,Biotech,98,64.43,20.65,2026-11-03,5.56,-2.87,5.74,8.4,False,True,False,True,False,Defensive Rotation,219.26
+TDOC,Health Care,98,37.0,8.89,2026-11-03,5.62,-1.82,5.86,5.6,False,True,False,False,False,Defensive Rotation,219.26
+TBBB,Consumer Staples,98,30.87,62.97,2026-11-03,5.01,-0.24,4.0,3.05,False,True,False,True,False,Defensive Rotation,219.26
+EXEL,Biotech,98,21.82,72.31,2026-11-03,5.96,-1.54,4.49,2.93,False,True,False,True,False,Defensive Rotation,219.26
+ROP,Water,98,20.58,473.58,2026-11-03,6.12,-2.2,7.17,2.69,False,True,False,False,False,Defensive Rotation,219.26
+IDXX,Health Care,98,18.5,672.04,2026-11-03,5.77,-1.39,7.45,2.81,False,True,False,False,False,Defensive Rotation,219.26
+LLY,Health Care,98,18.42,1409.38,2026-11-03,4.63,-2.78,4.47,3.05,False,True,False,True,False,Defensive Rotation,219.26
+CDNA,Biotech,97,58.82,88.47,2026-11-03,5.44,-2.64,4.22,6.43,False,True,False,True,False,Defensive Rotation,219.26
+KMPR,Insurance,97,19.87,33.77,2026-11-03,4.53,-4.6,4.97,4.01,False,True,True,False,False,Defensive Rotation,219.26
+GILD,Health Care,97,18.68,167.47,2026-11-03,3.46,-4.66,5.42,2.64,False,False,False,False,False,Defensive Rotation,219.26
+SAM,Consumer Staples,97,17.85,215.46,2026-11-03,4.96,-2.95,5.23,3.62,False,True,False,False,False,Defensive Rotation,219.26
+GEHC,Health Care,97,15.88,80.66,2026-11-03,5.58,-0.19,5.74,2.63,False,True,False,False,False,Defensive Rotation,219.26
+LH,Health Care,97,11.1,353.92,2026-11-03,3.01,-4.6,5.81,2.73,False,False,False,True,False,Defensive Rotation,219.26
+SLN,Health Care,96,69.71,19.78,2026-11-03,9.08,-0.43,0.42,3.2,False,True,True,True,False,Defensive Rotation,219.26
+SIBN,Medical Devices,96,22.96,23.77,2026-11-03,3.66,-0.67,4.02,5.09,False,False,False,True,False,Defensive Rotation,219.26
+TRUP,Health Care,96,22.56,31.12,2026-11-03,4.0,-0.22,2.66,3.68,False,False,True,False,False,Defensive Rotation,219.26
+BLCO,Health Care,96,16.09,20.03,2026-11-03,3.8,-6.23,6.35,3.68,False,False,False,False,False,Defensive Rotation,219.26
+ICLR,Health Care,95,19.83,203.77,2026-11-03,3.3,-6.97,4.9,4.75,False,False,False,False,False,Defensive Rotation,219.26
+AXGN,Medical Devices,95,19.55,49.5,2026-11-03,2.93,-3.24,7.1,4.31,False,False,False,True,False,Defensive Rotation,219.26
+BSY,Water,95,15.53,42.13,2026-11-03,5.22,-3.02,4.12,3.29,False,True,True,False,False,Defensive Rotation,219.26
+HALO,Biotech,94,31.96,128.62,2026-11-03,4.25,-4.01,3.37,2.86,False,True,True,True,False,Defensive Rotation,219.26
+HAE,Medical Devices,94,25.64,120.28,2026-11-03,3.11,-2.82,1.84,2.9,True,False,True,True,False,Defensive Rotation,219.26
+PNR,Water,94,12.47,69.73,2026-11-03,6.23,-1.61,8.81,3.05,False,True,False,False,False,Defensive Rotation,219.26
+HCSG,Health Care,94,12.4,25.57,2026-11-03,4.06,-2.7,6.47,3.61,False,True,False,True,False,Defensive Rotation,219.26
+AJG,Insurance,94,11.01,273.45,2026-11-03,3.38,-2.87,3.61,2.61,False,False,False,False,False,Defensive Rotation,219.26
+FIZZ,Consumer Staples,93,12.32,36.1,2026-11-03,3.59,-2.98,3.18,2.89,False,False,False,False,False,Defensive Rotation,219.26
+J,Water,93,10.34,159.85,2026-11-03,4.1,-1.08,5.29,2.66,False,True,False,False,False,Defensive Rotation,219.26
+STN,Water,93,8.56,77.49,2026-11-03,3.87,-0.3,4.47,2.59,False,False,False,False,False,Defensive Rotation,219.26
+KR,Consumer Staples,92,12.79,66.81,2026-11-03,3.27,-2.78,3.38,2.69,False,False,False,False,False,Defensive Rotation,219.26
+ERIE,Insurance,92,11.58,269.67,2026-11-03,3.38,-2.84,4.07,3.22,False,False,False,False,False,Defensive Rotation,219.26
+STZ,Consumer Staples,92,10.73,138.13,2026-11-03,3.67,-2.24,3.65,2.63,False,False,False,False,False,Defensive Rotation,219.26
+VRDN,Biotech,91,20.12,25.15,2026-11-03,3.24,-4.04,3.47,4.92,False,False,True,False,False,Defensive Rotation,219.26
+ZYME,Health Care,91,18.46,30.13,2026-11-03,2.47,-0.89,2.93,3.97,False,False,True,True,False,Defensive Rotation,219.26
+RLI,Insurance,91,9.19,66.84,2026-11-03,3.58,-1.46,2.81,2.73,False,False,False,True,False,Defensive Rotation,219.26
+NBIX,Biotech,91,6.43,164.85,2026-11-03,3.66,-2.76,6.95,2.51,False,False,False,False,False,Defensive Rotation,219.26
+MYGN,Biotech,90,54.88,6.04,2026-11-03,4.54,-10.78,3.47,6.59,False,True,True,False,False,Defensive Rotation,219.26
+CBLL,Medical Devices,90,31.11,28.27,2026-11-03,2.44,-2.15,1.81,5.62,True,False,True,True,False,Defensive Rotation,219.26
+AMPH,Pharma,90,18.77,27.12,2026-11-03,2.53,-2.45,3.69,3.18,False,False,True,False,False,Defensive Rotation,219.26
+SMPL,Consumer Staples,90,17.31,12.47,2026-11-03,3.25,-1.97,4.9,5.43,False,False,False,False,False,Defensive Rotation,219.26
+KNSA,Health Care,90,16.67,93.29,2026-11-03,2.95,-5.27,5.88,5.07,False,False,False,True,False,Defensive Rotation,219.26
+POOL,Medical Devices,90,10.4,207.25,2026-11-03,4.65,-4.49,6.21,3.62,False,True,False,False,False,Defensive Rotation,219.26
+XNCR,Biotech,89,32.83,30.64,2026-11-03,2.75,-8.81,4.8,6.24,False,False,True,True,False,Defensive Rotation,219.26
+TGTX,Biotech,89,14.93,60.75,2026-11-03,2.14,-4.48,4.55,4.26,False,False,True,True,False,Defensive Rotation,219.26
+PODD,Health Care,89,12.02,154.86,2026-11-03,2.96,-1.35,3.49,2.99,False,False,True,False,False,Defensive Rotation,219.26
+HWKN,Water,89,10.44,152.85,2026-11-03,4.62,-3.39,6.56,3.0,False,True,False,False,False,Defensive Rotation,219.26
+TRMB,Water,89,9.08,65.61,2026-11-03,3.23,-2.47,3.22,2.73,False,False,True,False,False,Defensive Rotation,219.26
+UVE,Insurance,89,8.45,48.88,2026-11-03,2.77,-3.68,3.16,3.25,False,False,False,True,False,Defensive Rotation,219.26
+SLDE,Insurance,88,19.76,27.59,2026-11-03,2.65,-5.34,2.61,3.37,False,False,False,True,False,Defensive Rotation,219.26
+ARQT,Biotech,88,17.17,32.0,2026-11-03,3.96,-3.9,1.32,4.81,True,False,True,True,False,Defensive Rotation,219.26
+KYMR,Biotech,88,15.4,127.09,2026-11-03,1.98,-5.07,3.81,5.12,False,False,False,True,False,Defensive Rotation,219.26
+HLF,Health Care,88,11.79,14.38,2026-11-03,2.72,-4.52,3.74,4.15,False,False,False,False,False,Defensive Rotation,219.26
+DLTR,Consumer Staples,88,8.23,134.07,2026-11-03,2.76,-3.82,3.8,3.31,False,False,False,False,False,Defensive Rotation,219.26
+MRNA,Health Care,87,157.31,228.44,2026-11-03,2.23,-10.23,3.17,10.36,False,False,True,True,False,Defensive Rotation,219.26
+SSL,Energy,87,25.43,16.0,2026-11-03,2.37,-12.04,5.32,2.83,False,False,False,True,False,Defensive Rotation,219.26

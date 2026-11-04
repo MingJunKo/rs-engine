@@ -1,20 +1,24 @@
 {
- "date": "2026-11-02",
+ "date": "2026-11-03",
  "regime": "Defensive Rotation",
  "setups": [],
  "turners": [
+  "IYR",
   "IPAY",
   "MOO",
-  "PEJ",
-  "IYR",
-  "XHB"
+  "BETZ",
+  "ITB"
  ],
  "prev": {
-  "date": "2026-10-30",
+  "date": "2026-11-02",
   "regime": "Defensive Rotation",
-  "setups": [
-   "TMO",
-   "VEEV"
+  "setups": [],
+  "turners": [
+   "IPAY",
+   "MOO",
+   "PEJ",
+   "IYR",
+   "XHB"
   ]
  }
 }
