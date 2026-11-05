@@ -1,6 +1,16 @@
 [
  {
   "date": "2026-11-05",
+  "id": "R10",
+  "title": "10-year edge tests: can filters lift R per trade?",
+  "period": "May 2017 – Nov 2026",
+  "question": "Do breakout volume, an RS-line high, base depth, a stop cap or pyramiding move the system from +0.2R towards +0.4R?",
+  "setup": "Current rules (top theme, 10-day-low stop, ⅓ day 3 + 10-day trail), 0.5% risk, 8 positions; one change at a time.",
+  "result": "Current: $195k, +7.3%/yr, +0.20R. Add ½ on the first 10-day pullback: $197k, +7.5%/yr, +0.20R (neutral). Base depth ≥ 20%: +5.2%/yr, +0.15R. RS-line high: +3.8%/yr, +0.10R. Skip stops > 8%: +3.3%/yr, +0.09R, DD −27%. Breakout volume ≥ 1.5× (buy at the close): +1.5%/yr, +0.09R. Combinations were worse.",
+  "verdict": "No mechanical filter beyond the theme filter improved the edge; wide stops are part of why it works. The path from 0.2R to 0.3–0.4R is discretionary: chart selection, entry precision and discipline, which daily-bar backtests can't measure. Track it live."
+ },
+ {
+  "date": "2026-11-05",
   "id": "R9",
   "title": "10-year sizing test",
   "period": "May 2017 – Nov 2026",
