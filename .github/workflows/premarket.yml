@@ -4,8 +4,11 @@ on:
   schedule:
     # Two slots so one lands in the pre-market window in both EST and EDT; the script only acts
     # between 8:00 and 9:29 New York time, once per day.
-    - cron: "45 12 * * 1-5"
-    - cron: "45 13 * * 1-5"
+    # GitHub's scheduler can run late or skip a slot, so there are several; the script acts once per day,
+    # only between 8:00 and 9:29 New York (12–13 UTC in summer time, 13–14 UTC in winter)
+    - cron: "5,25,45 12 * * 1-5"
+    - cron: "5,25,45 13 * * 1-5"
+    - cron: "5 14 * * 1-5"
   workflow_dispatch:
     inputs:
       force:
