@@ -193,15 +193,15 @@ IDXX,Medical Devices,98,21.75,698.55,2026-11-04,6.42,-2.13,8.52,2.91,False,True,
 GEHC,Medical Devices,98,20.93,85.81,2026-11-04,6.79,-2.0,7.62,2.8,False,True,False,False,False,Defensive Rotation,223.33
 LIVN,Medical Devices,98,20.16,94.19,2026-11-04,4.32,-5.22,6.88,3.25,False,True,True,True,False,Defensive Rotation,223.33
 REGN,Health Care,98,18.1,930.67,2026-11-04,4.24,-6.16,6.38,3.29,False,True,False,False,False,Defensive Rotation,223.33
-MDT,Medical Devices,98,16.87,104.96,2026-11-04,5.06,-0.72,4.72,2.56,False,True,False,False,False,Defensive Rotation,223.33
-ZTS,Health Care,98,15.99,89.2,2026-11-04,6.12,-0.1,5.62,2.55,False,True,True,False,False,Defensive Rotation,223.33
 CDNA,Biotech,97,57.27,85.86,2026-11-04,4.65,-5.51,4.28,6.54,False,True,False,True,False,Defensive Rotation,223.33
 KIDS,Medical Devices,97,37.86,33.51,2026-11-04,6.48,-2.95,6.24,5.24,False,True,False,True,False,Defensive Rotation,223.33
-VRDN,Biotech,97,34.81,29.06,2026-11-04,5.48,-2.3,4.79,5.62,False,True,True,False,False,Defensive Rotation,223.33
 CON,Health Services,97,25.93,43.56,2026-11-04,5.93,-0.35,4.0,2.74,False,True,True,True,False,Defensive Rotation,223.33
 MD,Health Services,97,19.54,32.8,2026-11-04,5.1,-1.88,4.78,3.46,False,True,False,True,False,Defensive Rotation,223.33
+MDT,Medical Devices,97,16.87,104.96,2026-11-04,5.06,-0.72,4.72,2.56,False,True,False,False,False,Defensive Rotation,223.33
+ZTS,Health Care,97,15.99,89.2,2026-11-04,6.12,-0.1,5.62,2.55,False,True,True,False,False,Defensive Rotation,223.33
 XNCR,Biotech,96,51.93,35.03,2026-11-04,4.68,-0.06,4.51,6.72,False,True,True,True,False,Defensive Rotation,223.33
 REPL,Biotech,96,50.92,20.69,2026-11-04,5.61,-2.68,5.69,8.4,False,True,False,True,False,Defensive Rotation,223.33
+VRDN,Biotech,96,34.81,29.06,2026-11-04,5.48,-2.3,4.79,5.62,False,True,True,False,False,Defensive Rotation,223.33
 SPOT,Internet & E-commerce,96,25.05,627.66,2026-11-04,4.14,-0.76,4.25,3.59,False,True,False,False,False,Defensive Rotation,223.33
 ZBH,Medical Devices,96,13.45,110.15,2026-11-04,4.63,-2.13,5.92,2.79,False,True,True,True,False,Defensive Rotation,223.33
 CRVL,Health Services,95,22.86,87.38,2026-11-04,4.7,-0.5,3.32,2.97,False,True,False,True,False,Defensive Rotation,223.33
@@ -216,6 +216,7 @@ ISRG,Medical Devices,94,18.97,482.1,2026-11-04,5.01,-0.77,3.85,3.14,False,True,F
 BSY,Water,94,17.41,43.64,2026-11-04,6.09,-0.68,3.83,3.33,False,True,True,False,False,Defensive Rotation,223.33
 LLY,Health Care,94,15.46,1417.99,2026-11-04,4.74,-2.19,4.47,3.03,False,True,False,True,False,Defensive Rotation,223.33
 GMAB,Biotech,93,54.36,55.12,2026-11-04,6.99,-8.09,7.23,5.13,False,True,True,True,False,Defensive Rotation,223.33
+ATRC,Medical Devices,93,38.2,65.53,2026-11-04,3.48,-0.74,3.02,4.17,False,False,False,True,False,Defensive Rotation,223.33
 AMN,Health Services,93,34.82,47.74,2026-11-04,5.16,-3.79,2.93,4.71,False,True,True,True,False,Defensive Rotation,223.33
 ARQT,Biotech,93,26.98,34.05,2026-11-04,4.96,-2.16,2.25,5.08,False,True,True,True,False,Defensive Rotation,223.33
 CART,Internet & E-commerce,93,23.05,59.22,2026-11-04,4.62,-4.48,4.55,4.33,False,True,False,True,False,Defensive Rotation,223.33
@@ -223,19 +224,18 @@ HLF,Health Care,93,22.77,15.31,2026-11-04,3.94,-1.42,4.06,4.35,False,False,False
 BMI,Water,93,19.75,163.75,2026-11-04,3.9,-1.71,4.12,5.55,False,False,False,False,False,Defensive Rotation,223.33
 HCA,Health Care,93,16.96,510.7,2026-11-04,4.08,-0.82,4.51,3.26,False,True,False,False,False,Defensive Rotation,223.33
 POOL,Medical Devices,93,16.69,219.26,2026-11-04,5.79,-1.6,5.87,3.69,False,True,False,False,False,Defensive Rotation,223.33
+PODD,Medical Devices,93,15.22,165.02,2026-11-04,4.26,-0.27,4.07,3.42,False,True,True,False,False,Defensive Rotation,223.33
 DLTR,Consumer Staples,93,14.8,147.0,2026-11-04,4.86,-0.92,4.77,3.68,False,True,False,False,False,Defensive Rotation,223.33
 KR,Consumer Staples,93,14.32,68.97,2026-11-04,4.22,-0.68,2.6,2.72,False,True,False,False,False,Defensive Rotation,223.33
 STZ,Consumer Staples,93,13.15,145.49,2026-11-04,4.88,-2.64,5.65,2.6,False,True,False,False,False,Defensive Rotation,223.33
-ATRC,Medical Devices,92,38.2,65.53,2026-11-04,3.48,-0.74,3.02,4.17,False,False,False,True,False,Defensive Rotation,223.33
+MRNA,Health Care,92,202.7,258.38,2026-11-04,3.54,-0.13,2.9,10.57,False,False,True,True,False,Defensive Rotation,223.33
 AVAH,Health Services,92,30.03,14.23,2026-11-04,2.29,-1.11,3.88,3.37,False,False,False,True,False,Defensive Rotation,223.33
-PODD,Medical Devices,92,15.22,165.02,2026-11-04,4.26,-0.27,4.07,3.42,False,True,True,False,False,Defensive Rotation,223.33
 PNR,Water,92,12.92,72.03,2026-11-04,7.04,-0.85,9.33,3.06,False,True,False,False,False,Defensive Rotation,223.33
-MRNA,Health Care,91,202.7,258.38,2026-11-04,3.54,-0.13,2.9,10.57,False,False,True,True,False,Defensive Rotation,223.33
 HALO,Biotech,91,29.11,130.34,2026-11-04,4.56,-2.73,3.34,2.85,False,True,True,True,False,Defensive Rotation,223.33
+LH,Health Care,91,11.33,367.79,2026-11-04,4.19,-0.87,5.37,2.85,False,True,False,True,False,Defensive Rotation,223.33
 STE,Medical Devices,91,7.98,247.91,2026-11-04,4.51,-0.55,4.33,2.54,False,True,True,False,False,Defensive Rotation,223.33
 HNGE,Health Services,90,30.71,120.87,2026-11-04,4.29,-3.26,3.01,4.52,False,True,False,True,False,Defensive Rotation,223.33
 SMPL,Consumer Staples,90,21.08,13.29,2026-11-04,4.29,-1.77,5.52,5.63,False,True,False,False,False,Defensive Rotation,223.33
 LFST,Health Services,90,20.11,14.21,2026-11-04,3.55,-0.7,4.3,3.5,False,False,True,True,False,Defensive Rotation,223.33
 EL,Consumer Staples,90,19.63,112.04,2026-11-04,2.76,-1.31,2.58,3.86,False,False,False,False,False,Defensive Rotation,223.33
 AHCO,Health Services,90,19.49,7.31,2026-11-04,3.8,-2.38,4.68,5.37,False,False,False,False,False,Defensive Rotation,223.33
-LH,Health Care,90,11.33,367.79,2026-11-04,4.19,-0.87,5.37,2.85,False,True,False,True,False,Defensive Rotation,223.33
