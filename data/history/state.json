@@ -1,18 +1,13 @@
 {
  "date": "2026-11-04",
  "regime": "Defensive Rotation",
- "setups": [
-  "BIIB",
-  "CBLL",
-  "HNGE",
-  "KR"
- ],
+ "setups": [],
  "turners": [
-  "XLRE",
-  "KCE",
-  "BETZ",
+  "IYR",
+  "TAN",
   "MOO",
-  "IPAY"
+  "BETZ",
+  "KCE"
  ],
  "prev": {
   "date": "2026-11-03",
