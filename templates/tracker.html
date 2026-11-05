@@ -57,6 +57,10 @@
       <div class="tbl-wrap"><table class="t" id="by-rs"></table></div>
       <div class="tbl-wrap"><table class="t" id="by-tight"></table></div>
     </div>
+    <div class="two" style="margin-top:14px">
+      <div class="tbl-wrap"><table class="t" id="by-adr"></table></div>
+      <div class="tbl-wrap"><table class="t" id="by-mkt"></table></div>
+    </div>
     <div class="tbl-wrap" style="margin-top:14px"><table class="t" id="by-month"></table></div>
   </section>
 
@@ -110,6 +114,8 @@ function render(){
   $("#bt-note").innerHTML = `Same RS ≥ min, above the 50-day, ADR and liquidity rules as the leaders list, plus the SETUP shape (≤ 6% below the pivot, 10-day range ≤ 2.5 ADR, 0–4 ATR above the 50-day). One signal per stock per 20 sessions. The <b>20-day return</b> card compares a SETUP bought at the close with any stock passing the same RS filters, which tells you whether waiting for the shape adds edge.`;
   table($("#by-rs"), statCols("RS bucket"), B.by_rs);
   table($("#by-tight"), statCols("Tightness"), B.by_tight);
+  table($("#by-adr"), statCols("Daily range"), B.by_adr || []);
+  table($("#by-mkt"), statCols("Market"), B.by_mkt || []);
   table($("#by-month"), statCols("Signal month"), B.by_month.slice().reverse());
 
   // live log

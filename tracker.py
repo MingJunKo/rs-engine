@@ -96,6 +96,8 @@ def run_tracker(ctx: dict) -> dict:
     bt = []
     O, H, L, C = o.values, h.values, l.values, c.values
     Bv = bench.reindex(idx).values
+    b_up = (bench > bench.rolling(50).mean()).reindex(idx).values          # market proxy: RSP above its 50-day
+    ADR = adr.values
     sg = sig.values
     for jx, t in enumerate(S):
         col = np.where(sg[start:, jx])[0] + start
@@ -108,7 +110,8 @@ def run_tracker(ctx: dict) -> dict:
             ret20 = (C[i + 20, jx] / C[i, jx] - 1) * 100 if i + 20 < len(idx) else None
             b20 = (Bv[i + 20] / Bv[i] - 1) * 100 if i + 20 < len(idx) else None
             bt.append({"symbol": t, "date": idx[i].strftime("%Y-%m-%d"), "rs": _i(rating.iat[i, jx]),
-                       "tight": _f(tight.iat[i, jx]), "ret20": _f(ret20), "bench20": _f(b20), **_clean(r)})
+                       "tight": _f(tight.iat[i, jx]), "adr": _f(ADR[i, jx]), "mkt_up": 1 if b_up[i] else 0,
+                       "ret20": _f(ret20), "bench20": _f(b20), **_clean(r)})
     # baseline: same stocks and filters, any shape (entered at the close) — does the SETUP shape add anything?
     base = ((rating >= st["min_rs_rating"]) & (c > sma50) & (adr >= st.get("min_adr", 2.5)) & (c >= st["min_price"])
             & (dv >= st["min_dollar_volume"])).values[start:-20]
@@ -160,10 +163,12 @@ def run_tracker(ctx: dict) -> dict:
         return out
     by_rs = bucket(bt, "rs", [0, 90, 95, 101], ["RS 80–89", "RS 90–94", "RS 95–99"])
     by_tight = bucket(bt, "tight", [0, 1.5, 2.0, 2.6], ["Tight < 1.5 ADR", "1.5–2.0", "2.0–2.5"])
+    by_adr = bucket(bt, "adr", [0, 4, 6, 100], ["ADR < 4%", "ADR 4–6%", "ADR ≥ 6%"])
+    by_mkt = bucket(bt, "mkt_up", [0, 1, 2], ["RSP below 50-day", "RSP above 50-day"])
     months = sorted({r["date"][:7] for r in bt})
     by_month = [{"label": m, **stats([r for r in bt if r["date"][:7] == m])} for m in months]
     return {"asof": ctx["asof_label"], "generated": ctx["generated"],
-            "backtest": {"summary": stats(bt), "by_rs": by_rs, "by_tight": by_tight, "by_month": by_month,
+            "backtest": {"summary": stats(bt), "by_rs": by_rs, "by_tight": by_tight, "by_adr": by_adr, "by_mkt": by_mkt, "by_month": by_month,
                          "from": idx[start].strftime("%d %b %Y"), "base_ret20": base_ret20, "bench_ret20": bench_ret20,
                          "recent": sorted([r for r in bt if r["status"] in ("running", "waiting")], key=lambda r: r["date"], reverse=True)[:40]},
             "live": {"rows": live, "rs": stats([r for r in live if r["source"] == "RS setup"]),
