@@ -34,6 +34,7 @@ def log(*a):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--dry", action="store_true", help="diagnostics only: no file, no Telegram")
     a = ap.parse_args()
     now = dt.datetime.now(NY)
     today = now.date().isoformat()
@@ -46,11 +47,12 @@ def main():
     st = pd.read_csv(ROOT / "docs" / "data" / "stocks.csv")
     st = st[st.price >= 3]
     prev = st.set_index("ticker").price.to_dict()
+    dvol = st.set_index("ticker").dollar_vol.to_dict() if "dollar_vol" in st else {}
     tickers = list(prev)
     log(f"{len(tickers)} stocks · scanning pre-market")
 
     import yfinance as yf
-    rows, seen_pm, seen_any = [], 0, 0
+    rows, seen_pm, seen_any, all_gaps = [], 0, 0, []
     for i in range(0, len(tickers), 150):
         part = tickers[i:i + 150]
         try:
@@ -74,13 +76,18 @@ def main():
             if pm.empty:
                 continue
             seen_pm += 1
-            last, vol = float(pm.Close.iloc[-1]), float(pm.Volume.sum())
+            last, vol = float(pm.Close.iloc[-1]), float(pm.Volume.fillna(0).sum())
             gap = (last / prev[t] - 1) * 100
-            if gap >= MIN_GAP and vol >= MIN_PM_VOL and last * vol >= MIN_PM_DVOL:
+            all_gaps.append((gap, t, vol))
+            # Yahoo often reports 0 volume on extended-hours bars: then fall back to the stock's normal liquidity
+            liquid = (vol >= MIN_PM_VOL and last * vol >= MIN_PM_DVOL) if vol > 0 else (dvol.get(t, 0) or 0) >= 5e6
+            if gap >= MIN_GAP and liquid:
                 rows.append({"symbol": t, "gap": round(gap, 1), "pm_price": round(last, 2), "prev_close": round(prev[t], 2),
                              "pm_vol_k": int(vol / 1000)})
         time.sleep(1)
-    log(f"{seen_any} tickers returned data, {seen_pm} had pre-market bars today")
+    log(f"{seen_any} tickers returned data, {seen_pm} had pre-market bars today; "
+        f"{sum(1 for g in all_gaps if g[2] > 0)} with pre-market volume")
+    log("largest gaps: " + ", ".join(f"{t} {g:+.1f}% ({int(v/1000)}K)" for g, t, v in sorted(all_gaps, reverse=True)[:10]))
     rows.sort(key=lambda r: -r["gap"])
     rows = rows[:25]
     log(f"{len(rows)} pre-market gappers ≥ {MIN_GAP}%")
@@ -101,6 +108,8 @@ def main():
                 v = meta.at[r["symbol"], k]
                 r[k] = None if pd.isna(v) else (int(v) if k == "rs_rating" else v)
 
+    if a.dry:
+        log("dry run: " + ", ".join(f"{r['symbol']} +{r['gap']}%" for r in rows)); return
     OUT.write_text(json.dumps({"date": today, "asof": now.strftime("%a %d %b %H:%M New York"), "rows": rows},
                               separators=(",", ":"), default=str))
     send(rows, now)
