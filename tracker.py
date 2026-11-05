@@ -32,13 +32,13 @@ def score(i, o, h, l, c):
     n = len(c)
     piv = np.nanmax(h[max(0, i - 19):i + 1])
     base = np.nanmin(l[max(0, i - 9):i + 1])
-    # stop = under the prior day's low (known when you buy), never below the tight area's low
-    out = {"pivot": piv, "stop": max(base, l[n - 1]) if np.isfinite(l[n - 1]) else base, "status": "waiting",
+    # stop = under the 10-day low (the tight area) — the rule that held up best over 10 years
+    out = {"pivot": piv, "stop": base, "status": "waiting",
            "R": None, "mfe": None, "entry": None, "days": None}
     for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
         if h[j] > piv:
             entry = max(o[j], piv) if np.isfinite(o[j]) else piv
-            stop = max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base
+            stop = base
             out["stop"] = stop
             risk = entry - stop
             if not (risk > 0):
@@ -77,7 +77,7 @@ def manage(i, o, h, l, c, sma, rule):
         if h[j] <= piv:
             continue
         entry = max(o[j], piv) if np.isfinite(o[j]) else piv
-        stop = max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base
+        stop = base
         risk = entry - stop
         if not (risk > 0):
             return None
@@ -99,7 +99,7 @@ def manage(i, o, h, l, c, sma, rule):
     return None
 
 
-def path(i, o, h, l, c, sma, nochase=0.02, stop_mode="prev", partial="day3", hold=None):
+def path(i, o, h, l, c, sma, nochase=0.02, stop_mode="base", partial="day3", hold=None):
     """The recommended trade, step by step, for the portfolio simulation: buy the pivot break (skip if it opens
     > 2% over), stop under the prior day's low, sell ⅓ on day 3 if in profit (stop → breakeven), trail the rest
     on `sma`. Variants: stop_mode "base" (10-day low), partial "2r" (⅓ at +2R) or None, hold=N (fixed exit after
@@ -203,7 +203,7 @@ def portfolio(trades, idx, C, start_cash=100_000.0, risk=0.005, max_pos=8, max_w
 
 
 LOSS_TESTS = [
-    ("Current: stop at 10-day low", {}),
+    ("Current: stop under the 10-day low", {}),
     ("Stop under the prior day's low", {"stop": "prev"}),
     ("Stop 1 ATR below entry", {"stop": "atr"}),
     ("Prior-day-low stop + don't chase", {"stop": "prev", "nochase": 0.02}),

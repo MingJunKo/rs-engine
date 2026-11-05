@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>10-Year Backtest</title>
+<title>Backtests & Research</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -16,14 +16,20 @@
 .kpi.g .v{color:var(--gold-bright)}
 .note2{font-size:12.5px;color:var(--t3);line-height:1.65;max-width:1000px;margin:6px 0 14px}.note2 b{color:var(--t2);font-weight:500}
 .leg{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 8px;font-size:11.5px;color:var(--t2)}.leg i{display:inline-block;width:16px;height:2.5px;margin-right:6px;vertical-align:middle}
+.rl{display:grid;grid-template-columns:120px 1fr;gap:4px 18px;background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:13px 16px;margin-bottom:10px}
+.rl .id{font-family:"DM Mono",monospace;font-size:10px;color:var(--t4);line-height:1.6}.rl .id b{display:block;color:var(--gold);font-size:13px;font-weight:500}
+.rl h3{font-family:Barlow,sans-serif;font-size:14px;font-weight:500;color:var(--t1);margin-bottom:4px}
+.rl p{font-size:12.5px;color:var(--t2);line-height:1.6;margin:2px 0}.rl p span{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);margin-right:8px}
+.rl .v{color:var(--t1)}.rl.rev{opacity:.62}
+@media (max-width:700px){.rl{grid-template-columns:1fr}}
 .controls .seg button{background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;font-family:Barlow,sans-serif;font-size:11.5px;cursor:pointer;margin-right:4px}
 .controls .seg button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
 </style>
 </head>
 <body>
 <nav><div class="wrap">
-  <span class="brand">MJ — <em>10-year backtest</em></span>
-  <a href="#curve">Equity</a><a href="#years">By year</a><a href="#tests">Rule tests</a><a href="#notes">Read this first</a>
+  <span class="brand">MJ — <em>Backtests</em></span>
+  <a href="#log">Research log</a><a href="#curve">Equity</a><a href="#years">By year</a><a href="#tests">Rule tests</a><a href="#notes">Read this first</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../tracker/" style="color:var(--gold)">Tracker</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -34,6 +40,11 @@
     <p class="note2">Top-theme RS setups · buy the pivot break (no chasing) · stop under the prior day's low · ⅓ sold on day 3, the rest trailed on the 10-day · 0.5% of equity at risk per trade · max 8 positions · compounding.</p>
     <div class="kpis" id="kpis"></div>
   </header>
+  <section id="log">
+    <div class="sec-head"><h2>Research log</h2><div class="line"></div><p>Every test we've run, newest first: what we asked, what we found, what we kept</p></div>
+    <div id="logwrap"></div>
+  </section>
+
   <section id="curve">
     <div class="sec-head"><h2>Equity curve</h2><div class="line"></div><p id="sub"></p></div>
     <div class="controls"><span class="seg" id="scale"></span></div>
@@ -104,6 +115,13 @@ function render(){
   $("#ytbl").innerHTML = `<thead><tr><th class="l">Year</th><th>Top-theme setups</th><th>All setups</th><th>${esc(D.bench_name)}</th></tr></thead><tbody>${ys.map(y=>{const a=D.years_top[y], b=D.years_all[y], c=D.years_bench[y];
     return `<tr><td class="l" style="color:var(--t1)">${y}</td>${[a,b,c].map(v=>`<td class="${v>0?'up':v<0?'dn':''}">${fmt(v)}%</td>`).join('')}</tr>`;}).join('')}</tbody>`;
   $("#best").innerHTML = `<thead><tr><th class="l">Biggest winners (top-theme book)</th><th>Signal</th><th>P&amp;L</th><th>R</th></tr></thead><tbody>${(T.best||[]).map(b=>`<tr><td class="l sym">${esc(b.sym)}</td><td style="color:var(--t3)">${esc(b.date)}</td><td class="up">${usd(b.pnl)}</td><td>${fmt(b.R,1)}R</td></tr>`).join('')}</tbody>`;
+  const LG = D.log || [];
+  const auto = LG.find(x => x.auto === "sizing"), sz = (D.tests||[]).filter(t => t.test.startsWith("Sizing"));
+  if (auto && sz.length) { const best = sz.slice().sort((a,b)=>b.cagr-a.cagr)[0];
+    auto.result = sz.map(t => `${t.test.replace('Sizing: ','')}: ${usd(t.end)} (${fmt(t.cagr)}%/yr, DD ${fmt(t.dd)}%)`).join(' · ');
+    auto.verdict = auto.verdict === "pending" ? `Best return: ${best.test.replace('Sizing: ','')}. Weigh the extra return against the deeper drawdown.` : auto.verdict; }
+  $("#logwrap").innerHTML = LG.map(x => `<div class="rl ${/^Reversed|superseded/i.test(x.verdict)?'rev':''}"><div class="id"><b>${esc(x.id)}</b>${esc(x.date)}<br>${esc(x.period)}</div>
+    <div><h3>${esc(x.title)}</h3><p><span>Question</span>${esc(x.question)}</p><p><span>Setup</span>${esc(x.setup)}</p><p><span>Result</span>${esc(x.result)}</p><p class="v"><span>Kept</span>${esc(x.verdict)}</p></div></div>`).join('');
   const TS = D.tests || [];
   if (TS.length) {
     const b0 = TS[0];

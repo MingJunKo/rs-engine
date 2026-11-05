@@ -85,7 +85,7 @@ def main(years="10y"):
     breadth = (close[S] > close[S].rolling(50).mean()).mean(axis=1).values * 100
     ADR = ((h[S] / l[S] - 1).rolling(20).mean() * 100).values
     S20 = close[S].rolling(20).mean().values
-    VARIANTS = {"base": {}, "stop10": {"stop_mode": "base"}, "p2r": {"partial": "2r", "sma": S20},
+    VARIANTS = {"base": {"stop_mode": "base"}, "prev": {"stop_mode": "prev"}, "p2r": {"partial": "2r", "sma": S20},
                 "fixed20": {"partial": None, "hold": 20}, "trail20": {"sma": S20}}
     books = {k: [] for k in VARIANTS}
     book, start = [], 130
@@ -134,7 +134,7 @@ def main(years="10y"):
     # ── which rules hold up over 10 years? each line is a full $100k book ──
     top_ = lambda b: b["top"] is True
     TESTS = [
-        ("Top theme (current rules)", "base", top_),
+        ("Top theme (current rules: 10-day-low stop)", "base", top_),
         ("All setups, no theme filter", "base", lambda b: True),
         ("+ RSP above its 50-day", "base", lambda b: top_(b) and b["m50"]),
         ("+ RSP above its 200-day", "base", lambda b: top_(b) and b["m200"]),
@@ -144,15 +144,20 @@ def main(years="10y"):
         ("+ RS ≥ 90", "base", lambda b: top_(b) and (b["rs"] or 0) >= 90),
         ("+ RSP > 50-day + ADR ≥ 4%", "base", lambda b: top_(b) and b["m50"] and b["adr"] >= 4),
         ("+ RSP > 200-day + ADR ≥ 4%", "base", lambda b: top_(b) and b["m200"] and b["adr"] >= 4),
-        ("Stop at the 10-day low instead", "stop10", top_),
+        ("Stop under the prior day's low instead", "prev", top_),
         ("Trail on the 20-day instead", "trail20", top_),
         ("Sell ⅓ at +2R, trail on the 20-day", "p2r", top_),
         ("No trail: stop or sell after 20 days", "fixed20", top_),
     ]
     yb = out_years_bench = yearly([(d, e, 0) for d, e in bench_curve(b_close.iloc[idx.get_loc(pd.Timestamp(top["from"])):])])
     tests = []
-    for name, vk, f in TESTS:
-        pf = T.portfolio([b for b in books[vk] if f(b)], idx, C)
+    SIZING = [("Sizing: 0.75% risk per trade", "base", top_, {"risk": 0.0075}),
+              ("Sizing: 1% risk per trade", "base", top_, {"risk": 0.01}),
+              ("Sizing: 0.5% risk, up to 12 positions", "base", top_, {"max_pos": 12}),
+              ("Sizing: 0.75% risk, up to 12 positions", "base", top_, {"risk": 0.0075, "max_pos": 12}),
+              ("Sizing: 1% risk, up to 12 positions", "base", top_, {"risk": 0.01, "max_pos": 12})]
+    for name, vk, f, *kw in [(*t, {}) for t in TESTS] + SIZING:
+        pf = T.portfolio([b for b in books[vk] if f(b)], idx, C, **(kw[0] if kw else {}))
         yr = yearly(pf["curve"]) if pf["curve"] else {}
         tests.append({"test": name, "end": pf["end"], "cagr": pf["cagr"], "dd": pf["max_dd"], "trades": pf["trades"],
                       "win": pf["win"], "avg_R": pf["avg_R"], "exposure": pf["exposure"], "years": yr,
@@ -160,6 +165,8 @@ def main(years="10y"):
                       "worst": min(yr.values()) if yr else None, "pos": sum(v > 0 for v in yr.values())})
         log(f"  {name:40s} ${pf['end']:>10,} {pf['cagr']:>6}%/yr  DD {pf['max_dd']}%")
     out["tests"] = tests
+    lp = ROOT / "config" / "research_log.json"                 # the running record of every backtest we've run
+    out["log"] = json.loads(lp.read_text()) if lp.exists() else []
     (ROOT / "data").mkdir(exist_ok=True)
     (ROOT / "data" / "backtest10.json").write_text(json.dumps(E._clean_json(out), separators=(",", ":")))
     tpl = (ROOT / "templates" / "backtest.html").read_text()
