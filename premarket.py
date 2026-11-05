@@ -128,7 +128,8 @@ def send(rows, now):
     for r in good[:8]:
         tag = " 📊earnings" if r["earnings"] else ""
         rs = f" · RS {r['rs_rating']}" if r.get("rs_rating") is not None else ""
-        lines.append(f"<code>{r['symbol']:<6}</code> +{r['gap']}% · {r['pm_vol_k']:,}K sh{rs}{tag}")
+        pv = f" · {r['pm_vol_k']:,}K sh" if r["pm_vol_k"] else ""
+        lines.append(f"<code>{r['symbol']:<6}</code> +{r['gap']}%{pv}{rs}{tag}")
         if r["news"]:
             n = r["news"][0]
             lines.append(f"   ↳ {e(n['title'][:110])}")
