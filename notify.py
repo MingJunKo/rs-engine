@@ -74,7 +74,7 @@ def build_message(p: dict, settings: dict) -> str:
         f = sc["funnel"]
         lines += ["", f"<b>Weekly scan</b> ({len(fin)} names · {f['base']} in watchlists → {f['tight']} tight + {f['rs_scan']} RS scan)",
                   "<i>★ leading theme · ◆ RS leader · ✚ tech + fund screens · ↗ early-turner theme</i>"]
-        fin.sort(key=lambda x: (-(x["lead_theme"] + x["leader"] + x["both"]), -(x["rs_rating"] or 0)))
+        fin.sort(key=lambda x: -((x["rs_rating"] or 0) + 8 * (x["lead_theme"] + x["leader"] + x["both"] + x["turner"])))
         for x in fin[:15]:
             tags = ("★" if x["lead_theme"] else "") + ("◆" if x["leader"] else "") + ("✚" if x["both"] else "") + ("↗" if x["turner"] else "")
             er = f" · ER {e(x['earnings'])}" if x.get("er_days") is not None and x["er_days"] <= 7 else ""

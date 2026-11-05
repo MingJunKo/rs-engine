@@ -364,7 +364,7 @@ def run_scans(ctx: dict) -> dict:
         (ROOT / "docs" / "data" / "scan_why.json").write_text(json.dumps(W, separators=(",", ":")))
     except Exception as e:
         print("  scan lookup skipped:", e)
-    rows.sort(key=lambda x: (-(x["lead_theme"] + x["both"] + x["leader"]), -(x["rs_rating"] or 0)))
+    rows.sort(key=lambda x: -((x["rs_rating"] or 0) + 8 * (x["lead_theme"] + x["both"] + x["leader"] + x["turner"])))
 
     eps = ep_scan(o, h, l, c, v, d)
     para = parabolic_scan(o, h, l, c, v, d)
