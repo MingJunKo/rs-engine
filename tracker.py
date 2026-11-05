@@ -99,10 +99,11 @@ def manage(i, o, h, l, c, sma, rule):
     return None
 
 
-def path(i, o, h, l, c, sma, nochase=0.02):
+def path(i, o, h, l, c, sma, nochase=0.02, stop_mode="prev", partial="day3", hold=None):
     """The recommended trade, step by step, for the portfolio simulation: buy the pivot break (skip if it opens
     > 2% over), stop under the prior day's low, sell ⅓ on day 3 if in profit (stop → breakeven), trail the rest
-    on the 10-day. Returns entry bar/price, stop and the sell events [(bar, fraction of the position, price)]."""
+    on `sma`. Variants: stop_mode "base" (10-day low), partial "2r" (⅓ at +2R) or None, hold=N (fixed exit after
+    N days, no trail). Returns entry bar/price, stop and the sell events [(bar, fraction of the position, price)]."""
     n = len(c)
     piv = np.nanmax(h[max(0, i - 19):i + 1]); base = np.nanmin(l[max(0, i - 9):i + 1])
     for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
@@ -111,21 +112,26 @@ def path(i, o, h, l, c, sma, nochase=0.02):
         if nochase and o[j] > piv * (1 + nochase):
             return None
         entry = max(o[j], piv) if np.isfinite(o[j]) else piv
-        stop = max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base
+        stop = base if stop_mode == "base" else (max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base)
         if not (entry - stop > 0):
             return None
+        risk = entry - stop
         left, st, ev = 1.0, stop, []
-        for k in range(j, min(n, j + MAX_HOLD)):
+        last = min(n, j + (hold + 1 if hold else MAX_HOLD))
+        for k in range(j, last):
             if l[k] <= st:
                 ev.append((k, left, st if k == j else min(o[k], st)))
                 return {"j": j, "entry": entry, "stop": stop, "events": ev}
-            if left == 1.0 and k == j + 3 and c[k] > entry:
-                ev.append((k, 1 / 3, c[k])); left, st = 2 / 3, max(st, entry)
-            if left < 1.0 and k > j + 3 and c[k] < sma[k]:
+            if left == 1.0:
+                if partial == "day3" and k == j + 3 and c[k] > entry:
+                    ev.append((k, 1 / 3, c[k])); left, st = 2 / 3, max(st, entry)
+                elif partial == "2r" and h[k] >= entry + 2 * risk:
+                    ev.append((k, 1 / 3, max(o[k], entry + 2 * risk))); left, st = 2 / 3, max(st, entry)
+            if not hold and (left < 1.0 or partial is None) and k > j + 3 and c[k] < sma[k]:
                 ev.append((k, left, c[k]))
                 return {"j": j, "entry": entry, "stop": stop, "events": ev}
-        k = min(n, j + MAX_HOLD) - 1
-        if j + MAX_HOLD <= n:
+        k = last - 1
+        if (hold and j + hold < n) or (not hold and j + MAX_HOLD <= n):
             ev.append((k, left, c[k]))
         return {"j": j, "entry": entry, "stop": stop, "events": ev}
     return None

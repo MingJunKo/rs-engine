@@ -23,7 +23,7 @@
 <body>
 <nav><div class="wrap">
   <span class="brand">MJ — <em>10-year backtest</em></span>
-  <a href="#curve">Equity</a><a href="#years">By year</a><a href="#notes">Read this first</a>
+  <a href="#curve">Equity</a><a href="#years">By year</a><a href="#tests">Rule tests</a><a href="#notes">Read this first</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../tracker/" style="color:var(--gold)">Tracker</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -45,6 +45,13 @@
     <div class="tbl-wrap"><table class="t" id="ytbl"></table></div>
     <div class="tbl-wrap" style="margin-top:14px"><table class="t" id="best"></table></div>
   </section>
+  <section id="tests">
+    <div class="sec-head"><h2>Which rules hold up over 10 years?</h2><div class="line"></div><p>Each line is a full $100k book, same period</p></div>
+    <div class="tbl-wrap"><table class="t" id="ttbl"></table></div>
+    <div class="tbl-wrap" style="margin-top:14px"><table class="t" id="tyears"></table></div>
+    <p class="note2">Lines starting with <b>+</b> add one rule to the top-theme book. Market gates block <i>new</i> trades while the condition is off; open positions are still managed by their stops and trail. Look for rules that improve the result <b>and</b> the drawdown across most years, not just the total.</p>
+  </section>
+
   <section id="notes">
     <div class="sec-head"><h2>Read this first</h2><div class="line"></div></div>
     <div class="note2">
@@ -97,6 +104,18 @@ function render(){
   $("#ytbl").innerHTML = `<thead><tr><th class="l">Year</th><th>Top-theme setups</th><th>All setups</th><th>${esc(D.bench_name)}</th></tr></thead><tbody>${ys.map(y=>{const a=D.years_top[y], b=D.years_all[y], c=D.years_bench[y];
     return `<tr><td class="l" style="color:var(--t1)">${y}</td>${[a,b,c].map(v=>`<td class="${v>0?'up':v<0?'dn':''}">${fmt(v)}%</td>`).join('')}</tr>`;}).join('')}</tbody>`;
   $("#best").innerHTML = `<thead><tr><th class="l">Biggest winners (top-theme book)</th><th>Signal</th><th>P&amp;L</th><th>R</th></tr></thead><tbody>${(T.best||[]).map(b=>`<tr><td class="l sym">${esc(b.sym)}</td><td style="color:var(--t3)">${esc(b.date)}</td><td class="up">${usd(b.pnl)}</td><td>${fmt(b.R,1)}R</td></tr>`).join('')}</tbody>`;
+  const TS = D.tests || [];
+  if (TS.length) {
+    const b0 = TS[0];
+    $("#ttbl").innerHTML = `<thead><tr><th class="l">Rule</th><th>$100k became</th><th>Per year</th><th>vs current</th><th>Worst drawdown</th><th>Worst year</th><th>Up years</th><th>Beat ${esc(D.bench_name)}</th><th>Trades</th><th>Win %</th><th>Avg R</th></tr></thead><tbody>${TS.map((x,i)=>`<tr${i===0?' style="background:var(--gold-bg)"':''}>
+      <td class="l" style="color:var(--t1)">${esc(x.test)}</td><td>${usd(x.end)}</td><td class="${x.cagr>0?'up':'dn'}">${fmt(x.cagr)}%</td>
+      <td class="${x.cagr>b0.cagr?'up':x.cagr<b0.cagr?'dn':''}">${i?fmt(x.cagr-b0.cagr)+' pts':''}</td><td class="dn">${fmt(x.dd)}%</td>
+      <td class="${x.worst<0?'dn':''}">${fmt(x.worst)}%</td><td>${x.pos}/${x.n_years}</td><td>${x.beat}/${x.n_years}</td>
+      <td>${x.trades}</td><td>${x.win??'–'}%</td><td>${fmt(x.avg_R,2)}R</td></tr>`).join('')}</tbody>`;
+    const yrs = Object.keys(TS[0].years);
+    $("#tyears").innerHTML = `<thead><tr><th class="l">Year by year</th>${yrs.map(y=>`<th>${y}</th>`).join('')}</tr></thead><tbody>${TS.map(x=>`<tr><td class="l" style="color:var(--t2)">${esc(x.test)}</td>${yrs.map(y=>{const v=x.years[y]; return `<td class="${v>0?'up':v<0?'dn':''}">${v==null?'–':fmt(v,0)+'%'}</td>`;}).join('')}</tr>`).join('')}
+      <tr><td class="l" style="color:var(--t3)">${esc(D.bench_name)} buy &amp; hold</td>${yrs.map(y=>{const v=D.years_bench[y]; return `<td style="color:var(--t3)">${v==null?'–':fmt(v,0)+'%'}</td>`;}).join('')}</tr></tbody>`;
+  } else $("#tests").remove();
   $("#footer").textContent = `Generated ${D.generated} · Not investment advice`;
   let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(chart, 150); });
 }

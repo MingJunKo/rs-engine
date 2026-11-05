@@ -41,13 +41,14 @@ def main(years="10y"):
     themes_of = {r.ticker: ({E_t for E_t in str(r.etfs).split() if E_t and E_t != "nan"}, r.theme) for r in st.itertuples()}
     meta = etfs.set_index("symbol")
     grp = [e for e in etfs.symbol if meta.at[e, "category"] in ("Group", "SPDR Sector")]
+    GAUGE = ["SPY", "XLY", "XLP", "IWM", "HYG", "IEF", "SPMO"]          # risk-appetite ratios for the market gates
     log(f"{len(S)} stocks, {len(grp)} theme ETFs — downloading {years} of prices")
     if years == "demo":                                     # offline test with simulated prices
         sty = {**meta["style"].to_dict(), **{t: "growth" for t in S}}
-        px = E.demo_prices(S + grp + [E.BENCH], sty)
+        px = E.demo_prices(S + grp + GAUGE + [E.BENCH], sty)
         px["Open"] = px["Close"].shift(1) * (1 + np.random.default_rng(1).normal(0, .004, px["Close"].shape))
     else:
-        px = E.download_yahoo(S + grp + [E.BENCH], period=years, want=("Open", "Close", "High", "Low", "Volume"))
+        px = E.download_yahoo(S + grp + GAUGE + [E.BENCH], period=years, want=("Open", "Close", "High", "Low", "Volume"))
     close = px["Close"].ffill(limit=3)
     close = close.loc[close[E.BENCH].notna()]
     o, h, l, v = (px[k].reindex(close.index) for k in ("Open", "High", "Low", "Volume"))
@@ -71,6 +72,22 @@ def main(years="10y"):
     sig = T.setup_signals(close[S], h[S], l[S], v[S], rating, atr=E.atr).values
     O, H, L, C = o[S].values, h[S].values, l[S].values, close[S].values
     S10 = close[S].rolling(10).mean().values
+    # market state each day: RSP vs its 50/200-day, risk-on gauge count (of 5), breadth (% of stocks above the 50-day)
+    def gauge(nu, de):
+        if nu not in close or de not in close:
+            return None
+        r = close[nu] / close[de]
+        return ((r > r.rolling(50).mean()) & (r > r.shift(21))).astype(int)
+    gs = [g for g in (gauge("XLY", "XLP"), gauge(E.BENCH, "SPY"), gauge("IWM", "SPY"), gauge("SPMO", E.BENCH), gauge("HYG", "IEF")) if g is not None]
+    riskon = pd.concat(gs, axis=1).sum(axis=1).values if gs else np.zeros(len(idx))
+    m50 = (b_close > b_close.rolling(50).mean()).values
+    m200 = (b_close > b_close.rolling(200).mean()).values
+    breadth = (close[S] > close[S].rolling(50).mean()).mean(axis=1).values * 100
+    ADR = ((h[S] / l[S] - 1).rolling(20).mean() * 100).values
+    S20 = close[S].rolling(20).mean().values
+    VARIANTS = {"base": {}, "stop10": {"stop_mode": "base"}, "p2r": {"partial": "2r", "sma": S20},
+                "fixed20": {"partial": None, "hold": 20}, "trail20": {"sma": S20}}
+    books = {k: [] for k in VARIANTS}
     book, start = [], 130
     for jx, t in enumerate(S):
         last = -999
@@ -78,11 +95,16 @@ def main(years="10y"):
             if i - last < GAP:
                 continue
             last = i
-            p = T.path(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], S10[:, jx])
-            if p:
-                ts = topset[i]
-                book.append({**p, "jx": jx, "sym": t, "rs": int(rating.iat[i, jx]) if pd.notna(rating.iat[i, jx]) else None,
-                             "top": None if ts is None else bool(stock_themes[t] & ts)})
+            ts = topset[i]
+            at = {"jx": jx, "sym": t, "rs": int(rating.iat[i, jx]) if pd.notna(rating.iat[i, jx]) else None,
+                  "top": None if ts is None else bool(stock_themes[t] & ts), "m50": bool(m50[i]), "m200": bool(m200[i]),
+                  "riskon": int(riskon[i]), "breadth": float(breadth[i]), "adr": float(ADR[i, jx])}
+            for vk, kw in VARIANTS.items():
+                kw = dict(kw); sma = kw.pop("sma", S10)
+                p = T.path(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], sma[:, jx], **kw)
+                if p:
+                    books[vk].append({**p, **at})
+            book = books["base"]
     log(f"{len(book)} triggered setups")
 
     top = T.portfolio([b for b in book if b["top"]], idx, C)
@@ -109,6 +131,35 @@ def main(years="10y"):
            "years_top": yearly(top["curve"]), "years_all": yearly(allp["curve"]),
            "years_bench": yearly([(d, e, 0) for d, e in rb]),
            "n_signals": len(book), "n_stocks": len(S), "n_etfs": len(G)}
+    # ── which rules hold up over 10 years? each line is a full $100k book ──
+    top_ = lambda b: b["top"] is True
+    TESTS = [
+        ("Top theme (current rules)", "base", top_),
+        ("All setups, no theme filter", "base", lambda b: True),
+        ("+ RSP above its 50-day", "base", lambda b: top_(b) and b["m50"]),
+        ("+ RSP above its 200-day", "base", lambda b: top_(b) and b["m200"]),
+        ("+ ≥ 3 of 5 risk gauges on", "base", lambda b: top_(b) and b["riskon"] >= 3),
+        ("+ breadth > 50%", "base", lambda b: top_(b) and b["breadth"] > 50),
+        ("+ ADR ≥ 4%", "base", lambda b: top_(b) and b["adr"] >= 4),
+        ("+ RS ≥ 90", "base", lambda b: top_(b) and (b["rs"] or 0) >= 90),
+        ("+ RSP > 50-day + ADR ≥ 4%", "base", lambda b: top_(b) and b["m50"] and b["adr"] >= 4),
+        ("+ RSP > 200-day + ADR ≥ 4%", "base", lambda b: top_(b) and b["m200"] and b["adr"] >= 4),
+        ("Stop at the 10-day low instead", "stop10", top_),
+        ("Trail on the 20-day instead", "trail20", top_),
+        ("Sell ⅓ at +2R, trail on the 20-day", "p2r", top_),
+        ("No trail: stop or sell after 20 days", "fixed20", top_),
+    ]
+    yb = out_years_bench = yearly([(d, e, 0) for d, e in bench_curve(b_close.iloc[idx.get_loc(pd.Timestamp(top["from"])):])])
+    tests = []
+    for name, vk, f in TESTS:
+        pf = T.portfolio([b for b in books[vk] if f(b)], idx, C)
+        yr = yearly(pf["curve"]) if pf["curve"] else {}
+        tests.append({"test": name, "end": pf["end"], "cagr": pf["cagr"], "dd": pf["max_dd"], "trades": pf["trades"],
+                      "win": pf["win"], "avg_R": pf["avg_R"], "exposure": pf["exposure"], "years": yr,
+                      "beat": sum(1 for y, v in yr.items() if y in yb and v > yb[y]), "n_years": len(yr),
+                      "worst": min(yr.values()) if yr else None, "pos": sum(v > 0 for v in yr.values())})
+        log(f"  {name:40s} ${pf['end']:>10,} {pf['cagr']:>6}%/yr  DD {pf['max_dd']}%")
+    out["tests"] = tests
     (ROOT / "data").mkdir(exist_ok=True)
     (ROOT / "data" / "backtest10.json").write_text(json.dumps(E._clean_json(out), separators=(",", ":")))
     tpl = (ROOT / "templates" / "backtest.html").read_text()
