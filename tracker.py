@@ -94,6 +94,57 @@ def manage(i, o, h, l, c, sma, rule):
     return None
 
 
+LOSS_TESTS = [
+    ("Current: stop at 10-day low", {}),
+    ("Stop at breakout-day low", {"stop": "lod"}),
+    ("Exit if it closes back below the pivot (days 0–2)", {"fail": True}),
+    ("Time stop: out on day 5 if not above entry", {"time": 5}),
+    ("Skip wide stops (> 8% or > 1.5 ATR)", {"maxrisk": True}),
+    ("Don't chase: skip if it opens > 2% over the pivot", {"nochase": 0.02}),
+    ("Pivot fail + time stop + no chase", {"fail": True, "time": 5, "nochase": 0.02}),
+    ("All of the above + skip wide stops", {"fail": True, "time": 5, "nochase": 0.02, "maxrisk": True}),
+]
+
+
+def manage_v(i, o, h, l, c, sma, a, opt):
+    """Day-3 rule (⅓ on day 3, breakeven, 10-day trail) with loss-control variants."""
+    n = len(c)
+    piv = np.nanmax(h[max(0, i - 19):i + 1]); base_stop = np.nanmin(l[max(0, i - 9):i + 1])
+    for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
+        if h[j] <= piv:
+            continue
+        if opt.get("nochase") and o[j] > piv * (1 + opt["nochase"]):
+            return None                                           # gapped too far over the pivot: skip
+        entry = max(o[j], piv) if np.isfinite(o[j]) else piv
+        stop = max(base_stop, l[j] if opt.get("stop") == "lod" else base_stop)
+        if opt.get("stop") == "lod" and stop >= entry:
+            stop = base_stop
+        risk = entry - stop
+        if not (risk > 0):
+            return None
+        if opt.get("maxrisk") and (risk / entry > 0.08 or risk > 1.5 * a[i]):
+            return None
+        part, banked, st = 0.0, 0.0, stop
+        for k in range(j, min(n, j + MAX_HOLD)):
+            if l[k] <= st and not (opt.get("stop") == "lod" and k == j):
+                ex = st if k == j else min(o[k], st)
+                return {"R": banked + (1 - part) * (ex - entry) / risk, "status": "stopped" if part == 0 else "closed",
+                        "exit": k, "risk_pct": risk / entry * 100}
+            if part == 0 and opt.get("fail") and k <= j + 2 and c[k] < piv:
+                return {"R": (c[k] - entry) / risk, "status": "stopped", "exit": k, "risk_pct": risk / entry * 100}
+            if part == 0 and opt.get("time") and k == j + opt["time"] and c[k] <= entry:
+                return {"R": (c[k] - entry) / risk, "status": "stopped", "exit": k, "risk_pct": risk / entry * 100}
+            if part == 0 and k == j + 3 and c[k] > entry:
+                part, banked, st = 1 / 3, (c[k] - entry) / risk / 3, max(st, entry)
+            if part > 0 and k > j + 3 and c[k] < sma[k]:
+                return {"R": banked + (1 - part) * (c[k] - entry) / risk, "status": "closed", "exit": k,
+                        "risk_pct": risk / entry * 100}
+        k = min(n, j + MAX_HOLD) - 1
+        return {"R": banked + (1 - part) * (c[k] - entry) / risk, "status": "closed" if j + MAX_HOLD <= n else "running",
+                "exit": k, "risk_pct": risk / entry * 100}
+    return None
+
+
 def curve(trades, idx, cap=None):
     """Cumulative R by exit date. cap = max new trades per signal day (highest RS first) — closer to a real book."""
     if cap:
@@ -195,6 +246,8 @@ def run_tracker(ctx: dict) -> dict:
            & (adr >= st.get("min_adr", 2.5)) & (c >= st["min_price"]) & (dv >= st["min_dollar_volume"]))
     start = max(130, len(idx) - 400)                      # ~1.5 years once the 50-day and RS have warmed up
     S10, S20 = c.rolling(10).mean().values, c.rolling(20).mean().values
+    Av = atr(h, l, c).values
+    lossv = {name: [] for name, _ in LOSS_TESTS}
     RO = ctx["riskon"].reindex(idx).values if ctx.get("riskon") is not None else None
     BR = ctx["breadth"].reindex(idx).values if ctx.get("breadth") is not None else None
     IT = ctx["in_top"].reindex(idx) if ctx.get("in_top") is not None else None
@@ -224,6 +277,12 @@ def run_tracker(ctx: dict) -> dict:
                 m = manage(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], (S10 if rule == "q10" else S20)[:, jx], rule)
                 if m:
                     managed[rule].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, **m, **attrs(i, jx, t)})
+            at_ = attrs(i, jx, t)
+            if at_["top"]:                                   # loss tests run on the recommended set: top-theme setups
+                for name, opt in LOSS_TESTS:
+                    m = manage_v(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], S10[:, jx], Av[:, jx], opt)
+                    if m:
+                        lossv[name].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, **m})
             if r["status"] in ("stopped", "closed", "running") and r["R"] is not None:
                 managed["fixed20"].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, "R": r["R"],
                                            "status": "running" if r["status"] == "running" else "closed",
@@ -291,12 +350,22 @@ def run_tracker(ctx: dict) -> dict:
     months = sorted({r["date"][:7] for r in bt})
     by_month = [{"label": m, **stats([r for r in bt if r["date"][:7] == m])} for m in months]
     gates = {"q10": gate_test(managed["q10"], idx), "fixed20": gate_test(managed["fixed20"], idx)}
+    loss_tests = []
+    for name, _ in LOSS_TESTS:
+        tr = lossv[name]
+        cv = curve(tr, idx, cap=3)
+        n_ = cv["trades"] + cv["open"]
+        tot = cv["total"] + cv["open_R"]
+        kept = {t["i"]: t for t in tr}
+        loss_tests.append({"test": name, "trades": n_, "R": round(tot, 1), "R_trade": round(tot / n_, 3) if n_ else None,
+                           "win": cv["win"], "avg_win": cv["avg_win"], "avg_loss": cv["avg_loss"], "big": cv["big"],
+                           "risk_pct": round(float(np.median([t["risk_pct"] for t in tr])), 1) if tr else None})
     curves = {rule: {"label": RULES[rule], "all": curve(tr, idx), "cap3": curve(tr, idx, cap=3)}
               for rule, tr in managed.items()}
     top = sorted(managed["q10"], key=lambda t: -t["R"])[:12]
     curves["top_q10"] = [{"symbol": t["sym"], "date": idx[t["i"]].strftime("%Y-%m-%d"), "R": round(t["R"], 1),
                           "exit": idx[t["exit"]].strftime("%Y-%m-%d"), "status": t["status"]} for t in top]
-    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves, "gates": gates,
+    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves, "gates": gates, "loss_tests": loss_tests,
             "backtest": {"summary": stats(bt), "by_rs": by_rs, "by_tight": by_tight, "by_adr": by_adr, "by_mkt": by_mkt, "by_month": by_month,
                          "from": idx[start].strftime("%d %b %Y"), "base_ret20": base_ret20, "bench_ret20": bench_ret20,
                          "recent": sorted([r for r in bt if r["status"] in ("running", "waiting")], key=lambda r: r["date"], reverse=True)[:40]},

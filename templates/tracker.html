@@ -32,7 +32,7 @@
 <body>
 <nav><div class="wrap">
   <span class="brand">MJ — <em>Setup tracker</em></span>
-  <a href="#rcurve">R curve</a><a href="#gates">Gate test</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
+  <a href="#rcurve">R curve</a><a href="#gates">Gate test</a><a href="#losses">Loss control</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -61,6 +61,12 @@
     <div class="controls"><span class="seg" id="gate-seg"></span></div>
     <div class="tbl-wrap"><table class="t" id="gate-t"></table></div>
     <p class="note2">Each row keeps only the setups that pass that gate, then takes up to 3 new trades a day (highest RS first) and scores them with the selected selling rule, counting open trades at today's price. <b>R / trade</b> is the number that matters: a gate earns its place if it raises R per trade without cutting the trade count so far that the yearly R collapses. <b>Max DD</b> is the deepest dip in the cumulative R curve. Top-theme history is rebuilt from the theme ETFs' past RS; risk-on uses the same 7 gauges as the dashboard.</p>
+  </section>
+
+  <section id="losses">
+    <div class="sec-head"><h2>Cutting the size of losses</h2><div class="line"></div><p>Top-theme setups · ⅓ day 3 + 10-day trail · max 3 a day</p></div>
+    <div class="tbl-wrap"><table class="t" id="loss-t"></table></div>
+    <p class="note2">Same signals, different ways of limiting the damage when a breakout fails. <b>Stop width</b> is the median distance from entry to stop: a tighter stop makes 1R smaller in dollars, so the same move is worth more R, but it gets hit more often. Judge each line on <b>R / trade</b> and total R, not on the average loss alone.</p>
   </section>
 
   <section id="live">
@@ -186,6 +192,18 @@ function render(){
     ], G); };
   $("#gate-seg").onclick = e => { const b = e.target.closest("button"); if (b) { grule = b.dataset.k; drawG(); } };
   drawG();
+
+  // loss control
+  const LT = D.loss_tests || []; const lb = LT[0] ? LT[0].R_trade : 0;
+  table($("#loss-t"), [
+    {h:"Variant", l:1, f:x=>`<td class="l" style="color:var(--t1)">${esc(x.test)}</td>`},
+    {h:"Trades", f:x=>`<td>${x.trades}</td>`}, {h:"Stop width", f:x=>`<td>${x.risk_pct??'–'}${x.risk_pct!=null?'%':''}</td>`},
+    {h:"Win %", f:x=>`<td>${x.win??'–'}${x.win!=null?'%':''}</td>`},
+    {h:"Avg win", f:x=>`<td>${R(x.avg_win)}</td>`}, {h:"Avg loss", f:x=>`<td>${R(x.avg_loss)}</td>`},
+    {h:"R / trade", f:x=>`<td style="font-weight:500">${R(x.R_trade==null?null:+x.R_trade.toFixed(2))}</td>`},
+    {h:"vs current", f:x=>`<td class="${x.R_trade>lb?'up':x.R_trade<lb?'dn':''}">${x.R_trade==null?'–':fmt(x.R_trade-lb,2)+'R'}</td>`},
+    {h:"Total R", f:x=>`<td>${R(x.R)}</td>`}, {h:"≥ 5R", f:x=>`<td>${x.big}</td>`},
+  ], LT);
 
   // live log
   let seg = "all";
