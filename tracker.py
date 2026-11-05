@@ -96,13 +96,15 @@ def manage(i, o, h, l, c, sma, rule):
 
 LOSS_TESTS = [
     ("Current: stop at 10-day low", {}),
-    ("Stop at breakout-day low", {"stop": "lod"}),
+    ("Stop under the prior day's low", {"stop": "prev"}),
+    ("Stop 1 ATR below entry", {"stop": "atr"}),
+    ("Prior-day-low stop + don't chase", {"stop": "prev", "nochase": 0.02}),
     ("Exit if it closes back below the pivot (days 0–2)", {"fail": True}),
     ("Time stop: out on day 5 if not above entry", {"time": 5}),
-    ("Skip wide stops (> 8% or > 1.5 ATR)", {"maxrisk": True}),
+    ("Prior-day-low stop + time stop day 5", {"stop": "prev", "time": 5}),
     ("Don't chase: skip if it opens > 2% over the pivot", {"nochase": 0.02}),
     ("Pivot fail + time stop + no chase", {"fail": True, "time": 5, "nochase": 0.02}),
-    ("All of the above + skip wide stops", {"fail": True, "time": 5, "nochase": 0.02, "maxrisk": True}),
+
 ]
 
 
@@ -116,9 +118,9 @@ def manage_v(i, o, h, l, c, sma, a, opt):
         if opt.get("nochase") and o[j] > piv * (1 + opt["nochase"]):
             return None                                           # gapped too far over the pivot: skip
         entry = max(o[j], piv) if np.isfinite(o[j]) else piv
-        stop = max(base_stop, l[j] if opt.get("stop") == "lod" else base_stop)
-        if opt.get("stop") == "lod" and stop >= entry:
-            stop = base_stop
+        # stops known at the moment of entry only (no peeking at the breakout day's own low)
+        stop = {"prev": l[j - 1], "atr": entry - a[i]}.get(opt.get("stop"), base_stop)
+        stop = max(stop, base_stop) if np.isfinite(stop) else base_stop
         risk = entry - stop
         if not (risk > 0):
             return None
@@ -126,7 +128,7 @@ def manage_v(i, o, h, l, c, sma, a, opt):
             return None
         part, banked, st = 0.0, 0.0, stop
         for k in range(j, min(n, j + MAX_HOLD)):
-            if l[k] <= st and not (opt.get("stop") == "lod" and k == j):
+            if l[k] <= st:                                    # on the entry day this assumes the low came after entry
                 ex = st if k == j else min(o[k], st)
                 return {"R": banked + (1 - part) * (ex - entry) / risk, "status": "stopped" if part == 0 else "closed",
                         "exit": k, "risk_pct": risk / entry * 100}
