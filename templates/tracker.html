@@ -32,7 +32,7 @@
 <body>
 <nav><div class="wrap">
   <span class="brand">MJ — <em>Setup tracker</em></span>
-  <a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
+  <a href="#rcurve">R curve</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -43,6 +43,18 @@
     <p class="note2">Every RS-leader <b>SETUP</b> and every <b>Weekly scan</b> name is logged on the day it appears and followed for 20 sessions, scored the way you'd trade it: buy the break of the pivot, stop under the tight area. The backtest rebuilds the same SETUP shape over the past year so there's a track record from day one.</p>
     <div class="kpis" id="kpis"></div>
   </header>
+
+  <section id="rcurve">
+    <div class="sec-head"><h2>How many R over time</h2><div class="line"></div><p>Backtest, RS setups, with your selling rules</p></div>
+    <div class="controls"><span class="seg" id="rule-seg"></span><span class="seg" id="cap-seg" style="margin-left:10px"></span></div>
+    <div class="card"><div id="rchart" style="height:240px"></div></div>
+    <div class="kpis" id="rkpis" style="margin-top:12px"></div>
+    <div class="two" style="margin-top:14px">
+      <div class="card"><h3>R by month (exit month)</h3><div class="sub">Sum of R closed in the month</div><div id="rmonths"></div></div>
+      <div class="tbl-wrap"><table class="t" id="rtop"></table></div>
+    </div>
+    <p class="note2" id="rnote"></p>
+  </section>
 
   <section id="live">
     <div class="sec-head"><h2>Live log</h2><div class="line"></div><p id="live-sub"></p></div>
@@ -118,6 +130,39 @@ function render(){
   table($("#by-mkt"), statCols("Market"), B.by_mkt || []);
   table($("#by-month"), statCols("Signal month"), B.by_month.slice().reverse());
 
+  // R curve
+  const CV = D.curves || {}; let rule = "q10", cap = "cap3";
+  const RL = {fixed20:"Fixed 20-day", q10:"⅓ day 3 + 10-day trail", p2r20:"⅓ at 2R + 20-day trail"};
+  const drawR = () => {
+    const c = (CV[rule]||{})[cap]; if (!c) return;
+    $("#rule-seg").innerHTML = Object.entries(RL).map(([k,n])=>`<button class="${k===rule?'on':''}" data-k="${k}">${n}</button>`).join('');
+    $("#cap-seg").innerHTML = [["cap3","Max 3 new a day"],["all","Every signal"]].map(([k,n])=>`<button class="${k===cap?'on':''}" data-c="${k}">${n}</button>`).join('');
+    const P = c.points, el = $("#rchart"), w = el.clientWidth || 900, h = 240, pad = 34;
+    if (P.length > 1) { const v = P.map(p=>p[1]), mn = Math.min(0,...v), mx = Math.max(0,...v), r = (mx-mn)||1;
+      const X = i => pad + i/(P.length-1)*(w-pad-8), Y = x => 10 + (1-(x-mn)/r)*(h-34);
+      const ticks = [mn, 0, mx].filter((x,i,a)=>a.indexOf(x)===i);
+      const lbl = [0, Math.floor(P.length/2), P.length-1].map(i=>`<text x="${X(i)}" y="${h-6}" fill="#6b645a" font-size="10" text-anchor="${i===0?'start':i===P.length-1?'end':'middle'}">${P[i][0].slice(0,7)}</text>`).join('');
+      el.innerHTML = `<svg width="${w}" height="${h}">${ticks.map(t=>`<line x1="${pad}" x2="${w-8}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t===0?'#45403a':'#232320'}" stroke-dasharray="${t===0?'':'2 3'}"/><text x="${pad-6}" y="${Y(t)+3}" fill="#6b645a" font-size="10" text-anchor="end">${Math.round(t)}R</text>`).join('')}
+        <polyline points="${P.map((p,i)=>`${X(i).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}" fill="none" stroke="${c.total>=0?'#5bbf7a':'#d4706a'}" stroke-width="1.6"/>${lbl}</svg>`; }
+    else el.innerHTML = `<p style="padding:30px;color:var(--t3)">Not enough closed trades yet.</p>`;
+    $("#rkpis").innerHTML = [
+      kpi("Total", fmt(c.total,1)+'R', `${c.trades} closed trades · ${c.open} still open (${fmt(c.open_R,1)}R)`, true),
+      kpi("Per trade", fmt(c.avg,2)+'R', `win ${c.win??'–'}% · avg win ${fmt(c.avg_win,2)}R · loss ${fmt(c.avg_loss,2)}R`),
+      kpi("Big winners", c.big, `trades ≥ 5R, worth ${fmt(c.big_R,1)}R together`),
+      kpi("Best trade", fmt(c.best,1)+'R', ''),
+    ].join('');
+    const M = c.months, mx = Math.max(1, ...M.map(m=>Math.abs(m[1])));
+    $("#rmonths").innerHTML = M.map(([m,v])=>`<div style="display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--t3);margin:2px 0"><span style="width:52px">${m}</span><span style="flex:1;display:flex;${v<0?'justify-content:flex-end;':''}"><i style="display:block;height:9px;width:${Math.abs(v)/mx*100}%;background:${v>=0?'#5bbf7a':'#d4706a'};opacity:.8;border-radius:1px"></i></span><span style="width:54px;text-align:right;color:${v>=0?'#8fcf8a':'#e0a17a'}">${fmt(v,1)}R</span></div>`).join('');
+    const T = CV.top_q10 || [];
+    table($("#rtop"), [{h:"Biggest winners (⅓ day 3 + 10-day)", l:1, f:x=>`<td class="sym l"><a href="${tv(x.symbol)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`},
+      {h:"Signal", f:x=>`<td style="color:var(--t3)">${esc(x.date)}</td>`}, {h:"Exit", f:x=>`<td style="color:var(--t3)">${x.status==='running'?'open':esc(x.exit)}</td>`},
+      {h:"R", f:x=>`<td>${R(x.R)}</td>`}], T);
+    $("#rnote").innerHTML = `<b>Reading this:</b> each trade risks 1R. At 0.5% of the account per trade, 20R ≈ +10% before costs. <b>Every signal</b> takes all ${CV[rule].all.trades} trades (far more than one person can hold); <b>max 3 new a day</b> keeps the three highest-RS signals each day, closer to a real book, but still ignores how many positions overlap. Same entry and initial stop for every rule; only the selling differs. No top-theme filter, today's universe (survivors flatter it a little), no slippage.`;
+  };
+  $("#rule-seg").onclick = e => { const b = e.target.closest("button"); if (b) { rule = b.dataset.k; drawR(); } };
+  $("#cap-seg").onclick = e => { const b = e.target.closest("button"); if (b) { cap = b.dataset.c; drawR(); } };
+  drawR();
+
   // live log
   let seg = "all";
   const SEG = {all:["All", x=>true], rs:["RS setups", x=>x.source==="RS setup"], scan:["Weekly scan", x=>x.source==="Weekly scan"],
@@ -131,7 +176,9 @@ function render(){
     {h:"Status", l:1, f:x=>`<td class="l">${ST(x.status)}</td>`},
     {h:"Pivot", f:x=>`<td>${fmt(x.pivot,2,false)}</td>`}, {h:"Stop", f:x=>`<td>${fmt(x.stop,2,false)}</td>`},
     {h:"Entry", f:x=>`<td>${fmt(x.entry,2,false)}</td>`},
-    {h:"R", f:x=>`<td>${R(x.R)}</td>`}, {h:"MFE", tip:"Best R reached", f:x=>`<td>${R(x.mfe)}</td>`},
+    {h:"R (20-day)", tip:"Fixed exit: stop or close after 20 days", f:x=>`<td>${R(x.R)}</td>`},
+    {h:"R (your rules)", tip:"⅓ on day 3, stop to breakeven, trail the rest on the 10-day", f:x=>`<td>${R(x.R_q10)}${x.q10_status==='running'?' <span style="color:#6b645a;font-size:9.5px">open</span>':''}</td>`},
+    {h:"MFE", tip:"Best R reached (20-day window)", f:x=>`<td>${R(x.mfe)}</td>`},
     {h:"Since logged", f:x=>`<td class="${x.since>0?'up':x.since<0?'dn':''}">${fmt(x.since)}%</td>`},
     {h:"Since signal", tip:"Gold = entry (pivot) · red = stop", f:x=>`<td>${spark(x.spark, x.entry ?? x.pivot, x.stop)}</td>`},
     {h:"Regime", l:1, f:x=>`<td class="l" style="color:var(--t3)">${esc(x.regime||'')}</td>`},

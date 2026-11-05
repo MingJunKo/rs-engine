@@ -56,6 +56,73 @@ def score(i, o, h, l, c):
     return out
 
 
+RULES = {
+    "fixed20": "Fixed: stop or close after 20 days",
+    "q10": "Sell ⅓ on day 3 · stop to breakeven · trail the rest on the 10-day",
+    "p2r20": "Sell ⅓ at +2R · stop to breakeven · trail the rest on the 20-day",
+}
+MAX_HOLD = 120
+
+
+def manage(i, o, h, l, c, sma, rule):
+    """Your selling rules. Same entry and initial stop as score(); exits at the close when price closes below the
+    trailing average. Returns total R (weighted for the partial sale), status, exit bar."""
+    n = len(c)
+    piv = np.nanmax(h[max(0, i - 19):i + 1]); stop = np.nanmin(l[max(0, i - 9):i + 1])
+    for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
+        if h[j] <= piv:
+            continue
+        entry = max(o[j], piv) if np.isfinite(o[j]) else piv
+        risk = entry - stop
+        if not (risk > 0):
+            return None
+        part, banked, st = 0.0, 0.0, stop                       # part = fraction already sold, banked = R from it
+        for k in range(j, min(n, j + MAX_HOLD)):
+            if l[k] <= st:                                      # stop (initial or breakeven)
+                ex = st if k == j else min(o[k], st)
+                return {"R": banked + (1 - part) * (ex - entry) / risk, "status": "stopped" if part == 0 else "closed", "exit": k}
+            if part == 0:
+                if rule == "q10" and k == j + 3 and c[k] > entry:
+                    part, banked, st = 1 / 3, (c[k] - entry) / risk / 3, max(st, entry)
+                elif rule == "p2r20" and h[k] >= entry + 2 * risk:
+                    part, banked, st = 1 / 3, 2 / 3, max(st, entry)
+            if part > 0 and k > j + 3 and c[k] < sma[k]:       # trail: close below the average
+                return {"R": banked + (1 - part) * (c[k] - entry) / risk, "status": "closed", "exit": k}
+        k = min(n, j + MAX_HOLD) - 1
+        done = j + MAX_HOLD <= n
+        return {"R": banked + (1 - part) * (c[k] - entry) / risk, "status": "closed" if done else "running", "exit": k}
+    return None
+
+
+def curve(trades, idx, cap=None):
+    """Cumulative R by exit date. cap = max new trades per signal day (highest RS first) — closer to a real book."""
+    if cap:
+        by_day = {}
+        for t in trades:
+            by_day.setdefault(t["i"], []).append(t)
+        trades = [t for d in by_day.values() for t in sorted(d, key=lambda x: -(x["rs"] or 0))[:cap]]
+    done = sorted([t for t in trades if t["status"] != "running"], key=lambda t: t["exit"])
+    pts, tot = {}, 0.0
+    for t in done:
+        tot += t["R"]
+        pts[idx[t["exit"]].strftime("%Y-%m-%d")] = round(tot, 2)
+    R = np.array([t["R"] for t in done]) if done else np.array([])
+    months = {}
+    for t in done:
+        m = idx[t["exit"]].strftime("%Y-%m")
+        months[m] = round(months.get(m, 0) + t["R"], 2)
+    return {"points": list(pts.items()), "total": round(tot, 1), "trades": len(done),
+            "open": sum(t["status"] == "running" for t in trades),
+            "open_R": round(sum(t["R"] for t in trades if t["status"] == "running"), 1),
+            "avg": round(float(R.mean()), 2) if len(R) else None,
+            "win": round(100 * float((R > 0).mean())) if len(R) else None,
+            "avg_win": round(float(R[R > 0].mean()), 2) if (R > 0).any() else None,
+            "avg_loss": round(float(R[R <= 0].mean()), 2) if (R <= 0).any() else None,
+            "best": round(float(R.max()), 1) if len(R) else None,
+            "big": int((R >= 5).sum()), "big_R": round(float(R[R >= 5].sum()), 1),
+            "months": sorted(months.items())}
+
+
 def stats(rows):
     t = [r for r in rows if r["status"] in ("stopped", "closed")]
     trig = [r for r in rows if r["status"] in ("stopped", "closed", "running")]
@@ -92,7 +159,9 @@ def run_tracker(ctx: dict) -> dict:
     dv = (c * v).rolling(20).mean()
     sig = ((pivot_dist >= -6) & (tight <= 2.5) & (ext >= 0) & (ext <= 4) & (rating >= st["min_rs_rating"]) & (c > sma50)
            & (adr >= st.get("min_adr", 2.5)) & (c >= st["min_price"]) & (dv >= st["min_dollar_volume"]))
-    start = max(60, len(idx) - 260)
+    start = max(130, len(idx) - 400)                      # ~1.5 years once the 50-day and RS have warmed up
+    S10, S20 = c.rolling(10).mean().values, c.rolling(20).mean().values
+    managed = {r: [] for r in RULES}
     bt = []
     O, H, L, C = o.values, h.values, l.values, c.values
     Bv = bench.reindex(idx).values
@@ -107,6 +176,14 @@ def run_tracker(ctx: dict) -> dict:
                 continue
             last = i
             r = score(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx])
+            for rule in ("q10", "p2r20"):
+                m = manage(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], (S10 if rule == "q10" else S20)[:, jx], rule)
+                if m:
+                    managed[rule].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, **m})
+            if r["status"] in ("stopped", "closed", "running") and r["R"] is not None:
+                managed["fixed20"].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, "R": r["R"],
+                                           "status": "running" if r["status"] == "running" else "closed",
+                                           "exit": min(len(idx) - 1, i + 1 + (r["days"] or 0))})
             ret20 = (C[i + 20, jx] / C[i, jx] - 1) * 100 if i + 20 < len(idx) else None
             b20 = (Bv[i + 20] / Bv[i] - 1) * 100 if i + 20 < len(idx) else None
             bt.append({"symbol": t, "date": idx[i].strftime("%Y-%m-%d"), "rs": _i(rating.iat[i, jx]),
@@ -147,11 +224,13 @@ def run_tracker(ctx: dict) -> dict:
             continue
         i, jx = idx.get_loc(pd.Timestamp(r.date)), pos[r.symbol]
         sc = score(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx])
+        mq = manage(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], S10[:, jx], "q10")
         now = C[-1, jx]
         live.append({"symbol": r.symbol, "date": r.date, "source": r.source, "price": r.price, "rs": _i(r.rs),
                      "theme": r.theme if isinstance(r.theme, str) else "", "cs": r.cs if isinstance(r.cs, str) else None,
                      "regime": r.regime, "since": _f((now / r.price - 1) * 100), "exchange": ctx["exchange"].get(r.symbol, ""),
-                     "spark": [round(float(x), 2) for x in C[i:, jx][:45]], **_clean(sc)})
+                     "spark": [round(float(x), 2) for x in C[i:, jx][:45]], **_clean(sc),
+                     "R_q10": _f(mq["R"], 2) if mq else None, "q10_status": mq["status"] if mq else None})
     live.sort(key=lambda x: x["date"], reverse=True)
 
     # ── breakdowns of the backtest ─────────────────────────────────
@@ -167,7 +246,12 @@ def run_tracker(ctx: dict) -> dict:
     by_mkt = bucket(bt, "mkt_up", [0, 1, 2], ["RSP below 50-day", "RSP above 50-day"])
     months = sorted({r["date"][:7] for r in bt})
     by_month = [{"label": m, **stats([r for r in bt if r["date"][:7] == m])} for m in months]
-    return {"asof": ctx["asof_label"], "generated": ctx["generated"],
+    curves = {rule: {"label": RULES[rule], "all": curve(tr, idx), "cap3": curve(tr, idx, cap=3)}
+              for rule, tr in managed.items()}
+    top = sorted(managed["q10"], key=lambda t: -t["R"])[:12]
+    curves["top_q10"] = [{"symbol": t["sym"], "date": idx[t["i"]].strftime("%Y-%m-%d"), "R": round(t["R"], 1),
+                          "exit": idx[t["exit"]].strftime("%Y-%m-%d"), "status": t["status"]} for t in top]
+    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves,
             "backtest": {"summary": stats(bt), "by_rs": by_rs, "by_tight": by_tight, "by_adr": by_adr, "by_mkt": by_mkt, "by_month": by_month,
                          "from": idx[start].strftime("%d %b %Y"), "base_ret20": base_ret20, "bench_ret20": bench_ret20,
                          "recent": sorted([r for r in bt if r["status"] in ("running", "waiting")], key=lambda r: r["date"], reverse=True)[:40]},
