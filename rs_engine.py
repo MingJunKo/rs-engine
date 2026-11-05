@@ -1149,16 +1149,36 @@ def run(demo: bool, notify: bool):
                 + (f", breadth {int(g['breadth'])}% {int(g['breadth_chg']):+d}" if pd.notna(g['breadth_chg']) else "") + ")"
                 + (" → watch " + ", ".join(g["stocks"][:4]) if g["stocks"] else "") for g in fresh_t[:4]))
         if scans_payload:
-            ep0 = [x for x in scans_payload["ep"] if x["days_ago"] == 0]
+            # EPs: only the ones worth a look — neglected, or strong RS, or in a top theme, with real money behind them
+            ep0 = [x for x in scans_payload["ep"] if x["days_ago"] == 0
+                   and (x.get("vol_m") or 0) * (x.get("price") or 0) >= 20
+                   and (x["neglected"] or (x.get("rs_rating") or 0) >= 80 or x.get("theme") in top_themes)]
+            ep0.sort(key=lambda x: (-x["neglected"], -x["gap"]))
             if ep0:
                 alert.append("Episodic pivot today: " + "; ".join(
-                    f"{x['symbol']} gap +{x['gap']}% on {x['rvol']}× vol"
+                    f"{x['symbol']} gap +{x['gap']}% on {x['rvol']}× vol" + (" · neglected" if x["neglected"] else "")
                     + (" (earnings)" if x["earnings_gap"] else (f" — {x['news'][0]['title'][:60]}" if x["news"] else ""))
                     for x in ep0[:5]))
             pr = [x for x in scans_payload["parabolic"] if x["first_red"]]
             if pr:
                 alert.append("Parabolic first red day (short trigger watch): " + ", ".join(
                     f"{x['symbol']} (+{x['run_5d']}% in 5d)" for x in pr[:5]))
+        if tracker_payload:
+            # breakouts: a logged RS setup (or top-theme scan name) cleared its pivot today, on volume
+            bo = []
+            for r in tracker_payload["live"]["rows"]:
+                if r["status"] != "running" or r.get("days") != 0 or r["symbol"] not in close.columns:
+                    continue
+                if r["source"] != "RS setup" and r.get("theme") not in top_themes:
+                    continue
+                vx = float(vol[r["symbol"]].iloc[-1] / vol[r["symbol"]].rolling(50).mean().iloc[-2])
+                if vx < 1.3:
+                    continue
+                risk = (r["entry"] - r["stop"]) / r["entry"] * 100 if r["entry"] and r["stop"] else None
+                bo.append(f"{r['symbol']} cleared {r['pivot']:.2f} on {vx:.1f}× vol"
+                          + (f" · stop {r['stop']:.2f} ({risk:.1f}% risk)" if risk else ""))
+            if bo:
+                alert.append("Breakout from a logged setup: " + "; ".join(bo[:6]))
     new_state = {"date": d, "regime": regime, "setups": setups_now, "turners": [g["etf"] for g in turners]}
     new_state["prev"] = (old_state if old_state.get("date") != d else None) or None
     new_state["prev"] = {k: v for k, v in (new_state["prev"] or {}).items() if k != "prev"} or None

@@ -108,14 +108,20 @@ def send(rows, now):
     if not rows:
         log("No gappers — no Telegram message."); return
     e = lambda s: html.escape(str(s))
+    # only the gappers worth a look: earnings-driven or already strong (RS ≥ 70); the rest are on the Scans page
+    good = [r for r in rows if r["earnings"] or (r.get("rs_rating") or 0) >= 70]
+    if not good:
+        log("Gappers found, but none earnings-driven or RS ≥ 70 — no Telegram message."); return
     lines = [f"<b>Pre-market EP watch — {now:%a %d %b}</b>", "<i>Gapping ≥ 8% on volume. Check the catalyst before the open.</i>", ""]
-    for r in rows[:12]:
+    for r in good[:8]:
         tag = " 📊earnings" if r["earnings"] else ""
         rs = f" · RS {r['rs_rating']}" if r.get("rs_rating") is not None else ""
         lines.append(f"<code>{r['symbol']:<6}</code> +{r['gap']}% · {r['pm_vol_k']:,}K sh{rs}{tag}")
         if r["news"]:
             n = r["news"][0]
             lines.append(f"   ↳ {e(n['title'][:110])}")
+    if len(rows) > len(good[:8]):
+        lines.append(f"<i>+{len(rows) - len(good[:8])} other gappers on the Scans page</i>")
     try:
         url = json.loads((ROOT / "config" / "settings.json").read_text()).get("dashboard_url")
         if url:
