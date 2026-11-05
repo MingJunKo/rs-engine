@@ -471,7 +471,12 @@ def broad_universe(known: set, names: pd.DataFrame, demo: bool) -> list[str]:
     if not SETTINGS.get("broad_universe", True):
         return []
     cache = CFG_DIR / "broad.csv"
-    fresh = cache.exists() and time.time() - cache.stat().st_mtime < 6 * 86400
+    meta = CFG_DIR / "broad_meta.json"                     # file dates don't survive a git checkout: store it
+    try:
+        last = dt.date.fromisoformat(json.loads(meta.read_text())["screened"])
+    except Exception:
+        last = dt.date(2000, 1, 1)
+    fresh = cache.exists() and (dt.date.today() - last).days < 6
     if demo or fresh or not len(names):
         return sorted(set(pd.read_csv(cache).ticker) - known) if cache.exists() else []
     n = names.fillna("")
@@ -491,6 +496,7 @@ def broad_universe(known: set, names: pd.DataFrame, demo: bool) -> list[str]:
         log(f"  broad universe: only {len(got)} of {len(cand)} downloaded — keeping last week's list as well")
         keep = sorted(set(keep) | old)
     pd.DataFrame({"ticker": sorted(keep)}).to_csv(cache, index=False)
+    meta.write_text(json.dumps({"screened": dt.date.today().isoformat(), "candidates": len(cand), "downloaded": int(len(got))}))
     log(f"  broad universe: {len(keep)} liquid names added")
     return sorted(keep)
 
