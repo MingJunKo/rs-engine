@@ -127,7 +127,7 @@ EGBN,Eagle Bancorp Inc.,Banks,95,-4,55.0,16.49,34.4,4.12,21.81,23.47,0.0,3.02,17
 EG,Everest Group Ltd.,Financials,95,26,65.0,10.22,421.3,8.9,14.85,14.38,0.0,2.36,179173475.72,4.11,True,True,00101-0,,,KIE XLF
 LKFT,Lakefront Biotherapeutics,Health Care,95,3,60.0,18.37,34.09,6.27,16.27,30.46,-1.59,2.35,7559607.34,5.42,False,True,10111-0,,,
 ALRM,Alarm.com Holdings Inc.,Software & Cloud,95,-3,85.0,14.96,67.96,4.68,21.12,20.73,0.0,2.64,31863574.01,5.86,True,True,1111110,314.0,7.53,XSW
-KIM,Kimco Realty Corporation (HC),Real Estate,95,42,70.0,7.6,25.88,10.6,16.89,7.19,-0.73,1.72,145477556.16,6.11,False,True,1010110,693.0,5.64,IYR SCHH XLRE
+KIM,Kimco Realty Corporation (HC),REITs,95,42,70.0,7.6,25.88,10.6,16.89,7.19,-0.73,1.72,145477556.16,6.11,False,True,1010110,693.0,5.64,IYR SCHH XLRE
 NWE,NorthWestern Energy Group Inc.,Utilities,95,-1,60.0,12.68,82.0,4.26,18.98,17.79,0.0,2.08,45698257.17,5.78,True,True,10111-0,,,
 CHD,Church & Dwight Company Inc.,Consumer Staples,95,6,50.0,7.52,112.03,6.95,16.05,8.72,0.0,2.15,225457914.94,5.14,True,True,0010110,1068.0,1.52,XLP
 ULTA,Ulta Beauty Inc.,Retail,94,0,60.0,16.07,660.7,6.7,20.72,22.63,-6.52,2.85,297795966.2,4.92,False,True,0010100,1024.0,-6.91,XLY XRT
@@ -145,9 +145,9 @@ TW,Tradeweb Markets Inc.,Capital Markets,94,1,70.0,15.26,126.99,5.98,18.09,23.07
 SIBN,SI-BONE Inc.,Medical Devices,94,2,65.0,27.08,24.95,14.29,27.62,37.54,0.0,5.33,18987039.23,4.32,True,True,0010100,169.0,-5.59,IHI XHE
 ACB,Aurora Cannabis Inc. Common Shares,Health Care,94,8,30.0,43.64,5.24,28.43,14.16,75.84,-5.92,4.11,6381159.8,5.15,False,True,00111-0,,,
 MMS,Maximus Inc.,Consumer Discretionary,94,20,70.0,16.05,68.51,10.84,25.29,18.15,-29.64,3.19,37904863.05,4.91,False,True,00001-0,,,
-EXR,Extra Space Storage Inc,Real Estate,94,20,75.0,9.76,161.04,11.25,20.28,8.96,0.0,2.07,195604622.95,6.55,False,True,1011110,797.0,4.18,IYR SCHH XLRE
+EXR,Extra Space Storage Inc,REITs,94,20,75.0,9.76,161.04,11.25,20.28,8.96,0.0,2.07,195604622.95,6.55,False,True,1011110,797.0,4.18,IYR SCHH XLRE
 SLN,Silence Therapeutics Plc American Depository Share,Health Care,94,-1,40.0,66.54,19.8,0.46,101.42,68.94,0.0,2.93,109796134.23,9.55,True,True,00111-0,,,
-SMA,SmartStop Self Storage REIT Inc.,Real Estate,94,8,55.0,9.26,38.14,8.7,15.56,12.02,0.0,2.07,23660726.81,6.09,True,True,10101-0,,,
+SMA,SmartStop Self Storage REIT Inc.,REITs,94,8,55.0,9.26,38.14,8.7,15.56,12.02,0.0,2.07,23660726.81,6.09,True,True,10101-0,,,
 HMC,Honda Motor Company Ltd.,Industrials,94,14,55.0,8.24,35.22,4.57,10.72,14.61,0.0,1.21,27471777.79,4.23,True,True,10111-0,,,
 ICE,Intercontinental Exchange Inc.,Financials,94,37,55.0,11.81,174.92,12.16,13.96,17.2,0.0,2.19,553045780.67,4.08,False,True,0110100,1667.0,-3.19,KCE XLF
 PCRX,Pacira BioSciences Inc.,Pharma,94,-1,45.0,34.11,36.4,0.03,47.01,42.3,-0.05,0.23,101954571.03,15.2,True,True,0011110,255.0,7.14,XPH
@@ -155,7 +155,7 @@ BKH,Black Hills Corporation,Infrastructure,94,-1,65.0,12.2,84.19,4.21,19.01,16.8
 JAKK,JAKKS Pacific Inc.,Consumer Discretionary,94,-4,60.0,23.06,34.02,4.71,24.02,34.89,0.0,3.64,7193161.77,5.85,True,True,10111-0,,,
 ISRG,Intuitive Surgical Inc.,Medical Devices,94,4,55.0,18.97,482.1,8.54,19.11,29.0,-18.68,3.14,1167045332.47,5.01,False,True,1101100,2251.0,-2.97,BOTZ IHI ROBO XHE XLV
 EXLS,ExlService Holdings Inc.,Consumer Discretionary,94,3,60.0,17.21,43.12,5.89,21.77,24.41,-0.6,2.88,102344374.72,4.54,False,True,10101-0,,,
-CCI,Crown Castle Inc.,Real Estate,94,-3,50.0,21.91,92.17,5.05,34.99,24.81,0.0,3.8,530945020.95,4.88,False,True,0011100,936.0,-1.99,IDGT IYR SCHH XLRE
+CCI,Crown Castle Inc.,REITs,94,-3,50.0,21.91,92.17,5.05,34.99,24.81,0.0,3.8,530945020.95,4.88,False,True,0011100,936.0,-1.99,IDGT IYR SCHH XLRE
 WWW,Wolverine World Wide Inc.,Consumer Discretionary,94,46,50.0,18.83,23.5,20.14,21.7,23.42,0.0,3.91,19920129.05,4.53,True,True,00101-0,,,
 LLY,Eli Lilly and Company,Health Care,94,10,65.0,15.46,1417.99,10.07,22.51,19.14,0.0,3.03,3550364522.3,4.74,True,True,0011110,4620.0,5.46,PPH XLV XPH
 ACGL,Arch Capital Group Ltd.,Financials,94,15,60.0,9.29,110.68,7.98,16.73,11.47,0.0,2.09,231501580.3,5.22,False,True,01101-0,,,KIE XLF
@@ -198,10 +198,10 @@ AVAH,Aveanna Healthcare Holdings Inc.,Health Services,92,16,60.0,30.03,14.23,8.9
 GLOB,Globant S.A. Common Shares,Software & Cloud,92,6,65.0,24.92,48.04,11.0,35.1,28.97,-32.54,5.1,42339349.23,4.08,False,True,00011-0,,,
 HAYW,Hayward Holdings Inc.,Industrials,92,10,75.0,16.18,16.98,14.81,37.94,8.36,-1.91,3.43,63054476.23,7.32,False,True,10111-0,,,
 PVH,PVH Corp.,Industrials,92,20,65.0,13.4,97.3,14.13,24.41,12.48,-1.44,3.39,71837485.5,5.91,False,True,10111-0,,,
-HST,Host Hotels & Resorts Inc.,Real Estate,92,9,75.0,8.99,26.11,3.32,16.15,12.68,0.0,2.13,214555572.9,6.05,True,True,0011110,742.0,7.38,IYR SCHH XLRE
+HST,Host Hotels & Resorts Inc.,REITs,92,9,75.0,8.99,26.11,3.32,16.15,12.68,0.0,2.13,214555572.9,6.05,True,True,0011110,742.0,7.38,IYR SCHH XLRE
 AVA,Avista Corporation,Utilities,92,50,60.0,5.68,40.17,8.54,14.15,5.89,-4.12,1.86,25839623.11,4.78,False,True,10101-0,,,
 RGR,Sturm Ruger & Company Inc.,Aerospace & Defense,92,6,55.0,19.03,49.91,7.59,14.34,32.74,-0.38,5.09,29189010.68,3.65,True,True,1010100,174.0,-8.42,ITA
-APLE,Apple Hospitality REIT Inc. Common Shares,Real Estate,92,-4,65.0,11.92,18.82,1.56,15.74,19.36,0.0,2.09,43304905.64,6.15,True,True,00111-0,,,
+APLE,Apple Hospitality REIT Inc. Common Shares,REITs,92,-4,65.0,11.92,18.82,1.56,15.74,19.36,0.0,2.09,43304905.64,6.15,True,True,00111-0,,,
 CL,Colgate-Palmolive Company,Consumer Staples,92,21,50.0,5.9,98.76,7.71,13.84,6.8,0.0,2.06,464119080.71,4.1,False,True,0010110,2014.0,2.81,XLP
 SMG,Scotts Miracle-Gro Company (The),Industrials,92,22,70.0,14.67,67.19,12.62,33.0,9.45,-7.55,3.65,67147511.79,4.75,False,True,00101-0,,,
 CME,CME Group Inc.,Financials,92,6,60.0,10.75,308.27,4.84,14.1,17.18,-2.36,2.14,646346179.02,3.89,False,True,0011100,1707.0,-5.22,KCE XLF
@@ -218,11 +218,11 @@ LNT,Alliant Energy Corporation,Utilities,92,21,55.0,5.76,73.77,7.15,13.5,6.92,-4
 PODD,Insulet Corporation,Medical Devices,92,29,60.0,15.22,165.02,10.8,22.48,18.46,-52.36,3.42,212060177.36,4.26,False,True,1001100,730.0,-7.12,IHI XHE XLV
 ATRC,AtriCure Inc.,Medical Devices,92,3,55.0,38.2,65.53,6.69,22.08,65.94,0.0,4.17,45854073.02,3.48,True,True,1010110,254.0,13.9,IHI XHE
 LOW,Lowe's Companies Inc.,Consumer Discretionary,91,33,60.0,10.68,229.38,15.61,25.68,5.69,-18.8,2.5,673426147.01,5.59,False,True,0000100,2648.0,-1.85,ITB XHB XLY
-LTC,LTC Properties Inc.,Real Estate,91,24,60.0,10.67,46.33,8.42,9.66,19.05,0.0,2.37,28029179.4,3.41,True,True,00111-0,,,
+LTC,LTC Properties Inc.,REITs,91,24,60.0,10.67,46.33,8.42,9.66,19.05,0.0,2.37,28029179.4,3.41,True,True,00111-0,,,
 AVY,Avery Dennison Corporation,Materials,91,15,60.0,8.17,192.59,6.58,14.33,11.33,-0.78,2.17,121500979.67,4.04,False,True,0010100,783.0,-0.51,XLB
 MRNA,Moderna Inc.,Health Care,91,17,65.0,202.7,258.38,20.65,37.83,379.73,0.0,10.57,4033671854.3,3.54,True,True,0011110,785.0,8.43,IBB PBE XBI XLV
 BBWI,Bath & Body Works Inc.,Retail,91,-1,60.0,17.81,23.54,8.78,31.29,18.08,-1.7,4.02,134623892.22,5.38,False,True,1010100,466.0,-0.43,XRT
-AMT,American Tower Corporation (REIT),Real Estate,91,1,40.0,11.32,194.86,6.05,18.25,15.05,0.0,3.02,700359387.16,3.36,False,True,0010100,1749.0,-0.46,IDGT IYR SCHH XLRE
+AMT,American Tower Corporation (REIT),REITs,91,1,40.0,11.32,194.86,6.05,18.25,15.05,0.0,3.02,700359387.16,3.36,False,True,0010100,1749.0,-0.46,IDGT IYR SCHH XLRE
 EFX,Equifax Inc.,Industrials,91,9,65.0,14.92,192.21,9.19,34.9,9.66,-14.54,3.27,354381628.35,3.86,False,True,0010100,834.0,-4.69,XLI
 KSS,Kohl's Corporation,Retail,91,-2,55.0,27.21,25.36,8.65,29.19,38.38,0.0,5.12,99374354.07,4.77,True,True,1011110,372.0,0.81,XRT
 TILE,Interface Inc.,Consumer Discretionary,91,19,55.0,10.62,40.16,11.77,14.58,14.51,0.0,2.74,14533646.19,3.82,True,True,11101-0,,,
@@ -230,11 +230,11 @@ YUMC,Yum China Holdings Inc.,Consumer Discretionary,91,26,70.0,7.92,49.68,11.67,
 DEO,Diageo plc,Consumer Staples,91,10,55.0,6.61,97.7,6.24,16.73,6.64,-2.13,1.64,101053120.95,3.81,False,True,00101-0,,,
 MDLZ,Mondelez International Inc.,Consumer Staples,91,29,40.0,6.56,67.38,8.91,13.02,8.33,0.0,1.93,504794258.89,3.77,True,True,0010100,1899.0,-0.47,XLP
 TSN,Tyson Foods Inc.,Consumer Staples,91,37,70.0,4.95,60.03,8.44,15.51,3.5,-11.13,1.85,184263669.8,5.31,False,True,0010100,874.0,-2.24,MOO XLP
-DRH,Diamondrock Hospitality Company,Real Estate,91,-2,70.0,11.64,14.63,2.59,18.17,16.77,0.0,2.47,48947908.11,5.51,True,True,00111-0,,,
+DRH,Diamondrock Hospitality Company,REITs,91,-2,70.0,11.64,14.63,2.59,18.17,16.77,0.0,2.47,48947908.11,5.51,True,True,00111-0,,,
 CHT,Chunghwa Telecom Co. Ltd.,Communication Services,91,-6,50.0,6.89,48.98,1.72,6.29,15.85,-0.02,1.19,8207377.36,4.65,False,True,-0111-0,,,
 CB,Chubb Limited,Financials,91,13,55.0,4.48,374.17,5.25,11.96,6.01,0.0,1.71,552712286.8,4.74,True,True,01101-0,,,KIE XLF
 SHO,Sunstone Hotel Investors Inc. Sunstone Hotel Investors Inc. Common Shares,Consumer Discretionary,91,-1,65.0,10.46,13.01,1.96,15.95,16.16,0.0,2.48,38455201.17,5.33,True,True,10111-0,,,
-PSA,Public Storage,Real Estate,91,16,70.0,8.0,342.76,10.55,19.91,5.9,0.0,2.08,305200713.7,6.21,False,True,0010110,1127.0,3.21,IYR SCHH XLRE
+PSA,Public Storage,REITs,91,16,70.0,8.0,342.76,10.55,19.91,5.9,0.0,2.08,305200713.7,6.21,False,True,0010110,1127.0,3.21,IYR SCHH XLRE
 GO,Grocery Outlet Holding Corp.,Retail,91,6,50.0,25.47,13.69,8.91,19.98,41.28,-3.39,3.9,27379519.81,2.91,True,True,0010110,246.0,9.82,XRT
 BLKB,Blackbaud Inc.,Software & Cloud,91,1,60.0,18.07,56.06,6.76,28.84,20.92,-12.81,4.18,26114539.05,3.79,False,True,0011100,284.0,-3.07,SKYY XSW
 RRC,Range Resources Corporation,Oil & Gas E&P,91,-8,50.0,23.75,52.1,-6.76,30.18,35.4,-7.59,3.34,297750672.06,4.95,True,True,1011100,543.0,-1.99,FCG XOP
@@ -322,7 +322,7 @@ MFIC,MidCap Financial Investment Corporation,Financials,88,-9,40.0,9.13,10.33,0.
 APPN,Appian Corporation,Software & Cloud,88,-10,55.0,39.61,49.82,-4.12,33.74,63.83,-4.83,6.58,48806697.82,3.25,True,True,1010110,212.0,2.42,SKYY XSW
 WM,Waste Management Inc.,Industrials,88,16,65.0,4.84,238.49,5.92,14.72,4.6,-2.02,1.91,576602395.26,3.88,False,True,0010110,2369.0,0.08,XLI
 HD,Home Depot Inc. (The),Consumer Discretionary,88,20,60.0,7.91,355.44,11.93,23.98,2.44,-7.13,2.33,1524446287.54,5.33,False,True,0010100,4094.0,-1.06,ITB XHB XLY
-SPG,Simon Property Group Inc.,Real Estate,88,41,65.0,4.43,228.5,8.17,13.26,4.11,-2.43,1.59,279752689.48,5.68,False,True,1111110,1358.0,3.66,IYR SCHH XLRE
+SPG,Simon Property Group Inc.,REITs,88,41,65.0,4.43,228.5,8.17,13.26,4.11,-2.43,1.59,279752689.48,5.68,False,True,1111110,1358.0,3.66,IYR SCHH XLRE
 WPP,WPP plc,Consumer Discretionary,88,12,50.0,9.36,28.4,10.08,15.76,11.65,0.0,2.4,9385249.81,3.71,True,True,00101-0,,,
 CENTA,Central Garden & Pet Company,Consumer Discretionary,88,1,60.0,5.83,41.5,8.33,19.91,2.22,0.0,2.56,14660500.93,5.17,False,True,00111-0,,,
 AIZ,Assurant Inc.,Financials,88,15,60.0,4.8,308.52,8.26,13.86,4.41,0.0,1.86,107404274.8,4.61,True,True,0111110,615.0,5.49,KIE XLF
@@ -484,7 +484,7 @@ CPNG,Coupang Inc.,Retail,82,44,60.0,8.15,17.05,20.84,18.24,4.28,-46.93,4.24,2259
 WSM,Williams-Sonoma Inc.,Consumer Discretionary,82,8,55.0,6.7,270.08,7.99,11.83,9.72,0.0,2.85,271176941.15,3.9,True,True,1011110,1003.0,8.08,XHB XLY
 CELH,Celsius Holdings Inc.,Consumer Staples,82,42,50.0,17.11,30.75,9.9,12.68,29.36,-48.68,3.83,151651704.48,1.62,False,True,00001-0,,,
 CRH,CRH PLC,Materials,82,44,55.0,5.78,98.8,14.17,18.18,1.57,-23.96,2.92,499144717.16,3.81,False,True,00011-0,,,IFRA PAVE XLB
-CSR,D/B/A Centerspace,Real Estate,82,16,50.0,3.86,59.57,5.51,7.43,7.87,-11.12,2.25,13199137.98,2.86,False,True,00111-0,,,
+CSR,D/B/A Centerspace,REITs,82,16,50.0,3.86,59.57,5.51,7.43,7.87,-11.12,2.25,13199137.98,2.86,False,True,00111-0,,,
 RNR,RenaissanceRe Holdings Ltd.,Insurance,82,22,55.0,5.36,353.66,6.46,9.01,9.46,-2.46,2.53,176271457.35,2.22,True,True,00101-0,,,KIE
 RSKD,Riskified Ltd. Class A,Consumer Discretionary,82,-10,55.0,35.58,8.81,-2.54,13.09,69.75,-4.45,5.19,15870812.04,3.03,True,True,00111-0,,,
 TNL,Travel   Leisure Co. Common  Stock,Consumer Discretionary,82,31,60.0,7.43,77.62,13.51,23.56,1.3,-0.14,2.89,61355320.68,5.35,False,True,00101-0,,,
@@ -523,7 +523,7 @@ JHX,James Hardie Industries plc.,Infrastructure,81,30,55.0,6.68,29.52,13.28,15.6
 LMB,Limbach Holdings Inc.,Consumer Discretionary,81,37,60.0,13.91,58.11,14.57,13.16,21.24,-49.08,4.72,10551733.36,3.04,False,True,11011-0,,,
 LCLN,Lincoln International Inc.,Financials,81,13,60.0,11.59,27.25,12.56,13.83,16.73,,3.76,6813004.86,2.34,False,True,-0-11-0,,,
 MSI,Motorola Solutions Inc.,AI Infrastructure,81,-14,55.0,2.6,496.99,2.81,8.92,5.11,0.0,1.71,460938732.75,3.58,False,True,0010100,1471.0,-1.41,IDGT XLK
-OUT,OUTFRONT Media Inc.,Real Estate,81,4,60.0,3.85,32.48,3.44,11.73,5.45,-2.84,2.25,41809662.98,4.06,False,True,10111-0,,,
+OUT,OUTFRONT Media Inc.,REITs,81,4,60.0,3.85,32.48,3.44,11.73,5.45,-2.84,2.25,41809662.98,4.06,False,True,10111-0,,,
 ONON,On Holding AG Class A,Consumer Discretionary,81,44,60.0,7.15,38.62,20.91,16.57,3.43,-23.72,3.48,347572316.63,5.45,False,True,10011-0,,,
 MLM,Martin Marietta Materials Inc.,Materials,81,28,55.0,4.49,556.56,9.13,13.81,3.56,-21.07,2.57,476532459.7,3.69,False,True,0000110,1076.0,0.19,PAVE XLB
 MICC,The Magnum Ice Cream Company N.V.,Consumer Staples,81,13,60.0,6.41,20.14,4.35,17.23,6.45,-1.37,1.91,16138650.83,2.25,True,True,-0101-0,,,
@@ -548,12 +548,12 @@ BKE,Buckle Inc. (The),Retail,80,9,50.0,3.94,47.88,5.32,11.04,5.55,-13.92,2.51,18
 TEVA,Teva Pharmaceutical Industries Limited,Pharma,80,17,45.0,9.75,41.85,4.7,6.95,20.22,-0.57,2.84,296006421.36,1.95,True,True,00101-0,,,PPH
 W,Wayfair Inc.,Internet & E-commerce,80,-3,55.0,13.13,123.56,8.37,17.17,18.73,0.0,4.77,250809740.47,3.02,True,True,1010110,458.0,2.69,IBUY XHB
 MANU,Manchester United Ltd. Class A,Leisure & Travel,80,55,55.0,4.4,22.86,10.06,12.06,4.34,-5.5,2.42,5585395.4,3.53,False,True,00101-0,,,
-INN,Summit Hotel Properties Inc.,Real Estate,80,-9,60.0,7.1,7.13,-0.97,19.03,8.17,-1.93,3.69,8811804.47,3.95,True,True,00111-0,,,
+INN,Summit Hotel Properties Inc.,REITs,80,-9,60.0,7.1,7.13,-0.97,19.03,8.17,-1.93,3.69,8811804.47,3.95,True,True,00111-0,,,
 BHB,Bar Harbor Bankshares Inc.,Banks,80,2,50.0,3.72,42.51,4.78,9.03,6.69,0.0,2.05,3245449.24,3.16,True,True,0010110,177.0,6.63,KRE
 VRSK,Verisk Analytics Inc.,Industrials,80,12,50.0,6.33,197.85,4.24,19.76,4.55,-11.32,3.12,241783082.24,2.44,False,True,0011100,962.0,-0.21,XLI
 HZO,MarineMax Inc.  (FL),Retail,80,-1,35.0,21.8,52.71,0.4,0.61,50.04,-0.09,0.3,41984926.94,1.77,True,True,0011110,185.0,8.82,XRT
 FTDR,Frontdoor Inc.,Consumer Discretionary,80,-14,55.0,5.94,92.86,10.29,17.89,3.27,0.0,2.89,55463155.95,4.63,True,True,01101-0,,,
-CSGP,CoStar Group Inc.,Real Estate,80,31,55.0,10.59,32.58,18.3,17.92,10.14,-53.75,4.94,203752284.63,1.37,False,True,1000100,756.0,-4.91,IYR XLRE
+CSGP,CoStar Group Inc.,REITs,80,31,55.0,10.59,32.58,18.3,17.92,10.14,-53.75,4.94,203752284.63,1.37,False,True,1000100,756.0,-4.91,IYR XLRE
 SRZN,Surrozen Inc.,Health Care,80,0,65.0,27.28,31.65,4.28,20.02,46.26,-7.27,10.29,12652669.67,2.81,False,True,00111-0,,,
 RNW,ReNew Energy Global plc Class A,Infrastructure,80,10,40.0,2.56,6.93,0.87,0.87,11.24,-8.94,0.39,10670988.37,2.32,True,True,10101-0,,,
 HLMN,Hillman Solutions Corp.,Consumer Discretionary,80,10,60.0,5.9,8.78,15.68,24.72,-3.2,-18.25,3.88,14838176.66,4.19,False,True,00011-0,,,
@@ -604,7 +604,7 @@ CALY,Callaway Golf Company,Consumer Discretionary,78,42,60.0,1.97,16.6,13.54,16.
 HTFL,Heartflow Inc.,Medical Devices,78,-17,65.0,53.95,56.57,-4.28,11.6,108.05,-6.54,5.8,85900520.65,1.77,True,True,00100-0,,,
 IDT,IDT Corporation,Communication Services,78,-4,45.0,12.07,83.99,2.93,4.58,27.04,-0.56,2.5,16395611.19,3.72,True,True,11110-0,,,
 EVRG,Evergy Inc.,Utilities,78,-3,50.0,1.76,86.21,2.33,7.29,4.71,-1.36,1.64,180377979.95,3.24,False,True,0011010,945.0,2.72,XLU
-HHH,Howard Hughes Holdings Inc.,Real Estate,78,4,60.0,8.45,79.06,7.32,7.89,16.18,-12.01,3.05,69346896.99,4.09,False,True,10100-0,,,
+HHH,Howard Hughes Holdings Inc.,REITs,78,4,60.0,8.45,79.06,7.32,7.89,16.18,-12.01,3.05,69346896.99,4.09,False,True,10100-0,,,
 PATK,Patrick Industries Inc.,Consumer Discretionary,78,41,60.0,8.36,84.68,21.09,27.07,-1.56,-41.07,4.02,63358940.81,4.02,False,True,00000-0,,,
 TSCO,Tractor Supply Company,Retail,78,16,45.0,7.53,36.58,15.72,13.29,8.05,-33.32,4.15,504327177.17,2.37,False,True,0000000,1060.0,-8.93,XLY XRT
 PGR,Progressive Corporation (The),Financials,78,2,70.0,5.39,234.82,4.06,10.74,9.05,0.0,2.2,577173300.59,3.21,False,True,0110010,1822.0,3.0,KIE XLF
@@ -679,14 +679,14 @@ IPAR,Interparfums Inc.,Consumer Discretionary,76,39,45.0,3.34,123.57,8.17,9.5,4.
 CNO,CNO Financial Group Inc.,Insurance,76,21,65.0,2.01,57.73,6.16,6.83,4.4,-1.3,1.94,51641974.5,2.45,True,True,1011010,383.0,8.81,KIE
 MQ,Marqeta Inc.,Software & Cloud,76,12,55.0,6.93,18.6,2.48,12.39,11.44,-8.46,3.59,15161480.76,2.01,False,True,10110-0,,,
 UFPT,UFP Technologies Inc.,Medical Devices,76,18,45.0,4.79,329.82,15.32,8.9,5.76,-1.5,3.67,33591730.04,2.98,True,True,--10010,281.0,3.31,XHE
-PECO,Phillips Edison & Company Inc.,Real Estate,76,52,60.0,2.29,41.14,9.07,9.93,1.92,-5.7,1.9,47396399.99,3.87,False,True,01100-0,,,
+PECO,Phillips Edison & Company Inc.,REITs,76,52,60.0,2.29,41.14,9.07,9.93,1.92,-5.7,1.9,47396399.99,3.87,False,True,01100-0,,,
 VRSN,VeriSign Inc.,Technology,75,-2,40.0,4.53,318.03,3.59,8.51,9.04,0.0,2.89,333085622.05,2.38,True,True,0011010,880.0,4.51,XLK
 CMG,Chipotle Mexican Grill Inc.,Consumer Discretionary,75,65,50.0,6.96,35.2,22.52,13.92,4.42,-13.87,3.71,770138499.55,1.85,False,True,0011000,1198.0,-4.01,XLY
 LCII,LCI Industries,Consumer Discretionary,75,-1,70.0,6.76,104.28,6.86,26.88,-0.36,-31.57,3.56,59977347.09,4.24,False,True,00010-0,,,
 CMCSA,Comcast Corporation,Communication Services,75,43,70.0,4.88,24.85,15.21,17.05,0.26,-20.33,2.88,751568508.41,2.49,False,True,0100000,1895.0,-7.88,XLC
 CSX,CSX Corporation,Infrastructure,75,-17,50.0,1.35,52.05,0.13,9.58,2.94,-1.95,2.1,597955672.52,2.81,True,True,1010010,1994.0,6.75,IFRA IYT PAVE XLI XTN
 NVST,Envista Holdings Corporation,Medical Devices,75,36,55.0,4.09,27.19,13.58,16.85,-0.69,-10.15,3.31,79999721.9,2.98,False,True,--10000,383.0,-1.54,IHI XHE
-SBAC,SBA Communications Corporation,Real Estate,75,-6,55.0,6.58,195.48,5.8,15.19,7.79,-11.5,3.62,240653710.35,2.25,False,True,0110010,685.0,2.54,IDGT IYR SCHH XLRE
+SBAC,SBA Communications Corporation,REITs,75,-6,55.0,6.58,195.48,5.8,15.19,7.79,-11.5,3.62,240653710.35,2.25,False,True,0110010,685.0,2.54,IDGT IYR SCHH XLRE
 TCMD,Tactile Systems Technology Inc.,Medical Devices,75,22,65.0,3.51,27.18,13.68,22.49,-5.82,-17.76,4.32,5653971.48,3.62,False,True,0000000,182.0,-0.55,XHE
 BCPC,Balchem Corporation,Industrials,75,27,65.0,2.23,182.58,9.79,10.46,1.2,-0.37,2.23,53668234.89,3.02,False,True,00110-0,,,
 KOF,Coca Cola Femsa S.A.B. de C.V.,Consumer Staples,75,2,55.0,3.83,116.4,1.01,9.67,7.6,-2.97,2.68,37221687.3,1.48,True,True,00100-0,,,
@@ -708,7 +708,7 @@ ELF,e.l.f. Beauty Inc.,Consumer Discretionary,75,-15,60.0,11.51,113.63,-1.54,10.
 IRON,Disc Medicine Inc.,Biotech,75,-10,50.0,12.57,83.28,0.1,35.09,7.54,-11.51,5.42,121452510.45,3.04,False,True,0010010,218.0,7.39,XBI
 MANE,Veradermics Incorporated,Pharma,75,-14,60.0,17.41,136.51,-5.09,25.28,25.64,-5.1,7.44,107061578.36,2.47,False,True,-011010,165.0,108.86,XPH
 ASH,Ashland Inc.,Consumer Discretionary,75,8,45.0,3.03,76.44,5.19,7.71,6.1,0.0,2.39,35738436.26,2.65,True,True,00100-0,,,
-WELL,Welltower Inc.,Real Estate,74,47,75.0,4.06,247.99,9.15,9.84,5.48,-1.25,2.42,689268985.79,2.36,True,True,0010010,1592.0,6.77,IYR SCHH XLRE
+WELL,Welltower Inc.,REITs,74,47,75.0,4.06,247.99,9.15,9.84,5.48,-1.25,2.42,689268985.79,2.36,True,True,0010010,1592.0,6.77,IYR SCHH XLRE
 GLBE,Global-E Online Ltd.,Software & Cloud,74,7,55.0,7.91,44.93,6.7,16.1,9.53,0.0,4.05,56557966.96,2.92,True,True,10110-0,,,
 RVTY,Revvity Inc.,Health Care,74,-18,50.0,17.19,159.43,-3.57,4.04,39.62,-3.83,4.04,291246441.0,1.71,True,True,0011010,543.0,8.6,XLV
 BLDR,Builders FirstSource Inc.,Homebuilders,74,40,45.0,6.35,69.5,24.37,23.62,-4.15,-46.11,4.81,170371497.14,3.28,False,True,0001000,672.0,-7.05,PAVE XHB
@@ -726,7 +726,7 @@ ASND,Ascendis Pharma A/S Ordinary Share,Biotech,74,-1,70.0,3.56,257.93,3.36,14.1
 TTAN,ServiceTitan Inc.,Software & Cloud,74,4,55.0,8.78,87.76,8.53,27.8,2.54,-20.44,4.8,119768077.12,3.34,False,True,0000010,373.0,9.06,SKYY XSW
 WEN,Wendy's Company (The),Consumer Discretionary,74,6,65.0,8.4,7.65,8.2,24.19,4.4,-15.4,3.66,49346294.07,2.3,False,True,00000-0,,,
 LNG,Cheniere Energy Inc.,Utilities,74,-19,50.0,3.4,292.02,-1.93,6.09,10.12,-11.59,3.03,653746303.71,0.76,True,True,10100-0,,,
-SBRA,Sabra Health Care REIT Inc.,Real Estate,74,55,60.0,2.89,21.09,10.59,10.3,2.39,-4.38,2.37,49244334.65,2.48,False,True,00100-0,,,
+SBRA,Sabra Health Care REIT Inc.,REITs,74,55,60.0,2.89,21.09,10.59,10.3,2.39,-4.38,2.37,49244334.65,2.48,False,True,00100-0,,,
 MAIN,Main Street Capital Corporation,Financials,74,19,55.0,1.06,57.62,5.51,5.72,3.46,-5.37,1.64,25782048.36,2.38,False,True,00100-0,,,
 AMX,America Movil S.A.B. de C.V.,Communication Services,74,21,50.0,3.69,25.03,4.6,11.94,4.64,-8.72,2.64,71343142.67,3.55,False,True,00110-0,,,
 PTC,PTC Inc.,Software & Cloud,74,-22,45.0,13.0,195.18,0.11,1.13,32.18,-0.18,0.49,504104605.65,12.1,False,True,0011000,684.0,-1.72,IGV XLK XSW
@@ -777,7 +777,7 @@ PVLA,Palvella Therapeutics Inc.,Biotech,72,7,50.0,9.75,162.28,10.04,26.78,4.74,0
 CBU,Community Financial System Inc.,Banks,72,8,45.0,1.53,65.73,4.72,10.32,1.41,-6.69,2.13,15876054.39,3.01,False,True,0010010,281.0,6.84,KBE KRE
 ORRF,Orrstown Financial Services Inc.,Banks,72,-5,55.0,3.62,45.27,3.24,10.26,6.08,0.0,2.7,4040044.85,2.73,True,True,0010010,164.0,5.13,KRE
 DOV,Dover Corporation,Industrials,72,-12,55.0,1.19,212.66,2.25,10.83,1.13,-8.17,2.09,269444763.73,3.87,False,True,0010010,1166.0,3.37,XLI
-REG,Regency Centers Corporation,Real Estate,72,40,60.0,0.33,76.84,4.99,7.59,0.86,-6.12,1.6,91576638.56,2.68,False,True,0010010,612.0,4.44,IYR SCHH XLRE
+REG,Regency Centers Corporation,REITs,72,40,60.0,0.33,76.84,4.99,7.59,0.86,-6.12,1.6,91576638.56,2.68,False,True,0010010,612.0,4.44,IYR SCHH XLRE
 SU,Suncor Energy  Inc.,Energy,72,-16,60.0,6.49,72.04,-7.09,5.6,18.18,-9.36,2.72,289158583.9,0.26,True,True,10100-0,,,
 GMRS,GMR Solutions Inc.,Consumer Discretionary,72,16,60.0,6.94,12.39,13.46,21.47,1.81,-21.28,5.17,7586981.54,1.68,False,True,-0000-0,,,
 PFIS,Peoples Financial Services Corp.,Banks,72,5,50.0,2.65,74.69,4.9,7.84,5.33,-0.31,2.84,4635746.36,2.22,True,True,1010010,124.0,10.71,KRE
@@ -803,10 +803,10 @@ TPG,TPG Inc.,Capital Markets,71,8,55.0,4.67,50.16,12.49,11.54,4.52,-25.29,3.98,1
 WIX,Wix.com Ltd.,Software & Cloud,71,-7,45.0,16.14,80.52,2.49,8.94,32.26,-42.28,5.47,57608539.41,0.59,False,True,00000-0,,,CLOU SKYY
 GRAL,GRAIL Inc.,Biotech,71,-23,60.0,60.07,143.66,-9.01,4.65,126.59,-9.6,7.8,126329683.3,2.54,True,True,0011010,375.0,2.46,IBB XBI
 RYTM,Rhythm Pharmaceuticals Inc.,Biotech,71,40,55.0,6.6,110.68,20.34,21.93,-1.27,-5.9,4.99,117238781.76,2.66,False,True,--10010,307.0,7.72,IBB XBI
-KRC,Kilroy Realty Corporation,Real Estate,71,15,50.0,3.08,37.83,6.41,11.59,3.12,-7.26,3.12,60166092.86,2.86,False,True,00100-0,,,
+KRC,Kilroy Realty Corporation,REITs,71,15,50.0,3.08,37.83,6.41,11.59,3.12,-7.26,3.12,60166092.86,2.86,False,True,00100-0,,,
 PBH,Prestige Consumer Healthcare Inc.,Pharma,71,23,65.0,2.32,53.28,11.49,14.73,-2.11,-24.11,3.03,26554568.92,2.97,False,True,0000000,321.0,-8.81,XPH
 AQN,Algonquin Power & Utilities Corp. Common Shares,Infrastructure,71,29,65.0,1.04,5.64,5.62,11.46,-0.62,-16.35,1.94,17788122.08,3.22,False,True,00000-0,,,
-SKT,Tanger Inc.,Real Estate,71,34,70.0,0.77,38.46,7.27,11.01,-1.35,-7.18,1.82,34389006.41,3.85,False,True,00100-0,,,
+SKT,Tanger Inc.,REITs,71,34,70.0,0.77,38.46,7.27,11.01,-1.35,-7.18,1.82,34389006.41,3.85,False,True,00100-0,,,
 ALGN,Align Technology Inc.,Medical Devices,71,19,60.0,2.17,164.9,7.34,16.58,-2.47,-16.51,3.2,158299068.71,2.73,False,True,--00000,674.0,-1.75,XHE XLV
 AMLX,Amylyx Pharmaceuticals Inc.,Pharma,71,6,50.0,9.68,29.4,4.74,4.85,21.54,-25.87,5.13,36285644.86,-0.62,False,False,0000010,208.0,22.35,XPH
 DKNG,DraftKings Inc.,Leisure & Travel,71,38,70.0,6.65,23.11,13.84,17.01,4.24,-36.23,4.66,244780833.66,1.42,False,True,00000-0,,,
@@ -827,7 +827,7 @@ ZG,Zillow Group Inc.,Consumer Discretionary,71,11,50.0,6.25,34.45,8.1,21.47,2.04
 AORT,Artivion Inc.,Medical Devices,70,44,55.0,5.97,26.45,15.4,21.11,-0.45,-44.47,4.46,12180684.97,2.38,False,True,0000000,208.0,-12.24,IHI XHE
 SPNT,SiriusPoint Ltd. Common Shares,Insurance,70,8,50.0,3.16,25.82,2.18,4.92,9.22,-1.86,2.3,19127853.59,1.43,True,True,00110-0,,,KIE
 RS,Reliance Inc.,Infrastructure,70,-20,60.0,3.2,441.95,1.09,10.08,6.01,-1.37,2.83,132993710.08,3.09,True,True,1011010,687.0,6.84,PAVE SLX XME
-EPR,EPR Properties,Real Estate,70,53,70.0,1.98,60.74,10.01,10.48,0.62,-3.58,2.16,48015289.04,3.03,False,True,10100-0,,,
+EPR,EPR Properties,REITs,70,53,70.0,1.98,60.74,10.01,10.48,0.62,-3.58,2.16,48015289.04,3.03,False,True,10100-0,,,
 ENOV,Enovis Corporation,Medical Devices,70,16,80.0,6.59,24.42,11.46,34.18,-7.18,-22.5,5.5,33458485.74,3.52,False,True,--00000,254.0,0.0,IHI XHE
 NVAX,Novavax Inc.,Biotech,70,-2,45.0,13.71,10.65,3.2,-5.92,37.6,-16.93,8.46,78840811.7,0.16,False,True,0001010,266.0,3.1,PBE XBI
 ONC,BeOne Medicines Ltd.,Biotech,70,3,45.0,5.4,377.78,1.18,4.13,14.55,-2.25,2.87,145909830.92,1.27,True,True,1010010,283.0,1.07,IBB
@@ -851,20 +851,20 @@ PFG,Principal Financial Group Inc,Financials,70,15,65.0,0.87,117.31,4.89,6.94,2.
 NVO,Novo Nordisk A/S,Pharma,70,59,45.0,-1.17,42.18,10.16,12.39,-7.07,-30.78,1.65,427842079.55,1.38,False,True,1000010,1353.0,6.28,PPH
 REPX,Riley Exploration Permian Inc.,Oil & Gas E&P,70,-29,50.0,7.57,42.88,-17.71,0.83,26.88,-20.22,4.25,13109316.63,-0.59,False,False,1001010,198.0,17.86,FCG XOP
 NBTB,NBT Bancorp Inc.,Banks,70,8,55.0,0.82,54.0,3.91,6.57,2.86,0.0,1.85,15725063.61,2.38,True,True,0010000,286.0,-4.03,KBE KRE
-CUZ,Cousins Properties Incorporated,Real Estate,70,26,65.0,2.26,30.33,6.38,9.65,2.85,-5.01,2.54,44311204.49,2.82,True,True,10110-0,,,
+CUZ,Cousins Properties Incorporated,REITs,70,26,65.0,2.26,30.33,6.38,9.65,2.85,-5.01,2.54,44311204.49,2.82,True,True,10110-0,,,
 SDGR,Schrodinger Inc.,Health Care,70,-18,55.0,24.97,28.52,-7.61,-1.31,60.13,-12.52,7.9,46370578.28,1.45,True,True,00100-0,,,
 MZTI,The Marzetti Company,Consumer Staples,69,-9,55.0,2.48,112.1,3.41,11.88,2.61,-33.91,3.51,43709924.4,1.82,False,True,00000-0,,,
 REYN,Reynolds Consumer Products Inc.,Consumer Discretionary,69,19,50.0,0.48,25.13,9.02,12.59,-3.57,-6.73,2.91,28617264.93,3.22,False,True,00110-0,,,
 ASTH,Astrana Health Inc.,Health Services,69,20,45.0,8.37,39.67,8.18,7.22,16.23,-20.36,4.58,10832433.31,1.54,False,True,1000010,212.0,24.71,XHS
 FBNC,First Bancorp,Banks,69,4,60.0,2.39,66.0,4.17,10.48,3.2,-0.13,2.38,13470997.41,1.99,False,True,0010010,243.0,2.53,KBE KRE
-JOE,St. Joe Company (The),Real Estate,69,1,50.0,1.78,70.45,3.41,6.77,4.8,-2.52,2.71,15312358.42,1.9,False,True,00100-0,,,
+JOE,St. Joe Company (The),Homebuilders,69,1,50.0,1.78,70.45,3.41,6.77,4.8,-2.52,2.71,15312358.42,1.9,False,True,00100-0,,,
 KAI,Kadant Inc,Industrials,69,40,55.0,1.1,308.56,16.09,17.19,-7.67,-10.83,3.31,36881704.04,3.12,False,True,--100-0,,,
 LNTH,Lantheus Holdings Inc.,Medical Devices,69,20,35.0,-2.89,101.14,1.04,1.19,0.07,-8.83,0.37,105777679.86,2.05,False,True,0010010,467.0,15.31,XHE
 NCLH,Norwegian Cruise Line Holdings Ltd.,Consumer Discretionary,69,22,50.0,3.86,18.6,15.82,19.92,-3.98,-25.66,4.12,359214444.35,3.94,False,True,00000-0,,,XLY
 HG,Hamilton Insurance Group Ltd. Class B Common Shares,Financials,69,22,55.0,3.17,37.28,7.5,8.88,4.87,0.0,2.88,14753094.58,2.11,False,True,10100-0,,,
 HIPO,Hippo Holdings Inc.,Financials,69,-20,55.0,3.17,35.88,-4.85,10.47,7.46,-7.0,3.63,10993912.93,1.68,False,True,00110-0,,,
 UGI,UGI Corporation,Infrastructure,69,-8,40.0,3.42,38.11,-0.86,2.58,12.29,-3.26,1.82,53143119.17,0.65,False,True,00100-0,,,
-UDR,UDR Inc.,Real Estate,69,37,60.0,0.56,37.22,7.23,10.23,-1.22,-8.31,1.93,170315642.42,3.29,False,True,1010000,524.0,-0.57,IYR SCHH XLRE
+UDR,UDR Inc.,REITs,69,37,60.0,0.56,37.22,7.23,10.23,-1.22,-8.31,1.93,170315642.42,3.29,False,True,1010000,524.0,-0.57,IYR SCHH XLRE
 WMS,Advanced Drainage Systems Inc.,Water,69,25,50.0,0.47,144.07,10.73,10.76,-2.81,-17.53,2.62,95571878.12,3.26,False,True,1000000,554.0,-4.15,CGW PAVE PHO XHB
 CPA,Copa Holdings S.A.,Airlines,69,40,35.0,2.3,145.89,12.31,5.48,4.08,-5.95,3.13,44108992.7,2.8,False,True,00100-0,,,JETS
 BLMN,Bloomin' Brands Inc.,Consumer Discretionary,69,-14,70.0,9.42,10.97,9.81,31.53,0.83,-7.43,6.29,26542955.2,2.72,False,True,00110-0,,,
@@ -882,7 +882,7 @@ ZS,Zscaler Inc.,Software & Cloud,69,-29,45.0,15.69,224.44,-12.26,5.74,38.03,-32.
 AEP,American Electric Power Company Inc.,Infrastructure,69,-6,45.0,0.78,129.24,0.81,6.22,3.96,-6.1,1.95,462207969.3,2.11,False,True,0011010,1982.0,2.59,IFRA XLU
 CRL,Charles River Laboratories International Inc.,Health Care,69,-30,55.0,8.48,326.29,-12.75,6.99,22.89,-13.24,4.79,413740449.73,1.32,False,True,1010010,571.0,1.96,IBB XLV
 PCVX,Vaxcyte Inc.,Biotech,69,-18,45.0,2.76,65.68,6.87,-1.53,11.53,-11.03,5.38,157627209.23,1.14,False,True,0011000,334.0,0.0,IBB XBI
-JBGS,JBG SMITH Properties Common Shares,Real Estate,68,18,55.0,3.45,12.29,6.41,13.17,2.76,-31.7,3.25,9170896.73,2.62,False,True,10000-0,,,
+JBGS,JBG SMITH Properties Common Shares,REITs,68,18,55.0,3.45,12.29,6.41,13.17,2.76,-31.7,3.25,9170896.73,2.62,False,True,10000-0,,,
 DORM,Dorman Products Inc.,Consumer Discretionary,68,5,55.0,4.1,142.41,9.77,12.51,3.51,-3.65,3.66,35769365.58,3.15,False,True,00100-0,,,
 ASB,Associated Banc-Corp,Banks,68,4,50.0,0.85,31.35,4.5,8.48,1.4,-2.26,1.99,67802990.18,2.59,False,True,0010010,396.0,7.61,KBE KRE
 HURN,Huron Consulting Group Inc.,Health Services,68,-28,65.0,6.04,173.02,-10.67,10.02,15.27,-12.83,4.45,94521833.6,0.65,False,True,00110-0,,,
@@ -934,7 +934,7 @@ PYPL,PayPal Holdings Inc.,Internet & E-commerce,67,16,50.0,1.53,60.2,6.45,10.24,
 DTE,DTE Energy Company,Utilities,67,8,50.0,-0.75,137.53,4.22,7.26,-0.84,-10.13,1.52,171682870.51,3.47,False,True,0010010,1036.0,5.07,XLU
 TXN,Texas Instruments Incorporated,Infrastructure,67,-22,40.0,4.73,311.49,1.03,5.31,12.43,-5.32,3.48,2378037814.51,3.31,False,True,1011010,2857.0,16.37,CARZ GRID QTUM SMH SOXX XLK XSD
 RCL,Royal Caribbean Cruises Ltd.,Consumer Discretionary,67,11,50.0,5.91,333.15,11.68,15.36,4.55,-2.69,3.2,619527201.92,5.05,False,True,00100-0,,,XLY
-HIW,Highwoods Properties Inc.,Real Estate,67,42,55.0,3.03,32.2,10.24,8.64,3.94,-4.89,2.97,37695536.29,2.39,False,True,00100-0,,,
+HIW,Highwoods Properties Inc.,REITs,67,42,55.0,3.03,32.2,10.24,8.64,3.94,-4.89,2.97,37695536.29,2.39,False,True,00100-0,,,
 JANX,Janux Therapeutics Inc.,Biotech,67,-15,45.0,5.97,18.18,0.72,8.28,12.92,-47.67,4.84,13283624.54,0.74,False,True,0000010,198.0,4.76,XBI
 EVR,Evercore Inc.,Capital Markets,67,-4,50.0,3.33,311.03,6.38,16.02,0.53,-18.15,3.71,175671295.88,3.31,False,True,0000010,715.0,9.33,KCE
 OMAB,Grupo Aeroportuario del Centro Norte S.A.B. de C.V. ADS,Airlines,67,39,65.0,1.87,108.39,10.32,14.53,-2.54,-17.36,2.88,12919154.49,3.72,False,True,0000000,164.0,-2.38,JETS
@@ -974,12 +974,12 @@ XOM,ExxonMobil Holdings Corporation,Energy,65,-31,45.0,1.48,169.27,-7.0,2.91,10.
 TROW,T. Rowe Price Group Inc.,Financials,65,45,60.0,0.92,112.57,8.24,8.66,0.31,-6.34,2.47,237953633.74,2.74,False,True,--10010,1164.0,6.59,KCE XLF
 SPT,Sprout Social Inc,Software & Cloud,65,-26,45.0,12.47,10.78,-13.9,6.42,31.62,-17.77,5.56,9956637.19,-0.45,False,False,1000000,193.0,-5.85,XSW
 ARCT,Arcturus Therapeutics Holdings Inc.,Health Care,65,-12,50.0,28.67,10.87,-9.94,-16.38,78.78,-35.79,9.6,7519963.53,-2.18,False,False,00000-0,,,
-VICI,VICI Properties Inc.,Real Estate,65,31,60.0,-0.04,25.25,7.36,11.09,-3.04,-12.42,1.84,248481699.44,2.53,False,True,0110000,945.0,-0.32,IYR SCHH XLRE
+VICI,VICI Properties Inc.,REITs,65,31,60.0,-0.04,25.25,7.36,11.09,-3.04,-12.42,1.84,248481699.44,2.53,False,True,0110000,945.0,-0.32,IYR SCHH XLRE
 CWT,California Water Service Group,Water,65,21,50.0,1.66,49.96,5.96,9.68,1.75,-4.09,2.35,20234780.16,2.18,False,True,0010010,344.0,2.08,CGW PHO
 CURB,Curbline Properties Corp.,Financials,65,23,50.0,1.75,30.16,7.52,8.14,2.54,-4.43,3.01,43416475.0,2.23,False,True,00100-0,,,
 TECH,Bio-Techne Corp,Health Care,65,-7,40.0,-2.71,72.73,0.06,0.41,1.27,0.0,0.15,208821777.56,1.92,False,True,0010010,598.0,2.57,IBB XLV
 KYIV,Kyivstar Group Ltd. Common Shares,Communication Services,65,11,55.0,0.63,13.62,2.18,8.18,1.87,-15.77,3.29,7547002.81,1.26,False,True,-0010-0,,,
-LINE,Lineage Inc.,Real Estate,65,33,55.0,0.36,38.61,9.22,12.11,-3.53,-12.07,2.64,32879559.45,2.5,False,True,--100-0,,,
+LINE,Lineage Inc.,REITs,65,33,55.0,0.36,38.61,9.22,12.11,-3.53,-12.07,2.64,32879559.45,2.5,False,True,--100-0,,,
 IT,Gartner Inc.,Software & Cloud,65,-25,50.0,5.95,207.19,-5.46,12.04,12.1,-18.62,4.18,252194021.63,0.88,False,True,1000000,651.0,-8.95,XLK XSW
 AUPH,Aurinia Pharmaceuticals Inc,Health Care,65,-21,60.0,2.49,17.11,-1.44,9.05,6.08,-8.11,3.06,14810640.29,1.2,False,True,00100-0,,,
 LYV,Live Nation Entertainment Inc.,Leisure & Travel,65,33,50.0,0.14,183.18,6.19,6.62,0.78,-2.8,2.2,355062731.84,2.44,False,True,1010010,850.0,4.68,PEJ XLC
@@ -1123,7 +1123,7 @@ BMO,Bank Of Montreal,Financials,60,4,55.0,-1.0,177.47,2.81,7.6,-1.17,-3.82,1.66,
 OLN,Olin Corporation,Industrials,60,18,55.0,0.8,18.08,9.78,11.54,-2.41,-38.89,4.73,68945010.16,2.13,False,True,00000-0,,,
 CWBC,Community West Bancshares,Banks,60,6,35.0,0.44,26.74,3.44,1.48,5.82,-4.11,2.53,4838325.35,1.02,False,True,0010010,149.0,18.25,KRE
 LOAR,Loar Holdings Inc.,Aerospace & Defense,60,35,55.0,1.45,69.72,13.83,13.77,-3.89,-14.23,4.22,79841775.06,1.67,False,True,1011010,283.0,14.57,ITA XAR
-FRT,Federal Realty Investment Trust,Real Estate,60,40,60.0,-1.23,114.63,5.9,7.94,-2.78,-9.83,1.62,110962226.58,2.0,False,True,--10010,619.0,11.93,IYR SCHH XLRE
+FRT,Federal Realty Investment Trust,REITs,60,40,60.0,-1.23,114.63,5.9,7.94,-2.78,-9.83,1.62,110962226.58,2.0,False,True,--10010,619.0,11.93,IYR SCHH XLRE
 AXP,American Express Company,Financials,60,20,55.0,-0.78,332.59,4.61,9.54,-2.62,-12.62,2.12,980955861.39,2.31,False,True,1010010,3000.0,3.52,IPAY XLF
 SGMT,Sagimet Biosciences Inc. Series A,Biotech,60,-29,35.0,7.52,9.99,-6.98,14.04,14.3,-10.56,6.58,11045004.27,0.13,False,True,0010010,124.0,44.19,XBI
 YELP,Yelp Inc.,Consumer Discretionary,60,46,60.0,1.03,22.05,19.71,21.55,-11.94,-31.44,4.67,24063752.21,2.1,False,True,--000-0,,,
@@ -1146,10 +1146,10 @@ GSBC,Great Southern Bancorp Inc.,Banks,60,-16,50.0,-0.57,82.78,1.56,4.52,2.23,0.
 AROW,Arrow Financial Corporation,Banks,59,6,60.0,-0.86,39.54,3.97,6.29,-0.31,-6.24,2.31,2714422.43,1.73,False,True,0010010,148.0,7.25,KRE
 LIFE,Ethos Technologies Inc.,Financials,59,-29,55.0,8.86,37.13,-13.31,5.93,24.56,-16.03,7.34,62701640.06,-0.39,False,False,-1000-0,,,
 SNAP,Snap Inc.,Software & Cloud,59,-19,50.0,3.95,5.92,-0.67,2.42,13.41,-34.87,5.79,263568572.24,0.47,False,True,0000000,535.0,-1.29,IGV
-O,Realty Income Corporation,Real Estate,59,29,70.0,-1.08,59.22,5.82,9.68,-3.69,-9.15,1.65,452198834.89,2.41,False,True,0010010,1460.0,1.53,IYR SCHH XLRE
+O,Realty Income Corporation,REITs,59,29,70.0,-1.08,59.22,5.82,9.68,-3.69,-9.15,1.65,452198834.89,2.41,False,True,0010010,1460.0,1.53,IYR SCHH XLRE
 JPM,JP Morgan Chase & Co.,Financials,59,9,45.0,-1.07,352.11,3.78,6.29,-0.68,-3.1,1.79,2404078666.17,1.55,False,True,--11010,5126.0,0.79,KBE XLF
 MBIN,Merchants Bancorp,Financials,59,29,60.0,-0.23,53.43,8.75,6.97,-0.96,-3.91,2.65,8357149.26,1.47,False,True,10110-0,,,
-BXP,BXP Inc.,Real Estate,59,27,55.0,-0.31,65.96,7.29,10.32,-3.04,-8.57,2.69,94696229.13,2.03,False,True,--10010,552.0,2.79,IYR SCHH XLRE
+BXP,BXP Inc.,REITs,59,27,55.0,-0.31,65.96,7.29,10.32,-3.04,-8.57,2.69,94696229.13,2.03,False,True,--10010,552.0,2.79,IYR SCHH XLRE
 IBRX,ImmunityBio Inc.,Biotech,59,-9,40.0,4.96,8.93,1.36,-7.84,21.99,-22.68,8.03,117628818.8,0.3,False,True,0001010,405.0,5.47,XBI
 CAC,Camden National Corporation,Banks,59,-10,55.0,-0.06,59.56,2.18,5.73,2.22,0.0,2.28,4956817.86,1.9,False,True,0010010,191.0,9.14,KRE
 ESTC,Elastic N.V.,Software & Cloud,59,-38,40.0,6.41,89.68,-15.86,-5.2,28.21,-15.86,4.9,189675661.92,-0.64,False,False,00000-0,,,CIBR IGV QTUM SKYY WCLD XSW
@@ -1164,7 +1164,7 @@ GWRE,Guidewire Software Inc.,Software & Cloud,59,-11,50.0,1.44,170.62,2.22,3.71,
 EFOR,Everforth Inc.,Software & Cloud,59,-28,55.0,5.37,36.98,-4.54,2.81,17.14,-30.59,5.49,30051419.44,0.87,False,True,0000010,248.0,0.4,XSW
 EGP,EastGroup Properties Inc.,REITs,59,41,55.0,-1.03,201.0,3.05,4.22,1.06,-9.23,2.19,120419757.45,0.75,False,True,0010010,552.0,7.6,IYR SCHH
 NIC,Nicolet Bankshares Inc.,Banks,59,-9,60.0,-0.15,175.24,2.48,7.1,0.99,-1.9,2.27,29363840.29,1.82,False,True,0010010,254.0,9.48,KBE KRE
-NHI,National Health Investors Inc.,Real Estate,59,37,65.0,-1.18,71.29,8.54,8.77,-4.07,-18.7,2.18,17008250.01,2.41,False,True,11000-0,,,
+NHI,National Health Investors Inc.,REITs,59,37,65.0,-1.18,71.29,8.54,8.77,-4.07,-18.7,2.18,17008250.01,2.41,False,True,11000-0,,,
 PHVS,Pharvaris N.V.,Health Care,59,-3,50.0,0.63,34.33,4.6,10.31,-0.35,-11.66,4.3,20606932.11,0.58,False,True,00100-0,,,
 LGND,Ligand Pharmaceuticals Incorporated,Pharma,59,-8,50.0,1.3,316.13,-0.83,6.46,5.33,-2.05,3.68,72165235.21,1.63,False,True,0011010,416.0,16.53,XPH
 PNFP,Pinnacle Financial Partners Inc. Common stock,Banks,59,5,55.0,-0.61,104.26,4.8,8.45,-1.58,-3.92,2.32,110946220.33,2.66,False,True,0010010,711.0,11.44,KBE KRE
@@ -1178,7 +1178,7 @@ ECHO,EchoStar  Corporation,Communication Services,58,-12,55.0,3.36,98.62,4.58,-1
 SLAB,Silicon Laboratories Inc.,Semiconductors,58,-11,40.0,-2.77,222.0,0.11,-0.28,1.62,-0.36,0.36,74772241.04,1.15,False,True,1010000,355.0,-5.59,XSD
 GSHD,Goosehead Insurance Inc.,Financials,58,28,70.0,2.48,56.35,21.71,29.87,-15.47,-28.1,5.73,18805221.51,1.43,False,True,10000-0,,,
 HIG,The Hartford Insurance Group Inc.,Financials,58,29,55.0,-1.45,138.11,6.21,8.93,-4.01,-4.78,1.93,251478941.77,1.86,False,True,0110010,1199.0,0.5,KIE XLF
-SLG,SL Green Realty Corp,Real Estate,58,15,55.0,1.81,53.78,9.78,11.12,-0.1,-8.96,4.19,52252860.58,1.57,False,True,--100-0,,,
+SLG,SL Green Realty Corp,REITs,58,15,55.0,1.81,53.78,9.78,11.12,-0.1,-8.96,4.19,52252860.58,1.57,False,True,--100-0,,,
 PPC,Pilgrim's Pride Corporation,Consumer Staples,58,41,45.0,2.05,29.01,9.97,4.02,5.3,-33.71,3.23,31110890.65,0.13,False,True,00000-0,,,
 WFG,West Fraser Timber Co. Ltd Common stock,Materials,58,-3,60.0,0.44,69.74,1.57,10.17,0.29,-7.76,3.16,13530299.22,0.76,False,True,--100-0,,,
 CHE,Chemed Corp,Health Services,58,-11,40.0,-0.41,548.64,2.86,7.61,-0.01,-0.61,2.52,80090258.84,2.19,False,True,1010010,534.0,9.2,XHS
@@ -1192,7 +1192,7 @@ EOG,EOG Resources Inc.,Energy,58,-35,45.0,0.47,147.06,-8.61,2.61,8.7,-11.16,2.36
 FSUN,FirstSun Capital Bancorp,Banks,58,4,50.0,-0.31,40.72,4.2,3.9,2.39,-0.95,2.24,13092572.04,1.43,False,True,1010010,167.0,27.48,KRE
 TNDM,Tandem Diabetes Care Inc.,Medical Devices,58,-26,55.0,2.97,19.05,-3.2,17.88,1.38,-32.59,5.64,41788612.97,1.2,False,True,0000010,274.0,0.37,IHI XHE
 VSTS,Vestis Corporation,Consumer Discretionary,58,-20,55.0,1.7,14.8,-2.95,6.32,6.86,-10.3,3.64,18044156.4,1.78,False,True,10110-0,,,
-RYN,Rayonier Inc. REIT,Real Estate,58,28,60.0,-0.67,20.17,7.57,11.5,-4.67,-15.02,2.51,68549301.62,1.57,False,True,11000-0,,,
+RYN,Rayonier Inc. REIT,REITs,58,28,60.0,-0.67,20.17,7.57,11.5,-4.67,-15.02,2.51,68549301.62,1.57,False,True,11000-0,,,
 FFBC,First Financial Bancorp.,Banks,58,-4,55.0,-1.09,33.39,2.2,6.44,-0.36,-6.97,1.93,29849407.76,2.03,False,True,0010010,324.0,6.93,KBE KRE
 DINO,HF Sinclair Corporation,Oil & Gas E&P,58,-11,45.0,5.89,104.57,-6.6,-8.75,26.89,-18.45,4.68,282095601.29,-1.42,False,False,1000010,686.0,5.54,XOP
 LYB,LyondellBasell Industries NV,Materials,58,-35,50.0,-0.27,62.96,-6.21,6.84,3.53,-21.98,3.14,240276236.04,0.09,False,True,10000-0,,,XLB
@@ -1226,7 +1226,7 @@ QLYS,Qualys Inc.,Software & Cloud,57,-40,55.0,5.58,210.89,-5.65,5.48,16.01,-8.42
 ASST,Strive Inc.,Medical Devices,57,-7,40.0,29.05,22.92,-16.75,-22.96,86.19,-25.46,7.92,230196390.85,-1.85,False,False,--01010,171.0,28.57,XHE
 HLNE,Hamilton Lane Incorporated,Capital Markets,57,20,50.0,0.74,94.99,14.83,9.82,-2.84,-37.03,4.31,54097476.84,1.31,False,True,--00000,381.0,-1.3,KCE
 FWONA,Liberty Media Corporation Series A,Industrials,57,30,40.0,-1.03,91.03,8.52,3.76,-0.25,-7.28,2.6,18469243.58,1.88,False,True,00100-0,,,
-JAN,Janus Living Inc. Class A-1,Real Estate,57,45,50.0,0.78,30.07,9.86,5.46,1.77,-5.02,3.27,56953797.01,0.54,False,True,1-110-0,,,
+JAN,Janus Living Inc. Class A-1,REITs,57,45,50.0,0.78,30.07,9.86,5.46,1.77,-5.02,3.27,56953797.01,0.54,False,True,1-110-0,,,
 TEN,Tsakos Energy Navigation Ltd Common Shares,Consumer Discretionary,57,-35,40.0,1.91,46.8,-12.99,-7.27,19.82,-17.02,4.43,22963418.66,-0.96,False,False,10010-0,,,
 IMO,Imperial Oil Limited,Energy,57,-4,55.0,-1.64,127.47,-2.44,4.32,1.42,-7.7,3.44,77234426.3,-0.35,False,False,10100-0,,,
 MLAB,Mesa Laboratories Inc.,Industrials,56,-19,50.0,5.92,126.19,-3.91,-7.25,25.08,-11.28,3.55,11866641.18,-0.44,False,False,00100-0,,,
@@ -1272,7 +1272,7 @@ RGEN,Repligen Corporation,Biotech,55,-9,55.0,2.53,178.2,-3.51,1.91,11.77,-8.41,4
 LULU,lululemon athletica inc.,Consumer Discretionary,55,-4,65.0,-0.7,112.06,6.5,19.71,-10.16,-48.09,3.9,359481491.0,2.28,False,True,0000000,849.0,-10.82,XLY
 DRD,DRDGOLD Limited,Materials,55,-15,55.0,1.84,24.4,-2.9,-0.04,11.58,-35.36,2.75,5917903.86,-1.06,False,False,--000-0,,,
 SAIA,Saia Inc.,Transports,55,29,55.0,0.26,361.72,11.43,5.87,-0.03,-25.75,3.79,130641060.37,1.4,False,True,0000010,520.0,14.54,IYT XTN
-CBRE,CBRE Group Inc,Real Estate,55,46,40.0,-0.74,141.11,14.07,8.0,-4.3,-17.77,3.46,356290466.45,1.17,False,True,1000000,1071.0,-0.65,IYR XLRE
+CBRE,CBRE Group Inc,REITs,55,46,40.0,-0.74,141.11,14.07,8.0,-4.3,-17.77,3.46,356290466.45,1.17,False,True,1000000,1071.0,-0.65,IYR XLRE
 BEAM,Beam Therapeutics Inc.,Biotech,55,-31,40.0,0.53,27.79,-3.44,10.15,1.98,-26.71,5.89,46539255.95,1.29,False,True,0000010,279.0,11.16,XBI
 DAKT,Daktronics Inc.,Consumer Discretionary,55,-27,70.0,-1.52,20.32,2.68,13.84,-6.53,-26.72,3.86,10050178.62,2.33,False,True,--000-0,,,
 TWST,Twist Bioscience Corporation,Biotech,55,-23,45.0,4.07,142.58,-17.8,-14.61,30.71,-30.45,10.13,370423213.56,-0.65,False,False,0000010,337.0,19.93,ARKG IBB XBI
@@ -1316,7 +1316,7 @@ RXRX,Recursion Pharmaceuticals Inc.,Biotech,54,-35,45.0,0.22,3.88,-10.8,-16.2,22
 MTCH,Match Group Inc.,Technology,54,-11,55.0,0.68,40.21,-4.4,-1.01,10.38,-13.58,3.49,167496406.48,-1.19,False,False,00100-0,,,
 GCT,GigaCloud Technology Inc Class A,Retail,54,-36,60.0,3.04,57.88,-4.54,5.7,10.46,-4.54,4.37,37613989.07,1.18,False,True,01110-0,,,
 ELS,Equity Lifestyle Properties Inc.,REITs,54,39,75.0,-1.31,62.5,7.81,6.4,-2.45,-6.76,2.31,139785000.48,1.62,False,True,--10000,480.0,-2.83,IYR SCHH
-LADR,Ladder Capital Corp,Real Estate,53,-12,55.0,-0.42,9.36,0.0,7.83,0.68,-10.41,2.41,20299282.16,1.0,False,True,10100-0,,,
+LADR,Ladder Capital Corp,REITs,53,-12,55.0,-0.42,9.36,0.0,7.83,0.68,-10.41,2.41,20299282.16,1.0,False,True,10100-0,,,
 RIG,Transocean Ltd (Switzerland),Oil Services,53,-45,50.0,-3.18,5.45,-18.78,0.93,5.62,-28.1,4.61,269628437.62,-1.0,False,False,10000-0,,,OIH XES
 SYRE,Spyre Therapeutics Inc.,Biotech,53,-18,55.0,2.55,99.04,-0.71,23.63,-4.24,-9.07,5.05,96962006.89,1.99,False,True,0010010,267.0,34.85,IBB XBI
 BBSI,Barrett Business Services Inc.,Health Services,53,18,40.0,-1.02,33.1,2.03,5.82,0.27,-19.17,2.77,5405899.73,0.55,False,True,--000-0,,,
@@ -1337,14 +1337,14 @@ UBS,UBS Group AG Registered,Financials,53,46,40.0,-2.68,50.67,8.52,4.54,-4.11,-9
 MDU,MDU Resources Group Inc.,Infrastructure,53,-15,30.0,-3.55,19.82,1.69,4.59,-3.82,-11.84,1.54,31604569.95,2.24,False,True,1010010,438.0,4.29,PAVE
 SECZ,Securitize Corp.,Financials,53,6,40.0,-10.95,8.04,-3.48,-36.69,11.82,,10.38,30586726.57,-1.89,False,False,---10-0,,,
 PBA,Pembina Pipeline Corp.,Energy,53,-15,50.0,-1.05,48.73,-2.66,4.32,2.66,-5.12,1.88,47160274.91,0.86,False,True,00100-0,,,
-VMRK,Vivmark Residential Common Shares of Beneficial Interest,Real Estate,53,30,50.0,-2.53,63.72,4.63,5.55,-3.33,-8.09,1.86,271799159.42,1.22,False,True,--10010,715.0,1.13,IYR SCHH XLRE
+VMRK,Vivmark Residential Common Shares of Beneficial Interest,REITs,53,30,50.0,-2.53,63.72,4.63,5.55,-3.33,-8.09,1.86,271799159.42,1.22,False,True,--10010,715.0,1.13,IYR SCHH XLRE
 DECK,Deckers Outdoor Corporation,Consumer Discretionary,53,29,45.0,-3.23,89.11,10.37,9.12,-8.95,-26.32,3.43,295558940.52,2.23,False,True,--00000,863.0,0.0,XLY
 REAX,Real REMAX Group Inc.,Financials,53,10,40.0,-7.72,16.99,17.09,1.49,-14.62,-60.21,8.29,10109665.56,-0.09,False,False,00000-0,,,
 QCRH,QCR Holdings Inc.,Banks,53,0,45.0,-1.57,103.8,2.84,4.83,-0.37,-2.47,2.3,13156951.82,1.39,False,True,--10000,220.0,-1.35,KRE
 PFBC,Preferred Bank,Banks,53,-13,45.0,-1.73,106.87,-0.2,2.23,2.03,-1.65,2.26,11461578.39,0.85,False,True,0010010,230.0,12.2,KRE
 GABC,German American Bancorp Inc.,Financials,53,18,55.0,-1.45,50.76,3.7,3.47,0.56,-1.21,2.27,7635544.04,1.1,False,True,00100-0,,,
-DOC,Healthpeak Properties Inc.,Real Estate,53,46,65.0,-1.3,20.17,8.73,6.73,-2.93,-10.25,2.48,122354232.58,0.97,False,True,--10010,759.0,0.13,IYR SCHH XLRE
-IVT,InvenTrust Properties Corp.,Real Estate,53,31,55.0,-1.9,31.86,5.92,7.09,-3.53,-12.54,2.05,19992234.08,1.75,False,True,00100-0,,,
+DOC,Healthpeak Properties Inc.,REITs,53,46,65.0,-1.3,20.17,8.73,6.73,-2.93,-10.25,2.48,122354232.58,0.97,False,True,--10010,759.0,0.13,IYR SCHH XLRE
+IVT,InvenTrust Properties Corp.,REITs,53,31,55.0,-1.9,31.86,5.92,7.09,-3.53,-12.54,2.05,19992234.08,1.75,False,True,00100-0,,,
 BANC,Banc of California Inc.,Banks,52,-20,55.0,-2.0,18.56,0.43,6.48,-1.68,-14.42,2.36,40402769.35,1.27,False,True,0010000,312.0,-1.58,KBE KRE
 NSP,Insperity Inc.,Health Services,52,-13,55.0,1.5,51.69,0.08,11.35,2.03,-5.05,5.83,23622567.41,0.53,False,True,10100-0,,,
 IMAX,Imax Corporation,Consumer Discretionary,52,17,50.0,-0.27,51.76,2.45,2.33,4.08,-8.11,3.54,44031781.0,-0.28,False,False,--100-0,,,
@@ -1355,7 +1355,7 @@ UTZ,Utz Brands Inc,Consumer Staples,52,-10,35.0,-2.84,14.28,-0.07,0.07,1.3,-0.28
 PPLI,People Incorporated,Technology,52,44,35.0,-1.39,41.99,17.45,1.7,-2.21,-11.82,3.62,41513890.9,2.02,False,True,--100-0,,,
 ADPT,Adaptive Biotechnologies Corporation,Health Care,52,-18,55.0,1.97,26.71,-5.85,-0.71,13.18,-10.49,5.96,52262183.81,0.21,False,True,--100-0,,,
 ACHV,Achieve Life Sciences Inc. Common Shares,Biotech,52,-4,45.0,-0.18,6.98,1.9,-0.71,6.56,-18.17,5.65,8904615.19,-0.98,False,False,0000010,114.0,42.5,XBI
-CPT,Camden Property Trust,Real Estate,52,29,60.0,-2.61,104.48,5.02,6.99,-4.63,-10.17,1.85,85419858.41,2.14,False,True,--10010,575.0,1.95,IYR SCHH XLRE
+CPT,Camden Property Trust,REITs,52,29,60.0,-2.61,104.48,5.02,6.99,-4.63,-10.17,1.85,85419858.41,2.14,False,True,--10010,575.0,1.95,IYR SCHH XLRE
 ASC,Ardmore Shipping Corporation,Consumer Discretionary,52,-39,50.0,0.98,18.47,-11.16,-1.86,13.6,-13.29,4.56,15399211.68,-0.4,False,False,10110-0,,,
 NWL,Newell Brands Inc.,Industrials,52,12,40.0,-0.44,5.86,12.48,5.59,-1.54,-7.57,5.57,34091615.68,0.59,False,True,00100-0,,,
 HTO,H2O America,Water,52,-4,55.0,0.46,62.65,1.38,7.68,2.13,-3.57,2.84,55398886.49,0.95,False,True,0010010,316.0,0.96,CGW PHO
@@ -1370,7 +1370,7 @@ BBNX,Beta Bionics Inc.,Medical Devices,52,-5,50.0,2.65,16.95,-5.04,-9.02,20.13,-
 IOVA,Iovance Biotherapeutics Inc.,Biotech,52,-27,45.0,-1.14,8.7,-41.26,-32.87,40.1,-41.45,8.13,179004098.89,-2.35,False,False,0000010,293.0,3.17,IBB XBI
 DSGR,Distribution Solutions Group Inc.,Medical Devices,52,-4,35.0,-3.22,35.02,0.11,-0.09,0.57,-0.2,0.32,9504609.11,0.84,False,True,10100-0,,,
 SW,Smurfit WestRock plc,Materials,52,44,50.0,-0.79,45.19,12.05,6.61,-2.83,-11.03,3.21,222216930.18,0.99,False,True,--100-0,,,XLB
-VTR,Ventas Inc.,Real Estate,52,47,70.0,-0.22,89.2,10.03,8.97,-2.73,-10.74,2.48,334747963.16,1.18,False,True,0010010,953.0,2.36,IYR SCHH XLRE
+VTR,Ventas Inc.,REITs,52,47,70.0,-0.22,89.2,10.03,8.97,-2.73,-10.74,2.48,334747963.16,1.18,False,True,0010010,953.0,2.36,IYR SCHH XLRE
 EQX,Equinox Gold Corp. Common Shares,Gold & Silver,52,7,40.0,-0.04,11.28,7.63,-0.88,5.24,-39.62,4.01,134969019.53,-0.45,False,False,--00010,328.0,7.19,GDX
 PJT,PJT Partners Inc.,Capital Markets,52,3,50.0,-2.11,158.12,6.21,13.23,-8.34,-17.01,3.64,66493459.38,0.88,False,True,0000010,418.0,4.76,KCE
 LHX,L3Harris Technologies Inc.,Aerospace & Defense,52,-23,55.0,-5.27,259.74,-0.33,9.18,-9.86,-30.52,2.4,488263501.35,1.32,False,True,0000000,1692.0,-2.7,ARKX ITA PPA SHLD XAR XLI
@@ -1421,7 +1421,7 @@ ARGX,argenx SE,Biotech,50,18,60.0,0.4,931.38,4.44,0.09,6.41,-12.04,3.17,44907933
 APO,Apollo Global Management Inc. (New),Financials,50,15,45.0,-2.05,122.76,8.21,5.87,-3.68,-18.6,3.45,471255472.53,0.3,False,True,--00010,1177.0,3.79,KBE XLF
 CLOV,Clover Health Investments Corp.,Health Services,50,-24,35.0,-2.81,4.69,-2.09,1.96,0.64,-13.31,5.13,19823598.62,0.7,False,True,--10010,227.0,9.66,XHS
 BLBD,Blue Bird Corporation,Consumer Discretionary,50,29,55.0,-3.97,60.99,6.68,6.65,-7.6,-25.17,3.48,33509509.0,1.11,False,True,--000-0,,,
-WY,Weyerhaeuser Company,Real Estate,50,34,55.0,-2.45,21.75,13.34,16.94,-13.75,-17.6,2.86,176596582.37,1.7,False,True,--00000,901.0,0.0,IYR SCHH XLRE
+WY,Weyerhaeuser Company,REITs,50,34,55.0,-2.45,21.75,13.34,16.94,-13.75,-17.6,2.86,176596582.37,1.7,False,True,--00000,901.0,0.0,IYR SCHH XLRE
 KRNY,Kearny Financial Corp,Banks,50,0,35.0,-2.6,9.32,2.3,2.3,-0.5,-6.89,2.37,4163630.5,0.04,False,True,0010010,171.0,1.18,KRE
 BAX,Baxter International Inc.,Medical Devices,50,-15,55.0,-0.74,26.5,4.08,8.78,-1.85,-6.49,3.84,180192131.52,1.92,False,True,0010010,692.0,4.53,IHI XHE XLV
 FRSH,Freshworks Inc.,Software & Cloud,50,-45,35.0,0.37,13.26,-13.78,-3.63,14.41,-14.4,4.34,73640099.6,-0.34,False,False,1010010,342.0,4.59,CLOU WCLD XSW
@@ -1503,17 +1503,17 @@ LZB,La-Z-Boy Incorporated,Consumer Discretionary,47,27,40.0,-6.65,33.06,12.33,11
 PBR,Petroleo Brasileiro S.A. Petrobras ADS,Energy,47,-33,40.0,-6.81,19.61,-10.99,-17.61,8.99,-25.04,3.2,641036186.08,-2.57,False,False,10000-0,,,
 BNY,The Bank of New York Mellon Corporation,Financials,47,5,60.0,-2.44,152.72,2.78,6.72,-3.42,-6.95,2.06,547919857.69,0.8,False,True,--10010,1877.0,6.95,KBE KCE XLF
 WFRD,Weatherford International plc,Oil Services,47,-28,55.0,-2.94,86.04,-3.12,7.63,-3.28,-22.54,3.81,96189432.26,0.29,False,True,10000-0,,,OIH XES
-CSWC,Capital Southwest Corporation,Consumer Discretionary,47,-9,40.0,-3.17,23.79,3.39,1.34,-1.3,-5.19,1.69,10739996.17,0.86,False,True,--100-0,,,
+CSWC,Capital Southwest Corporation,Consumer Discretionary,47,-9,40.0,-3.17,23.79,3.39,1.34,-1.3,-5.2,1.69,10739996.17,0.86,False,True,--100-0,,,
 COO,The Cooper Companies Inc.,Medical Devices,47,20,55.0,-3.35,64.42,8.43,14.16,-12.14,-23.6,2.5,184502702.88,2.77,False,True,--00010,673.0,0.6,XHE XLV
 TNK,Teekay Tankers Ltd.,Consumer Discretionary,47,-34,50.0,-1.51,88.88,-10.48,-12.21,15.67,-18.03,3.97,40333399.11,-2.06,False,False,10000-0,,,
 NE,Noble Corporation plc A,Oil Services,47,-41,45.0,-4.83,41.03,-12.81,-1.01,1.9,-22.92,4.15,60202597.48,-1.59,False,False,00000-0,,,OIH XES
 CACI,CACI International Inc.,Aerospace & Defense,47,-47,65.0,-2.1,632.16,-5.12,5.42,0.54,-7.1,3.45,156256263.72,0.22,False,True,0010000,617.0,-7.08,PPA
-EQIX,Equinix Inc.,Real Estate,47,5,55.0,-2.29,1054.09,4.61,0.64,0.6,-5.09,3.29,633974477.79,1.02,False,True,--11010,1359.0,5.02,IDGT IYR SCHH XLRE
+EQIX,Equinix Inc.,REITs,47,5,55.0,-2.29,1054.09,4.61,0.64,0.6,-5.09,3.29,633974477.79,1.02,False,True,--11010,1359.0,5.02,IDGT IYR SCHH XLRE
 USB,U.S. Bancorp,Financials,47,1,50.0,-2.58,61.03,2.4,6.53,-3.46,-5.84,1.94,437799214.4,1.21,False,True,--10010,2063.0,4.14,KBE XLF
 P,Everpure Inc. Class A common stock,Software & Cloud,47,-40,45.0,-0.78,111.77,-19.36,-24.07,28.09,-28.8,5.91,469053983.92,-1.0,False,False,1001010,811.0,6.15,SKYY XLK
 GSBD,Goldman Sachs BDC Inc.,Financials,47,-14,35.0,-2.67,8.94,0.9,-1.0,2.08,-9.56,2.3,6736134.76,-0.93,False,False,00100-0,,,
 PI,Impinj Inc.,Semiconductors,47,-14,60.0,-1.47,180.3,2.16,-2.1,4.88,-13.8,6.07,85690521.88,0.21,False,True,0011010,318.0,10.42,XSD
-ARE,Alexandria Real Estate Equities Inc.,Real Estate,47,44,45.0,-2.99,46.0,15.26,0.17,-3.68,-19.49,4.29,120750245.46,-0.59,False,False,--00010,596.0,4.75,IYR SCHH XLRE
+ARE,Alexandria Real Estate Equities Inc.,REITs,47,44,45.0,-2.99,46.0,15.26,0.17,-3.68,-19.49,4.29,120750245.46,-0.59,False,False,--00010,596.0,4.75,IYR SCHH XLRE
 GENI,Genius Sports Limited,Leisure & Travel,47,4,55.0,-2.73,7.01,10.39,12.7,-10.47,-38.35,6.07,40290029.89,1.07,False,True,10010-0,,,
 MNSO,MINISO Group Holding Limited,Retail,47,23,60.0,-5.06,10.42,6.87,16.95,-17.04,-51.21,2.44,14316669.39,2.81,False,True,00010-0,,,
 MMYT,MakeMyTrip Limited,Airlines,47,40,65.0,-2.34,50.75,19.67,17.02,-15.49,-41.25,5.12,44534384.0,1.13,False,True,--000-0,,,JETS
@@ -1527,7 +1527,7 @@ DRTS,Alpha Tau Medical Ltd.,Medical Devices,46,9,40.0,0.18,14.03,5.09,-3.11,8.01
 BGC,BGC Group Inc.,Capital Markets,46,6,40.0,-1.72,11.27,-1.49,-4.89,7.43,-10.75,2.93,31247608.14,-1.45,False,False,--10010,370.0,3.35,KCE
 OIS,Oil States International Inc.,Oil Services,46,-44,60.0,-2.2,8.53,-7.18,3.02,2.65,-40.72,4.68,9501324.89,0.11,False,True,1000000,200.0,-6.98,XES
 ABCB,Ameris Bancorp,Banks,46,5,45.0,-3.43,84.14,2.76,5.24,-4.35,-9.47,1.81,37227956.21,1.14,False,True,--10010,391.0,2.09,KBE KRE
-DEI,Douglas Emmett Inc.,Real Estate,46,7,45.0,-2.95,10.58,5.8,7.85,-6.14,-15.34,3.14,19714545.21,1.28,False,True,--000-0,,,
+DEI,Douglas Emmett Inc.,REITs,46,7,45.0,-2.95,10.58,5.8,7.85,-6.14,-15.34,3.14,19714545.21,1.28,False,True,--000-0,,,
 HTGC,Hercules Capital Inc.,Financials,46,-18,50.0,-3.21,16.63,0.12,0.36,0.28,-6.36,1.65,19970368.05,-1.11,False,False,00100-0,,,
 BTE,Baytex Energy Corp Common Shares,Oil & Gas E&P,46,-47,70.0,-4.37,4.44,-18.68,-5.33,7.59,-19.71,3.86,104581629.41,-2.2,False,False,0001010,188.0,7.43,FCG
 SBET,Sharplink Inc.,Capital Markets,46,3,30.0,-5.75,7.15,-2.85,-24.74,13.67,-41.06,5.79,71128623.21,-2.62,False,False,--00010,164.0,2.5,KCE
@@ -1575,7 +1575,7 @@ KMI,Kinder Morgan Inc.,Infrastructure,45,-35,55.0,-3.85,31.52,-5.24,-1.12,1.66,-
 SRTA,Strata Critical Medical Inc.,Health Services,45,10,55.0,-1.9,5.22,9.66,9.89,-6.62,-19.32,4.98,4989660.36,0.76,False,True,--00010,141.0,12.8,ARKX XHS
 IP,International Paper Company,Materials,45,9,45.0,-4.69,35.65,3.39,10.92,-11.04,-24.86,3.43,207139379.46,0.8,False,True,1000010,853.0,2.03,XLB
 NTES,NetEase Inc.,Software & Cloud,45,41,40.0,-4.98,121.26,7.83,1.84,-6.61,-16.18,1.55,85334880.91,0.65,False,True,--000-0,,,
-IRM,Iron Mountain Incorporated (Delaware)Common Stock REIT,Real Estate,45,-2,60.0,-3.44,118.66,2.58,1.85,-1.95,-10.13,3.0,151460274.16,1.31,False,True,1010010,1170.0,7.54,IYR SCHH XLRE
+IRM,Iron Mountain Incorporated (Delaware)Common Stock REIT,REITs,45,-2,60.0,-3.44,118.66,2.58,1.85,-1.95,-10.13,3.0,151460274.16,1.31,False,True,1010010,1170.0,7.54,IYR SCHH XLRE
 INSM,Insmed Incorporated,Biotech,45,0,40.0,-8.4,110.0,13.43,4.53,-17.01,-47.97,3.86,398096970.89,-0.33,False,False,0000000,667.0,-0.6,IBB XBI
 OKE,ONEOK Inc.,Infrastructure,44,-37,45.0,-3.2,88.6,-5.24,0.4,1.89,-8.12,2.48,284242817.81,-1.23,False,False,10100-0,,,IFRA XLE
 ADBE,Adobe Inc.,Software & Cloud,44,-16,40.0,-4.31,248.48,-0.51,4.35,-4.52,-30.5,3.45,1056444965.12,-0.47,False,False,0000000,1990.0,-9.3,IGV SKYY XLK XSW
@@ -1626,7 +1626,7 @@ AMR,Alpha Metallurgical Resources Inc.,Metals & Mining,43,-23,30.0,-8.39,153.81,
 PATH,UiPath Inc.,Software & Cloud,43,-39,60.0,-4.87,13.51,-4.79,3.13,-3.5,-29.96,4.1,343958458.13,-1.03,False,False,--00000,531.0,-0.75,XSW
 BCE,BCE Inc.,Communication Services,43,17,55.0,-3.29,21.11,5.44,6.89,-6.03,-17.03,2.26,102826943.21,-0.19,False,False,--000-0,,,
 HPQ,HP Inc.,Technology,43,-38,45.0,-3.03,29.93,-7.77,-5.67,7.24,-15.64,4.51,412252775.52,-1.1,False,False,--00010,1080.0,5.06,XLK
-MAA,Mid-America Apartment Communities Inc.,Real Estate,43,27,45.0,-4.45,122.15,4.63,5.81,-7.37,-11.93,1.82,113950543.49,1.1,False,True,--10010,773.0,2.93,IYR SCHH XLRE
+MAA,Mid-America Apartment Communities Inc.,REITs,43,27,45.0,-4.45,122.15,4.63,5.81,-7.37,-11.93,1.82,113950543.49,1.1,False,True,--10010,773.0,2.93,IYR SCHH XLRE
 PTEN,Patterson-UTI Energy Inc.,Oil Services,43,-51,55.0,-4.74,10.65,-15.48,-6.66,6.82,-20.05,4.89,88270590.43,-1.9,False,False,1000010,438.0,6.31,OIH XES
 TRS,TriMas Corporation,Medical Devices,43,-11,30.0,-4.43,39.4,0.1,1.1,-2.67,-12.42,2.53,15037648.65,0.41,False,True,00100-0,,,
 CGON,CG Oncology Inc. Common stock,Biotech,43,15,50.0,-5.15,67.71,5.86,6.4,-9.54,-16.08,4.42,57652360.85,-0.28,False,False,--00000,230.0,-0.86,XBI
@@ -1649,7 +1649,7 @@ NGVT,Ingevity Corporation,Industrials,42,-32,50.0,-5.47,73.73,-0.59,1.28,-4.67,-
 ROK,Rockwell Automation Inc.,Infrastructure,42,-7,50.0,-3.64,443.88,0.02,-1.52,0.78,-10.07,2.65,385842831.18,1.01,False,True,0010010,1536.0,8.25,BOTZ PAVE ROBO XLI
 AVLN,Avalyn Pharma Inc.,Pharma,42,-1,50.0,-7.68,27.47,6.72,8.02,-15.99,-30.01,7.27,10747783.98,-1.08,False,False,--000-0,94.0,,XPH
 LI,Li Auto Inc.,Industrials,42,16,45.0,-5.4,11.58,1.67,6.34,-8.75,-43.29,2.51,31161725.09,-0.01,False,False,--000-0,,,
-RITM,Rithm Capital Corp.,Real Estate,42,2,45.0,-1.95,9.5,2.48,9.7,-4.43,-16.91,2.8,64176790.51,0.9,False,True,--000-0,,,
+RITM,Rithm Capital Corp.,REITs,42,2,45.0,-1.95,9.5,2.48,9.7,-4.43,-16.91,2.8,64176790.51,0.9,False,True,--000-0,,,
 PDD,PDD Holdings Inc.,China,42,20,40.0,-5.71,82.15,6.04,4.78,-9.58,-40.53,2.5,436144156.37,0.96,False,True,--00000,511.0,-9.56,KWEB
 OSBC,Old Second Bancorp Inc.,Banks,42,11,35.0,-3.64,25.19,3.53,0.89,-1.97,-2.46,2.33,15291618.93,0.52,False,True,--10000,185.0,-1.07,KRE
 IRMD,iRadimed Corporation,Medical Devices,42,27,45.0,-2.45,88.58,5.54,4.43,-2.66,-15.34,2.87,10024821.53,1.06,False,True,--00000,214.0,-5.73,IHI XHE
@@ -1663,7 +1663,7 @@ RF,Regions Financial Corporation,Financials,42,-3,60.0,-3.89,29.03,2.25,7.32,-6.
 BWLP,BW LPG Limited Common Shares,Consumer Discretionary,42,-35,45.0,-4.78,22.63,-11.64,-11.57,9.03,-14.02,3.58,12306194.85,-2.24,False,False,10100-0,,,
 KNTK,Kinetik Holdings Inc.,Infrastructure,42,-48,50.0,-4.48,51.17,-9.61,-3.73,3.53,-11.91,3.26,60413589.18,-1.13,False,False,00100-0,,,
 PLTR,Palantir Technologies Inc.,Software & Cloud,42,-38,30.0,-4.06,171.7,-12.76,-10.61,10.12,-17.87,4.99,5160725114.05,-1.68,False,False,1000000,2850.0,-5.03,AIQ ARKX IGV PPA QTUM SHLD WCLD XLK XSW
-UMH,UMH Properties Inc.,Real Estate,41,8,45.0,-3.04,15.46,3.2,0.26,-0.23,-7.2,2.09,9657849.13,-0.17,False,False,--100-0,,,
+UMH,UMH Properties Inc.,REITs,41,8,45.0,-3.04,15.46,3.2,0.26,-0.23,-7.2,2.09,9657849.13,-0.17,False,False,--100-0,,,
 COF,Capital One Financial Corporation,Financials,41,-11,50.0,-4.46,206.31,0.7,5.36,-5.89,-19.08,2.65,882590760.29,0.36,False,True,0000010,2119.0,2.07,IPAY XLF
 PBLS,Parabilis Medicines Inc.,Health Care,41,5,50.0,-7.85,30.36,7.77,5.2,-14.67,,9.27,31577349.93,-0.82,False,False,---00-0,,,
 PNC,PNC Financial Services Group Inc. (The),Financials,41,-2,60.0,-4.1,233.45,2.28,7.01,-6.79,-8.32,1.92,447666458.04,1.21,False,True,--10010,2034.0,5.61,KBE XLF
@@ -1709,7 +1709,7 @@ EZPW,EZCORP Inc. Class A Non Voting,Retail,40,0,55.0,-4.52,29.52,-0.61,-4.31,1.1
 FHB,First Hawaiian Inc.,Banks,40,3,50.0,-4.65,25.87,1.81,3.48,-5.28,-13.92,1.97,62728955.02,0.99,False,True,--10010,367.0,9.88,KBE KRE
 QXO,QXO Inc.,Consumer Discretionary,40,14,50.0,-7.72,12.66,16.57,4.54,-16.6,-53.23,5.47,229015940.68,1.25,False,True,--000-0,,,
 CASH,Pathward Financial Inc.,Banks,40,-3,60.0,-5.45,79.01,3.96,8.14,-10.8,-20.84,2.45,16335978.89,1.38,False,True,--00010,288.0,4.35,KBE KRE
-NHP,National Healthcare Properties Inc.,Real Estate,40,11,45.0,-4.72,15.8,7.48,1.39,-5.65,-7.04,5.13,21310385.56,0.16,False,True,--100-0,,,
+NHP,National Healthcare Properties Inc.,REITs,40,11,45.0,-4.72,15.8,7.48,1.39,-5.65,-7.04,5.13,21310385.56,0.16,False,True,--100-0,,,
 SCHL,Scholastic Corporation,Consumer Discretionary,40,-11,40.0,-3.31,38.39,-0.52,4.39,-2.54,-17.86,3.31,13159369.44,1.17,False,True,--000-0,,,
 EDIT,Editas Medicine Inc.,Biotech,40,-39,45.0,-7.9,2.72,-7.8,-0.37,-6.21,-27.47,8.38,6271189.07,-0.05,False,False,0000010,216.0,4.35,XBI
 OXY,Occidental Petroleum Corporation,Energy,40,-48,45.0,-4.03,57.33,-8.8,-1.71,2.77,-12.65,2.45,551226113.74,-1.56,False,False,1010000,1236.0,-5.07,FCG XLE XOP
@@ -1720,7 +1720,7 @@ VET,Vermilion Energy Inc. Common (Canada),Oil & Gas E&P,40,-50,60.0,-9.88,10.75,
 ADC,Agree Realty Corporation,REITs,40,24,65.0,-3.87,69.96,6.07,6.77,-7.3,-12.45,1.91,118523363.88,1.51,False,True,--10000,496.0,-0.6,IYR SCHH
 CRK,Comstock Resources Inc.,Oil & Gas E&P,40,-50,40.0,-5.05,13.38,-10.02,-1.98,1.29,-51.11,3.96,35703691.92,-1.0,False,False,0000010,314.0,6.8,FCG XOP
 STOK,Stoke Therapeutics Inc.,Biotech,40,-1,50.0,-5.5,27.45,3.94,12.64,-14.03,-28.42,4.77,34115228.76,0.3,False,True,--00010,200.0,1.01,XBI
-PLD,Prologis Inc.,Real Estate,40,36,45.0,-4.46,131.36,4.9,2.08,-4.84,-11.77,2.14,531649850.24,-0.2,False,False,--10010,1736.0,3.64,IYR SCHH XLRE
+PLD,Prologis Inc.,REITs,40,36,45.0,-4.46,131.36,4.9,2.08,-4.84,-11.77,2.14,531649850.24,-0.2,False,False,--10010,1736.0,3.64,IYR SCHH XLRE
 CTOS,Custom Truck One Source Inc.,Infrastructure,39,-49,40.0,-8.0,10.13,-5.94,1.71,-8.41,-15.37,5.51,10373842.31,1.26,False,True,1000010,186.0,7.51,PAVE
 PINS,Pinterest Inc.,Technology,39,-2,55.0,-5.73,21.22,1.43,5.94,-9.04,-35.52,4.59,313821565.9,0.76,False,True,--000-0,,,
 FLOC,Flowco Holdings Inc.,Oil Services,39,-36,50.0,-5.54,19.46,-4.37,4.85,-6.16,-30.02,4.88,10956791.68,-0.29,False,False,--01010,153.0,10.07,XES
@@ -1746,7 +1746,7 @@ VZ,Verizon Communications Inc.,Communication Services,39,25,50.0,-1.88,46.17,6.9
 MCS,Marcus Corporation (The),Consumer Discretionary,39,1,45.0,-5.54,28.05,-0.6,6.09,-8.16,-9.6,3.06,5540545.75,0.26,False,True,--100-0,,,
 CVSA,Covista Inc. Common Shares,Real Estate,39,-20,40.0,-4.67,124.19,-1.83,-2.5,-0.06,-11.91,3.56,44215046.29,-0.67,False,False,--100-0,,,
 CHRD,Chord Energy Corporation,Oil & Gas E&P,39,-49,50.0,-6.56,132.33,-14.1,-3.78,0.76,-16.32,3.31,111796627.31,-2.47,False,False,1000010,517.0,4.66,FCG XOP
-DLR,Digital Realty Trust Inc.,Real Estate,39,-3,65.0,-4.69,184.88,2.84,0.12,-3.33,-8.1,2.98,451130728.66,0.8,False,True,--11010,1326.0,6.25,CLOU IDGT IYR SCHH XLRE
+DLR,Digital Realty Trust Inc.,REITs,39,-3,65.0,-4.69,184.88,2.84,0.12,-3.33,-8.1,2.98,451130728.66,0.8,False,True,--11010,1326.0,6.25,CLOU IDGT IYR SCHH XLRE
 DAVE,Dave Inc.,Financials,39,10,55.0,-7.55,336.22,4.19,-2.02,-7.95,-24.02,5.76,104532131.62,-0.72,False,False,--000-0,,,
 ALGT,Allegiant Travel Company,Transports,39,21,35.0,-7.82,81.53,12.83,5.15,-16.1,-31.58,5.85,34762041.51,1.42,False,True,--01010,302.0,26.36,IYT JETS XTN
 TJX,TJX Companies Inc. (The),Retail,39,18,40.0,-6.03,144.76,4.6,5.64,-10.39,-13.77,1.99,849057547.67,2.68,False,True,--10010,2742.0,0.26,XLY XRT
@@ -1758,7 +1758,7 @@ CBSH,Commerce Bancshares Inc.,Banks,38,16,40.0,-4.59,56.16,2.09,2.52,-4.57,-6.47
 VNOM,Viper Energy Inc.,Oil & Gas E&P,38,-51,55.0,-5.31,41.06,-11.62,-1.27,0.75,-16.94,2.57,97544837.15,-2.08,False,False,1000010,494.0,1.86,XOP
 GPC,Genuine Parts Company,Consumer Discretionary,38,10,50.0,-5.18,126.4,4.13,-0.77,-4.07,-12.94,2.91,139046076.58,-0.79,False,False,--10000,1080.0,0.0,XLY
 NHC,National HealthCare Corporation,Health Services,38,12,55.0,-7.35,212.4,0.29,-6.95,-2.92,-14.33,3.67,32054397.08,-1.45,False,False,--10010,253.0,6.75,XHS
-ESS,Essex Property Trust Inc.,Real Estate,38,22,50.0,-4.97,271.52,3.86,-0.36,-3.86,-8.12,2.01,157881775.04,-0.03,False,False,--10010,633.0,3.26,IYR SCHH XLRE
+ESS,Essex Property Trust Inc.,REITs,38,22,50.0,-4.97,271.52,3.86,-0.36,-3.86,-8.12,2.01,157881775.04,-0.03,False,False,--10010,633.0,3.26,IYR SCHH XLRE
 OTF,Blue Owl Technology Finance Corp.,,38,-8,45.0,-6.26,9.79,4.59,4.59,-10.12,-25.58,2.68,22620882.56,-0.34,False,False,00000-0,,,
 FISI,Financial Institutions Inc.,Banks,38,-25,60.0,-4.02,40.44,-0.81,2.95,-2.86,-4.55,2.14,4501062.09,0.43,False,True,--10010,159.0,6.71,KRE
 OFIX,Orthofix Medical Inc.,Medical Devices,38,-10,55.0,-6.97,9.72,-3.19,3.29,-8.3,-40.0,4.55,3989639.76,0.78,False,True,--00000,143.0,-2.05,IHI XHE
@@ -1808,7 +1808,7 @@ HTB,HomeTrust Bancshares Inc.,Banks,37,3,45.0,-5.71,47.84,1.85,2.95,-7.04,-7.46,
 HSHP,Himalaya Shipping Ltd. Common Shares,Consumer Discretionary,37,-26,45.0,-6.95,15.42,-8.65,-11.75,3.92,-18.83,3.19,7696013.32,-2.76,False,False,--000-0,,,
 MIAX,Miami International Holdings Inc.,Capital Markets,37,29,55.0,-8.88,34.97,9.35,13.58,-23.08,-38.48,4.16,51596857.47,-0.65,False,False,--00010,208.0,3.48,KCE
 CHEF,The Chefs' Warehouse Inc.,Food & Beverage,37,2,30.0,-6.0,106.84,-0.51,-3.93,-2.11,-8.23,4.7,60661377.92,-0.67,False,False,--10010,290.0,16.47,PBJ
-NTST,NetSTREIT Corp.,Real Estate,36,23,55.0,-5.41,18.64,8.62,5.67,-10.37,-15.33,2.59,30415350.17,0.71,False,True,--000-0,,,
+NTST,NetSTREIT Corp.,REITs,36,23,55.0,-5.41,18.64,8.62,5.67,-10.37,-15.33,2.59,30415350.17,0.71,False,True,--000-0,,,
 ZBIO,Zenas BioPharma Inc.,Biotech,36,-10,40.0,-7.45,28.46,-1.08,5.64,-11.53,-34.07,6.69,13605815.76,-0.42,False,False,--00010,146.0,5.8,XBI
 TLN,Talen Energy Corporation,Infrastructure,36,-31,45.0,-10.45,326.78,-6.03,-12.42,-3.41,-25.41,5.32,395571470.51,0.02,False,True,10000-0,,,
 WLFC,Willis Lease Finance Corporation,Medical Devices,36,31,50.0,-9.45,47.65,18.44,11.2,-25.28,-40.27,5.8,9161655.23,-0.02,False,False,--000-0,,,
@@ -1841,7 +1841,7 @@ SF,Stifel Financial Corporation,Capital Markets,35,25,35.0,-6.81,72.94,9.06,4.02
 JD,JD.com Inc.,Retail,35,28,45.0,-8.27,27.73,8.96,4.64,-15.48,-17.89,1.89,226264604.21,1.38,False,True,--000-0,,,
 DNOW,DNOW Inc.,Infrastructure,35,-46,50.0,-5.72,15.37,-6.85,-3.21,-0.13,-8.89,3.69,41074956.88,-0.74,False,False,0010000,303.0,-5.02,PAVE
 WF,Woori Financial Group Inc.,Financials,35,21,40.0,-7.02,68.83,3.5,-8.47,-2.16,-18.52,2.28,6537926.66,-2.27,False,False,--000-0,,,
-ALX,Alexander's Inc.,Real Estate,35,-12,40.0,-6.16,249.96,0.82,1.82,-6.84,-11.19,2.64,13175958.5,0.1,False,True,--100-0,,,
+ALX,Alexander's Inc.,REITs,35,-12,40.0,-6.16,249.96,0.82,1.82,-6.84,-11.19,2.64,13175958.5,0.1,False,True,--100-0,,,
 MUFG,Mitsubishi UFJ Financial Group Inc.,Financials,35,17,30.0,-6.22,21.97,2.38,-5.3,-2.44,-8.95,1.47,60127944.77,-1.39,False,False,--100-0,,,
 FSS,Federal Signal Corporation,Industrials,35,9,50.0,-6.78,117.93,3.95,-0.18,-7.63,-11.79,3.61,58944492.61,0.64,False,True,--110-0,,,
 AGO,Assured Guaranty Ltd.,Insurance,35,19,40.0,-7.12,72.51,4.6,4.44,-11.74,-20.19,1.9,24708531.49,0.96,False,True,--000-0,,,KIE
@@ -1849,7 +1849,7 @@ FLR,Fluor Corporation,Aerospace & Defense,35,2,40.0,-7.42,47.61,1.36,-8.44,-2.34
 FRNM,Freenome Inc. Common stock,Health Care,35,-19,20.0,-14.93,11.3,-15.92,-30.93,3.57,-33.96,8.72,8930824.04,-3.16,False,False,--000-0,,,
 TNGX,Tango Therapeutics Inc.,Biotech,35,14,65.0,-10.85,23.18,4.27,5.84,-20.07,-29.54,7.8,107591518.78,-0.18,False,False,--00010,249.0,29.02,XBI
 CLRO,ClearOne Inc.,Utilities,35,-44,40.0,-21.31,5.0,-10.23,23.46,-48.98,-63.87,29.01,46293487.31,0.61,False,True,00010-0,,,
-CXW,CoreCivic Inc.,Real Estate,35,-16,50.0,-7.61,30.52,-0.36,-3.96,-5.33,-14.12,4.55,53512167.83,-1.38,False,False,--100-0,,,
+CXW,CoreCivic Inc.,REITs,35,-16,50.0,-7.61,30.52,-0.36,-3.96,-5.33,-14.12,4.55,53512167.83,-1.38,False,False,--100-0,,,
 WYNN,Wynn Resorts Limited Common stock,Consumer Discretionary,35,32,50.0,-7.88,82.38,15.41,7.52,-18.64,-37.65,3.02,169167447.77,0.41,False,True,--00000,496.0,-2.94,XLY
 MBC,MasterBrand Inc.,Consumer Discretionary,35,2,60.0,-8.45,7.51,8.68,5.77,-16.56,-45.66,5.88,17809475.46,0.65,False,True,--000-0,,,
 SOBO,South Bow Corporation Common Shares,Infrastructure,35,-28,55.0,-5.32,34.05,-4.11,-0.29,-2.21,-10.63,1.88,26891018.08,-1.25,False,False,00100-0,,,
@@ -1870,7 +1870,7 @@ MOV,Movado Group Inc.,Consumer Discretionary,34,28,50.0,-8.77,32.81,5.46,-0.12,-
 SMFG,Sumitomo Mitsui Financial Group Inc Unsponsored,Financials,34,19,30.0,-6.96,24.63,2.03,-4.65,-4.28,-10.63,1.49,31232584.02,-1.78,False,False,--100-0,,,
 AEG,Aegon Ltd. New York Registry Shares,Financials,34,31,50.0,-5.84,8.58,4.38,1.18,-6.82,-7.51,1.11,56340222.04,-0.39,False,False,--100-0,,,
 CLMT,Calumet Inc.,Oil & Gas E&P,34,-15,40.0,-11.19,43.6,-12.61,-22.43,4.11,-26.16,5.55,77541195.17,-3.55,False,False,1000010,190.0,6.15,XOP
-CTO,CTO Realty Growth Inc.,Real Estate,34,30,50.0,-4.72,20.46,7.51,-0.34,-4.45,-7.55,2.41,7245754.93,-0.02,False,False,--100-0,,,
+CTO,CTO Realty Growth Inc.,REITs,34,30,50.0,-4.72,20.46,7.51,-0.34,-4.45,-7.55,2.41,7245754.93,-0.02,False,False,--100-0,,,
 LGIH,LGI Homes Inc.,Homebuilders,34,24,60.0,-7.42,48.9,17.52,6.1,-17.37,-25.73,6.31,18962311.97,0.33,False,True,--00010,252.0,22.93,XHB
 WSC,WillScot Holdings Corporation,Industrials,34,0,50.0,-10.98,19.3,7.34,11.18,-24.99,-33.37,4.94,56518898.25,1.36,False,True,--000-0,,,
 MUSA,Murphy USA Inc.,Retail,34,14,35.0,-7.56,502.42,-2.36,-1.93,-6.06,-19.12,3.27,142749711.93,-1.03,False,False,--00010,611.0,13.15,XRT
@@ -1889,9 +1889,9 @@ NTNX,Nutanix Inc.,Software & Cloud,34,-48,30.0,-7.0,63.7,-12.34,-13.23,5.95,-14.
 DRVN,Driven Brands Holdings Inc.,Consumer Discretionary,34,2,60.0,-7.04,11.91,0.42,1.28,-8.1,-30.31,4.33,15135773.67,-0.37,False,False,--000-0,,,
 TEX,Terex Corporation,Infrastructure,34,7,45.0,-7.68,57.56,7.85,1.39,-11.69,-22.62,4.55,102929009.74,0.32,False,True,--00010,484.0,2.98,PAVE
 MGNI,Magnite Inc.,Technology,34,-9,40.0,-8.83,22.79,4.69,-8.25,-6.29,-11.22,4.36,45695562.51,-1.01,False,False,10100-0,,,
-INVH,Invitation Homes Inc.,Real Estate,34,13,45.0,-5.57,27.57,3.07,4.47,-8.2,-8.86,1.89,151401932.18,0.8,False,True,--10010,624.0,6.85,IYR SCHH XLRE
+INVH,Invitation Homes Inc.,REITs,34,13,45.0,-5.57,27.57,3.07,4.47,-8.2,-8.86,1.89,151401932.18,0.8,False,True,--10010,624.0,6.85,IYR SCHH XLRE
 SCSC,ScanSource Inc.,Technology,34,-23,35.0,-6.36,56.98,-4.14,-6.5,0.07,-8.42,3.46,16853505.15,-0.87,False,False,--100-0,,,
-DEA,Easterly Government Properties Inc.,Real Estate,34,8,40.0,-5.35,23.28,3.42,0.04,-4.75,-7.5,2.12,9731814.79,0.15,False,True,--100-0,,,
+DEA,Easterly Government Properties Inc.,REITs,34,8,40.0,-5.35,23.28,3.42,0.04,-4.75,-7.5,2.12,9731814.79,0.15,False,True,--100-0,,,
 DEC,Diversified Energy Company,Oil & Gas E&P,34,-53,35.0,-6.24,13.33,-9.13,-4.99,0.75,-24.25,2.77,9797595.7,-2.45,False,False,-000010,185.0,2.21,FCG XOP
 CFG,Citizens Financial Group Inc.,Financials,34,2,50.0,-6.1,65.9,1.77,3.64,-8.29,-11.11,2.15,317879398.63,0.17,False,True,--10010,1099.0,7.64,KBE KRE XLF
 AAL,American Airlines Group Inc.,Transports,34,19,45.0,-8.04,13.63,8.35,4.85,-14.97,-24.9,4.27,800178498.52,1.25,False,True,--00010,580.0,2.65,IYT JETS XTN
@@ -1988,7 +1988,7 @@ CR,Crane Company,Infrastructure,30,16,55.0,-6.05,206.38,4.01,-1.22,-5.45,-8.75,3
 NTCT,NetScout Systems Inc.,Cybersecurity,30,-31,30.0,-9.04,38.1,-3.62,-7.05,-5.06,-15.03,3.0,18227740.98,-0.72,False,False,--00010,316.0,10.88,CIBR
 HIMS,Hims & Hers Health Inc.,Health Services,30,-28,40.0,-13.25,26.66,-9.07,-9.54,-10.11,-39.03,7.04,290792822.25,-1.03,False,False,--00010,509.0,17.55,IBUY XHS
 NTGR,NETGEAR Inc.,Utilities,30,-39,40.0,-9.41,22.32,-4.98,-3.13,-8.15,-25.03,3.46,6763074.6,0.06,False,True,--010-0,,,
-CBL,CBL & Associates Properties Inc.,Real Estate,30,17,55.0,-7.4,49.7,0.14,-0.6,-7.43,-16.27,2.3,11652976.73,-1.65,False,False,--000-0,,,
+CBL,CBL & Associates Properties Inc.,REITs,30,17,55.0,-7.4,49.7,0.14,-0.6,-7.43,-16.27,2.3,11652976.73,-1.65,False,False,--000-0,,,
 WPC,W. P. Carey Inc. REIT,REITs,30,20,50.0,-6.07,65.36,3.61,2.11,-7.7,-13.53,1.94,111260659.4,-0.26,False,False,--10010,903.0,3.91,IYR SCHH
 NNN,NNN REIT Inc.,REITs,30,17,55.0,-6.53,41.63,3.33,4.32,-10.08,-13.67,1.88,116737334.51,0.08,False,True,--10010,600.0,10.91,IYR SCHH
 ROG,Rogers Corporation,Industrials,30,-37,40.0,-12.9,128.7,-8.59,-17.82,-3.76,-22.98,4.69,32277479.18,-1.04,False,False,--010-0,,,
@@ -2240,7 +2240,7 @@ SHEN,Shenandoah Telecommunications Co,Communication Services,22,9,40.0,-16.2,10.
 WT,WisdomTree Inc.,Capital Markets,22,-25,35.0,-13.73,20.03,-6.09,-17.16,-6.62,-20.01,4.14,56307567.52,-3.03,False,False,--00010,314.0,1.29,KCE
 HLIT,Harmonic Inc.,AI Infrastructure,22,-22,50.0,-13.67,10.21,-4.85,-9.0,-12.59,-40.33,4.92,17099533.53,-1.55,False,False,--000-0,,,
 SPCE,Virgin Galactic Holdings Inc.,Aerospace & Defense,22,-25,35.0,-17.9,2.51,-5.64,-18.24,-14.33,-66.62,5.61,13875874.34,-2.2,False,False,--00010,195.0,23.42,ITA XAR
-XRN,Chiron Real Estate Inc.,Real Estate,22,18,35.0,-9.3,31.63,9.94,-7.23,-9.52,-15.44,3.29,6541910.7,-2.1,False,False,--000-0,,,
+XRN,Chiron Real Estate Inc.,REITs,22,18,35.0,-9.3,31.63,9.94,-7.23,-9.52,-15.44,3.29,6541910.7,-2.1,False,False,--000-0,,,
 ORCL,Oracle Corporation,Software & Cloud,22,-54,45.0,-17.35,123.73,-14.4,-14.22,-13.44,-49.91,5.65,5462638160.85,-2.05,False,False,--00010,3518.0,0.6,AIQ GRID IGV SKYY XLK XSW
 CZR,Caesars Entertainment Inc.,Consumer Discretionary,21,19,30.0,-4.57,29.36,2.77,-0.98,-2.3,-3.45,0.83,200104037.08,-0.32,False,False,--100-0,,,
 PAX,Patria Investments Limited Class A Common Shares,Financials,21,5,40.0,-13.26,9.76,4.39,-12.86,-11.84,-42.28,3.73,16094839.72,-2.09,False,False,--000-0,,,
@@ -2248,7 +2248,7 @@ MFG,Mizuho Financial Group Inc. Sponosred ADR (Japan),Financials,21,5,30.0,-11.7
 NOW,ServiceNow Inc.,Software & Cloud,21,-63,55.0,-18.66,108.81,-27.52,-21.14,-7.28,-38.7,4.85,2456201491.5,-3.73,False,False,--00010,2237.0,1.41,CLOU IGV SKYY XLK XSW
 ARDX,Ardelyx Inc.,Biotech,21,15,40.0,-19.01,3.29,6.13,-0.6,-32.44,-58.82,4.41,14833300.77,-0.66,False,False,--00010,249.0,4.18,XBI
 NAMS,NewAmsterdam Pharma Company N.V.,Health Care,21,10,40.0,-17.88,20.93,-0.66,-6.02,-24.36,-49.51,5.97,30669741.42,-1.15,False,False,--000-0,,,
-DX,Dynex Capital Inc.,Real Estate,21,12,50.0,-8.21,10.91,0.74,2.12,-11.14,-16.51,2.69,78039362.66,-1.47,False,False,--000-0,,,
+DX,Dynex Capital Inc.,REITs,21,12,50.0,-8.21,10.91,0.74,2.12,-11.14,-16.51,2.69,78039362.66,-1.47,False,False,--000-0,,,
 BHP,BHP Group Limited,Metals & Mining,21,-20,40.0,-10.06,80.14,-2.53,-7.89,-6.84,-17.02,1.95,242888789.45,-2.43,False,False,--00010,821.0,11.25,COPX SLX
 EROC,ERock Inc.,Energy,21,-10,20.0,-31.76,7.94,-11.78,-41.79,-23.73,,10.07,29284030.85,-3.22,False,False,---00-0,,,
 LKQ,LKQ Corporation,Consumer Discretionary,21,19,45.0,-9.2,20.94,21.82,-6.48,-13.42,-37.8,3.95,122467809.4,-1.43,False,False,--000-0,,,
@@ -2276,7 +2276,7 @@ WAFD,WaFd Inc.,Banks,20,4,30.0,-12.33,30.13,2.76,0.7,-18.99,-22.8,2.22,25224051.
 APPS,Digital Turbine Inc.,Software & Cloud,20,-29,50.0,-23.8,9.54,-3.73,-9.06,-33.15,-33.7,8.02,24464879.4,-1.32,False,False,--00010,211.0,6.03,XSW
 MSM,MSC Industrial Direct Company Inc.,Internet & E-commerce,20,-16,40.0,-11.3,116.06,-5.33,-10.94,-6.34,-12.62,3.37,125473276.78,-1.63,False,False,--11010,477.0,14.94,IBUY
 MLTX,MoonLake Immunotherapeutics Class A,Health Care,20,-16,45.0,-20.41,11.56,-6.09,5.57,-35.88,-47.83,7.0,20873899.33,-0.96,False,False,--000-0,,,
-CDP,COPT Defense Properties Common Shares of Beneficial Interest,Real Estate,20,1,35.0,-9.34,33.11,-1.08,-1.69,-10.18,-12.85,2.05,28196794.81,-1.29,False,False,--100-0,,,
+CDP,COPT Defense Properties Common Shares of Beneficial Interest,REITs,20,1,35.0,-9.34,33.11,-1.08,-1.69,-10.18,-12.85,2.05,28196794.81,-1.29,False,False,--100-0,,,
 NVTS,Navitas Semiconductor Corporation,Semiconductors,20,-3,40.0,-23.65,9.33,-0.32,-22.06,-24.76,-70.65,7.16,139404377.48,-1.71,False,False,--00010,351.0,19.39,XSD
 UNF,Unifirst Corporation,Consumer Discretionary,20,10,55.0,-10.13,250.94,-0.08,-0.31,-13.02,-16.57,3.82,99176054.56,-1.45,False,False,--000-0,,,
 ARW,Arrow Electronics Inc.,Semiconductors,20,-35,40.0,-14.79,202.63,-9.11,-15.71,-8.84,-16.27,3.91,96634426.77,-1.8,False,False,--000-0,,,
@@ -2311,7 +2311,7 @@ CTMX,CytomX Therapeutics Inc.,Biotech,19,7,45.0,-21.57,2.35,-0.42,-8.2,-30.27,-6
 STRA,Strategic Education Inc.,Real Estate,19,-12,30.0,-11.14,74.32,-4.17,-6.89,-9.21,-14.55,2.87,21907245.46,-2.39,False,False,--100-0,,,
 ORIC,Oric Pharmaceuticals Inc.,Biotech,19,9,45.0,-25.03,9.34,0.43,-22.04,-27.76,-36.25,9.94,22539735.93,-2.9,False,False,--00010,183.0,1.1,XBI
 HPP,Hudson Pacific Properties Inc.,Financials,19,-11,50.0,-17.92,10.56,-4.17,-8.81,-21.43,-37.55,7.22,9180491.88,-1.35,False,False,--000-0,,,
-BNL,Broadstone Net Lease Inc.,Real Estate,19,16,30.0,-10.31,18.03,6.94,-3.22,-13.45,-19.82,2.83,61046738.53,-1.53,False,False,--000-0,,,
+BNL,Broadstone Net Lease Inc.,REITs,19,16,30.0,-10.31,18.03,6.94,-3.22,-13.45,-19.82,2.83,61046738.53,-1.53,False,False,--000-0,,,
 PWR,Quanta Services Inc.,Infrastructure,19,-15,35.0,-17.46,580.44,-4.36,-19.33,-13.09,-26.07,4.7,867824494.08,-1.57,False,False,1100010,1941.0,12.13,GRID IFRA PAVE XLI
 FEIM,Frequency Electronics Inc.,Industrials,19,-33,35.0,-24.55,61.52,-14.07,-29.39,-17.31,-30.88,6.26,16703203.35,-2.49,False,False,--000-0,,,
 ATEC,Alphatec Holdings Inc.,Medical Devices,19,-66,50.0,-20.21,8.28,-27.69,-21.44,-10.1,-63.49,6.25,46081783.13,-2.21,False,False,--00000,269.0,-4.95,IHI XHE
@@ -2366,7 +2366,7 @@ FICO,Fair Isaac Corporation,Software & Cloud,17,3,65.0,-19.19,701.03,0.41,0.8,-3
 MU,Micron Technology Inc.,AI & Robotics,17,-40,40.0,-19.63,795.23,-19.12,-23.93,-9.77,-34.45,4.61,24526233903.43,-3.45,False,False,--00010,3888.0,29.13,AIQ CARZ CHAT DRAM QTUM SMH SOXX XLK XSD
 SENEA,Seneca Foods Corp.,Consumer Staples,17,-1,35.0,-15.45,146.7,-6.24,-14.42,-11.93,-29.23,3.9,14679210.53,-4.99,False,False,--000-0,,,
 DDOG,Datadog Inc.,Software & Cloud,17,-43,40.0,-28.44,188.72,-32.22,-32.17,-17.69,-35.65,6.2,952303767.26,-3.58,False,False,--00010,1276.0,21.06,CIBR CLOU IGV SKYY WCLD XLK XSW
-ORC,Orchid Island Capital Inc.,Real Estate,17,10,40.0,-12.79,4.96,0.41,-0.19,-18.57,-30.35,3.6,34041923.99,-2.85,False,False,--000-0,,,
+ORC,Orchid Island Capital Inc.,REITs,17,10,40.0,-12.79,4.96,0.41,-0.19,-18.57,-30.35,3.6,34041923.99,-2.85,False,False,--000-0,,,
 PLAB,Photronics Inc.,Semiconductors,17,-23,30.0,-15.49,27.38,-6.68,-11.16,-14.17,-50.18,3.64,21825291.63,-1.35,False,False,--010-0,,,
 ESI,Element Solutions Inc.,Industrials,17,-22,45.0,-14.87,33.44,-6.57,-11.39,-12.79,-31.73,4.38,153480626.41,-1.05,False,False,--000-0,,,
 AMBA,Ambarella Inc.,AI & Robotics,17,-18,40.0,-21.97,60.92,-8.07,-10.33,-27.29,-36.22,5.94,100061355.39,-1.37,False,False,--000-0,,,ROBO XSD
@@ -2401,7 +2401,7 @@ APEI,American Public Education Inc.,Real Estate,16,-16,55.0,-15.17,42.41,-3.66,-
 SILC,Silicom Ltd,Communication Services,16,-37,40.0,-36.43,31.76,-28.08,-48.48,-23.51,-48.48,8.36,8552238.76,-3.61,False,False,--000-0,,,
 ORN,Orion Group Holdings Inc. Common,Aerospace & Defense,16,-10,50.0,-21.28,7.84,-5.54,-16.24,-22.53,-54.26,6.5,5402133.05,-1.82,False,False,--000-0,,,
 GEV,GE Vernova Inc.,Infrastructure,16,-4,25.0,-19.28,832.83,-5.15,-19.03,-16.69,-29.07,5.25,2987264173.14,-1.84,False,False,--00010,3438.0,9.56,GRID XLI
-FPI,Farmland Partners Inc.,Real Estate,16,-45,45.0,-15.96,8.96,-11.55,-16.57,-9.86,-30.08,3.2,8068855.25,-4.01,False,False,--000-0,,,
+FPI,Farmland Partners Inc.,REITs,16,-45,45.0,-15.96,8.96,-11.55,-16.57,-9.86,-30.08,3.2,8068855.25,-4.01,False,False,--000-0,,,
 ZBRA,Zebra Technologies Corporation,Technology,16,-58,35.0,-14.74,332.44,-13.58,-13.83,-8.73,-14.98,3.41,228402826.64,-2.21,False,False,--10010,644.0,1.1,XLK
 INOD,Innodata Inc.,Software & Cloud,16,0,50.0,-33.93,43.3,-9.13,-34.63,-33.87,-64.36,6.93,82276941.24,-3.29,False,False,--000-0,,,
 CARE,Carter Bankshares Inc.,Banks,16,-10,50.0,-12.07,29.26,-3.18,-3.94,-13.42,-17.84,2.21,5461595.25,-1.71,False,False,--00010,164.0,32.26,KRE
@@ -2427,7 +2427,7 @@ CMRE,Costamare Inc.,Consumer Discretionary,15,-36,35.0,-14.82,13.16,-10.96,-12.0
 DELL,Dell Technologies Inc.,Software & Cloud,15,-40,40.0,-26.85,372.36,-24.59,-35.04,-14.8,-36.63,5.7,3291377746.48,-4.26,False,False,--01010,2131.0,29.78,SKYY XLK
 DCI,Donaldson Company Inc.,Industrials,15,0,35.0,-11.57,85.52,0.54,-5.09,-12.75,-21.9,1.96,48859390.19,-1.11,False,False,--000-0,,,
 WCC,WESCO International Inc.,Infrastructure,15,-27,45.0,-18.3,316.72,-8.78,-17.54,-14.68,-17.54,4.57,266316897.48,-1.81,False,False,--00010,704.0,12.64,PAVE
-IVR,INVESCO MORTGAGE CAPITAL INC,Real Estate,15,9,40.0,-14.3,5.52,1.28,-1.36,-21.03,-31.08,3.22,21797793.31,-2.61,False,False,--000-0,,,
+IVR,INVESCO MORTGAGE CAPITAL INC,REITs,15,9,40.0,-14.3,5.52,1.28,-1.36,-21.03,-31.08,3.22,21797793.31,-2.61,False,False,--000-0,,,
 BLX,Bladex Inc. Class E,Financials,15,7,55.0,-11.49,51.27,-1.16,-7.75,-10.21,-17.35,2.74,9998233.12,-1.98,False,False,--000-0,,,
 INFQ,Infleqtion Inc.,Quantum,15,-15,30.0,-27.75,8.56,-11.11,-31.74,-22.95,-56.92,6.58,61275758.76,-4.5,False,False,--00010,261.0,177.66,QTUM
 IMTX,Immatics N.V.,Health Care,15,6,45.0,-20.47,6.91,-5.99,-7.87,-26.65,-41.79,5.99,8449105.67,-2.85,False,False,--000-0,,,
@@ -2464,11 +2464,11 @@ TE,T1 Energy Inc.,Solar,14,0,20.0,-38.19,2.73,3.8,-28.16,-50.81,-77.33,10.48,531
 MTSI,MACOM Technology Solutions Holdings Inc.,Semiconductors,14,-31,45.0,-28.18,233.13,-10.65,-33.52,-22.71,-43.09,6.67,466724370.06,-2.14,False,False,--01010,656.0,27.63,SOXX XSD
 MNPR,Monopar Therapeutics Inc.,Biotech,14,1,35.0,-26.31,72.81,-0.79,-8.5,-39.43,-41.21,5.15,10586161.29,-3.87,False,False,--00010,98.0,22.5,XBI
 TDAY,USA TODAY Co. Inc.,Consumer Discretionary,14,-6,30.0,-22.41,6.07,-5.01,-17.41,-24.12,-32.78,4.25,18031551.34,-1.76,False,False,--000-0,,,
-LAND,Gladstone Land Corporation,Real Estate,14,-24,20.0,-19.6,7.28,-13.13,-24.23,-11.3,-39.31,3.77,6719763.98,-5.77,False,False,--000-0,,,
+LAND,Gladstone Land Corporation,REITs,14,-24,20.0,-19.6,7.28,-13.13,-24.23,-11.3,-39.31,3.77,6719763.98,-5.77,False,False,--000-0,,,
 IE,Ivanhoe Electric Inc.,Metals & Mining,14,-24,40.0,-27.89,7.76,-12.12,-25.24,-27.48,-61.04,6.68,21458015.15,-2.93,False,False,--00000,204.0,-2.39,XME
 SUN,SUN,Midstream,14,-17,45.0,-14.38,64.67,-9.73,-11.36,-10.9,-19.13,3.14,29350035.89,-4.02,False,False,--00010,302.0,3.07,AMLP
 AVR,Anteris Technologies Global Corp.,Medical Devices,14,5,40.0,-21.46,6.12,0.33,-13.19,-26.79,-42.1,5.94,9901106.48,-3.15,False,False,--00010,138.0,8.66,XHE
-CIM,Chimera Investment Corporation,Real Estate,14,10,30.0,-16.56,8.68,4.2,-5.65,-23.43,-32.69,2.99,12724550.14,-3.36,False,False,--000-0,,,
+CIM,Chimera Investment Corporation,REITs,14,10,30.0,-16.56,8.68,4.2,-5.65,-23.43,-32.69,2.99,12724550.14,-3.36,False,False,--000-0,,,
 DIOD,Diodes Incorporated,Semiconductors,14,-35,40.0,-24.09,79.46,-11.02,-26.25,-19.51,-35.27,4.89,40888846.76,-2.19,False,False,--00010,397.0,17.8,XSD
 WULF,TeraWulf Inc.,Software & Cloud,14,-9,45.0,-29.87,11.7,-12.82,-21.84,-33.6,-59.63,9.66,577816319.53,-2.27,False,False,--00010,501.0,12.08,NCLD XSW
 DAN,Dana Incorporated,Consumer Discretionary,14,-4,45.0,-16.73,23.72,-6.91,-16.57,-12.79,-38.59,4.65,47781095.17,-3.75,False,False,--000-0,,,
@@ -2559,7 +2559,7 @@ BTBT,Bit Digital Inc.,Software & Cloud,11,-1,20.0,-40.78,0.83,-13.58,-45.13,-38.
 BIDU,Baidu Inc. ADS,Quantum,11,4,30.0,-19.2,80.43,1.17,-7.6,-26.43,-50.51,2.23,178298990.92,-2.72,False,False,--00000,492.0,-2.57,QTUM
 KLAC,KLA Corporation,Semiconductors,11,-1,35.0,-23.99,149.79,-5.66,-24.14,-22.39,-50.3,4.17,2069566281.84,-3.28,False,False,--00010,2481.0,19.45,QTUM SMH SOXX XLK
 LUNR,Intuitive Machines Inc.,Aerospace & Defense,11,-24,30.0,-34.31,9.93,-14.32,-34.06,-33.49,-78.27,7.42,77207388.28,-3.82,False,False,--00010,329.0,17.08,ARKX ITA XAR
-ARR,ARMOUR Residential REIT Inc.,Real Estate,11,7,50.0,-15.37,12.6,-0.55,-4.92,-20.14,-24.88,3.25,64192906.17,-3.32,False,False,--000-0,,,
+ARR,ARMOUR Residential REIT Inc.,REITs,11,7,50.0,-15.37,12.6,-0.55,-4.92,-20.14,-24.88,3.25,64192906.17,-3.32,False,False,--000-0,,,
 DXPE,DXP Enterprises Inc.,Infrastructure,11,-29,45.0,-20.45,158.38,-5.55,-17.36,-20.09,-21.14,4.75,30678403.54,-2.5,False,False,0100010,255.0,9.44,PAVE
 ASML,ASML Holding N.V. New York Registry Shares,AI & Robotics,10,-19,40.0,-17.46,1496.3,-10.02,-18.31,-12.09,-24.59,3.06,2602100094.3,-3.18,False,False,--000-0,,,CHAT QTUM SMH SOXX
 RDW,Redwire Corporation,Aerospace & Defense,10,-34,40.0,-32.57,7.72,-14.32,-27.31,-34.74,-70.19,6.49,98328356.39,-3.58,False,False,--00010,325.0,25.97,ITA XAR
@@ -2648,7 +2648,7 @@ INIO,INNIO N.V.,Consumer Discretionary,8,-29,40.0,-38.91,14.74,-19.67,-30.96,-43
 BKSY,BlackSky Technology Inc.,AI Infrastructure,8,-28,30.0,-34.26,16.77,-12.24,-25.99,-39.65,-67.52,7.05,16678036.02,-2.79,False,False,--000-0,,,
 SHAZ,SharonAI Holdings Inc.,AI Infrastructure,8,0,35.0,-49.46,24.42,-14.23,-49.25,-53.17,-73.66,11.83,62180531.93,-5.44,False,False,--00010,116.0,329.63,NCLD
 CRMD,CorMedix Inc.,Pharma,7,-66,55.0,-28.25,5.66,-30.98,-22.25,-24.63,-55.54,6.17,11458513.82,-4.66,False,False,--00010,195.0,5.41,XPH
-SAFE,Safehold Inc. New,Real Estate,7,-2,40.0,-23.44,10.77,-1.82,-10.99,-31.64,-36.34,3.72,9010097.05,-4.29,False,False,--000-0,,,
+SAFE,Safehold Inc. New,REITs,7,-2,40.0,-23.44,10.77,-1.82,-10.99,-31.64,-36.34,3.72,9010097.05,-4.29,False,False,--000-0,,,
 COHR,Coherent Corp.,AI Infrastructure,7,-28,40.0,-41.92,195.09,-18.57,-42.34,-41.63,-54.3,7.67,1905078179.08,-3.96,False,False,--00010,1311.0,19.07,CHAT LYTE QTUM XLK
 CORT,Corcept Therapeutics Incorporated,Pharma,7,4,30.0,-29.84,79.22,-8.18,-33.75,-26.61,-35.89,6.08,100522821.07,-5.08,False,False,--00010,425.0,21.43,PPH XPH
 BKR,Baker Hughes Company,Energy,7,-16,45.0,-19.38,49.87,-8.76,-12.71,-20.23,-27.92,3.44,438074074.88,-3.79,False,False,--00000,1149.0,-0.69,OIH XES XLE
@@ -2668,12 +2668,12 @@ MTZ,MasTec Inc.,Infrastructure,7,0,45.0,-31.51,167.61,-7.4,-26.58,-35.19,-61.69,
 NGS,Natural Gas Services Group Inc.,Oil Services,7,-39,45.0,-20.6,28.95,-11.82,-15.0,-20.15,-34.14,4.07,2699550.88,-3.3,False,False,--00010,162.0,9.46,XES
 NNE,Nano Nuclear Energy Inc.,Infrastructure,7,-2,35.0,-35.91,10.95,-11.62,-33.6,-37.82,-74.81,6.83,25250831.91,-4.51,False,False,--000-0,,,
 MDXG,MiMedx Group Inc,Biotech,7,-22,35.0,-28.83,3.2,-18.99,-30.74,-23.44,-59.8,6.18,7016984.85,-5.18,False,False,--00000,226.0,-4.24,XBI
-MFA,MFA Financial Inc.,Real Estate,7,-1,40.0,-18.79,6.61,-2.65,-9.2,-23.35,-30.71,3.06,18840565.38,-4.16,False,False,--000-0,,,
+MFA,MFA Financial Inc.,REITs,7,-1,40.0,-18.79,6.61,-2.65,-9.2,-23.35,-30.71,3.06,18840565.38,-4.16,False,False,--000-0,,,
 MLI,Mueller Industries Inc.,Water,7,3,45.0,-18.08,55.2,-0.18,-12.56,-20.31,-21.18,2.5,100223769.07,-2.9,False,False,--00010,741.0,2.35,PAVE PHO
 MLYS,Mineralys Therapeutics Inc.,Biotech,7,-18,50.0,-32.97,17.0,-20.49,-22.55,-37.01,-64.08,7.05,35837839.73,-4.98,False,False,--00010,229.0,6.51,XBI
 ALNT,Allient Inc.,Industrials,7,-36,40.0,-31.57,79.56,-17.35,-32.14,-28.43,-32.93,6.0,19934929.92,-3.21,False,False,--000-0,,,
 VALE,VALE S.A.,Metals & Mining,7,4,30.0,-20.21,11.43,-0.35,-18.82,-20.14,-34.03,2.59,442665936.92,-5.63,False,False,--00000,538.0,-2.89,SLX
-GNL,Global Net Lease Inc.,Real Estate,7,5,25.0,-16.99,7.09,1.58,-10.77,-19.92,-24.02,2.98,22629848.57,-4.76,False,False,--000-0,,,
+GNL,Global Net Lease Inc.,REITs,7,5,25.0,-16.99,7.09,1.58,-10.77,-19.92,-24.02,2.98,22629848.57,-4.76,False,False,--000-0,,,
 GRRR,Gorilla Technology Group Inc. Ordinary shares,Cybersecurity,7,-22,40.0,-38.82,7.7,-23.61,-36.78,-37.8,-64.65,10.53,11809113.94,-4.4,False,False,--000-0,,,BUG
 DPC,DPC Holdings PLC,Infrastructure,7,1,25.0,-39.63,28.42,1.28,-32.35,-50.0,,9.0,55414114.98,-3.17,False,False,---00-0,,,
 GPCR,Structure Therapeutics Inc.,Health Care,6,3,30.0,-43.99,20.36,-5.21,-25.88,-61.31,-78.29,5.91,22689010.6,-7.93,False,False,--000-0,,,

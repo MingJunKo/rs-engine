@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setup Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --ink:#0b0b0a; --surface:#121211; --surface-2:#171716; --surface-3:#1d1d1b;
+  --border:#232320; --border-2:#2e2d29; --gold:#c9a55a; --gold-bright:#e8c070; --gold-dim:#7a6234; --gold-bg:#17130a;
+  --t1:#ede6d8; --t2:#a59c8f; --t3:#6b645a; --t4:#45403a;
+  --up:#5bbf7a; --up-bg:rgba(91,191,122,.14); --dn:#d4706a; --dn-bg:rgba(212,112,106,.14);
+  --growth:#7c9cff; --cyclical:#e0b25a; --defensive:#5fc9a8; --neutral:#8a8478;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+body{background:var(--ink);color:var(--t1);font-family:Barlow,system-ui,sans-serif;font-weight:300;font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.mono{font-family:"DM Mono",ui-monospace,monospace}
+.wrap{max-width:1440px;margin:0 auto;padding:0 28px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,11,10,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--border)}
+nav .wrap{display:flex;align-items:center;gap:26px;height:48px;overflow-x:auto;scrollbar-width:none}
+nav .brand{font-family:"Playfair Display",serif;font-weight:700;font-size:16px;white-space:nowrap}
+nav .brand em{color:var(--gold);font-style:italic}
+nav a{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);text-decoration:none;white-space:nowrap}
+nav a:hover{color:var(--gold)}
+nav .asof{margin-left:auto;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);white-space:nowrap}
+
+/* hero */
+.hero{padding:34px 0 26px;border-bottom:.5px solid var(--border)}
+.eyebrow{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-dim)}
+.hero h1{font-family:"Playfair Display",serif;font-weight:900;font-size:clamp(30px,4.4vw,46px);line-height:1.05;margin:10px 0 16px;letter-spacing:-.5px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.regime{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:4px;border:.5px solid;font-family:"DM Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.badge.bull{color:var(--up);border-color:rgba(91,191,122,.4);background:var(--up-bg)}
+.badge.bear{color:var(--dn);border-color:rgba(212,112,106,.4);background:var(--dn-bg)}
+.badge.warn{color:var(--gold-bright);border-color:var(--gold-dim);background:var(--gold-bg)}
+.verdict{flex:1;min-width:280px;max-width:860px;color:var(--t2);font-size:14.5px;line-height:1.65}
+.demo{margin-top:14px;font-family:"DM Mono",monospace;font-size:10px;color:var(--dn);letter-spacing:.06em}
+
+/* sections */
+section{padding:30px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+.sec-head h2{font-family:"DM Mono",monospace;font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.sec-head .line{flex:1;height:.5px;background:var(--border)}
+.sec-head p{font-size:11.5px;color:var(--t3);white-space:nowrap}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:16px 18px}
+.card h3{font-family:"DM Mono",monospace;font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--t2);margin-bottom:4px}
+.card .sub{font-size:11px;color:var(--t3);margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-rrg{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+.grid2>*,.grid-rrg>*{min-width:0}
+
+/* gauges */
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px}
+.gauge{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:13px 14px 10px;position:relative;overflow:hidden}
+.gauge::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--dn);opacity:.7}
+.gauge.on::before{background:var(--up)}
+.gauge .lbl{font-size:12.5px;font-weight:500;color:var(--t1)}
+.gauge .gnote{font-size:10px;color:var(--t3);line-height:1.35;min-height:27px;margin-top:2px;overflow-wrap:anywhere}
+.gauge .read{font-size:10.5px;color:var(--t2);line-height:1.4;margin-top:7px;padding-top:7px;border-top:.5px solid var(--border)}
+.gauge .read b{font-weight:500;color:var(--t1)}
+.gauge .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px}
+.pill{font-family:"DM Mono",monospace;font-size:8.5px;letter-spacing:.12em;padding:2px 7px;border-radius:2px;text-transform:uppercase}
+.pill.on{color:var(--up);background:var(--up-bg)}.pill.off{color:var(--dn);background:var(--dn-bg)}
+.gauge .chg{font-family:"DM Mono",monospace;font-size:12px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+
+/* legends / tabs */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:-4px 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.legend i{width:14px;height:2.5px;border-radius:2px;display:inline-block}
+.tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:.5px solid var(--border-2);color:var(--t3);padding:5px 11px;border-radius:3px;cursor:pointer}
+.tabs button:hover{color:var(--t1)}
+.tabs button.on{color:var(--gold);border-color:var(--gold-dim);background:var(--gold-bg)}
+svg text{font-family:"DM Mono",monospace}
+
+/* heatmap */
+.heat{width:100%;border-collapse:separate;border-spacing:2px;font-family:"DM Mono",monospace;font-size:9.5px}
+.heat th{color:var(--t4);font-weight:400;padding:0 0 4px;white-space:nowrap}
+.heat td.nm{color:var(--t2);padding-right:8px;white-space:nowrap;text-align:left;font-size:10.5px}
+.heat td.nm b{color:var(--t1);font-weight:500;margin-right:6px}
+.heat td.c{height:22px;min-width:9px;border-radius:2px;text-align:center;color:rgba(0,0,0,.65);font-size:8.5px}
+.heat .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:.5px solid var(--border);border-radius:7px;background:var(--surface)}
+table.t{width:100%;border-collapse:collapse;font-size:12px}
+table.t th{position:sticky;top:0;background:var(--gold-bg);color:var(--gold);font-family:"DM Mono",monospace;font-size:8.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-align:right;padding:9px 10px;border-bottom:.5px solid var(--border-2);white-space:nowrap;cursor:pointer;user-select:none}
+table.t th.l,table.t td.l{text-align:left}
+table.t th:hover{color:var(--gold-bright)}
+table.t td{padding:6px 10px;border-bottom:.5px solid var(--border);text-align:right;white-space:nowrap;font-family:"DM Mono",monospace;font-size:11.5px;color:var(--t2)}
+table.t tr:last-child td{border-bottom:none}
+table.t tr:hover td{background:var(--surface-2)}
+table.t td.sym{color:var(--t1);font-weight:500;position:sticky;left:0;background:var(--surface);z-index:1}
+table.t tr:hover td.sym{background:var(--surface-2)}
+table.t td.sym a{text-decoration:none}
+table.t td.sym a:hover{color:var(--gold)}
+table.t td.nm{font-family:Barlow,sans-serif;font-size:12px;color:var(--t2);max-width:230px;overflow:hidden;text-overflow:ellipsis}
+table.t tr.bench td{color:var(--gold)}
+.rating{display:inline-block;min-width:30px;text-align:center;padding:2px 6px;border-radius:3px;font-weight:500;color:#0b0b0a}
+.chip{display:inline-block;font-family:Barlow,sans-serif;font-size:10.5px;padding:1px 7px;border-radius:9px;border:.5px solid var(--border-2);color:var(--t2);white-space:nowrap}
+.sdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.flag{font-size:9px;padding:1px 5px;border-radius:2px;margin-left:3px;letter-spacing:.06em}
+.flag.tt{color:var(--up);background:var(--up-bg)}.flag.ext{color:var(--dn);background:var(--dn-bg)}
+.flag.new{color:var(--gold-bright);background:var(--gold-bg)}.flag.nh{color:var(--growth);background:rgba(124,156,255,.12)}
+.offbar{display:inline-flex;align-items:center;gap:6px;justify-content:flex-end}
+.offbar i{display:inline-block;height:7px;background:var(--dn);opacity:.55;border-radius:1px}
+.q{font-size:10.5px}
+.q.Leading{color:var(--up)}.q.Weakening{color:var(--gold)}.q.Lagging{color:var(--dn)}.q.Improving{color:var(--growth)}
+
+/* leaders controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.controls input[type=search]{background:var(--surface);border:.5px solid var(--border-2);color:var(--t1);padding:6px 10px;border-radius:4px;font-family:"DM Mono",monospace;font-size:11px;width:180px;outline:none}
+.controls input[type=search]:focus{border-color:var(--gold-dim)}
+.controls label{font-size:11.5px;color:var(--t2);display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+.controls select{background:var(--surface);border:.5px solid var(--border-2);color:var(--t1);padding:5px 8px;border-radius:4px;font-size:11.5px;font-family:Barlow,sans-serif}
+.themechips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.themechips button{font-family:Barlow,sans-serif;font-size:11.5px;background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;cursor:pointer}
+.themechips button b{font-family:"DM Mono",monospace;font-weight:500;color:var(--gold);margin-left:5px;font-size:10.5px}
+.themechips button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
+.more{display:block;margin:10px auto 0;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:.5px solid var(--border-2);color:var(--t2);padding:7px 16px;border-radius:3px;cursor:pointer}
+.more:hover{color:var(--gold);border-color:var(--gold-dim)}
+.count{font-family:"DM Mono",monospace;font-size:10px;color:var(--t3);margin-left:auto}
+
+/* method */
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:12px;color:var(--t2);line-height:1.6}
+.method b{color:var(--t1);font-weight:500}
+footer{padding:30px 0 50px;color:var(--t4);font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.06em}
+footer a{color:var(--t3)}
+
+/* collapsibles */
+details.fold{background:var(--surface);border:.5px solid var(--border);border-radius:7px;margin-bottom:10px}
+details.fold>summary{list-style:none;cursor:pointer;padding:11px 16px;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"+";font-size:13px;color:var(--gold-dim);width:10px}
+details.fold[open]>summary::before{content:"−"}
+details.fold>summary span{color:var(--t3);letter-spacing:.04em;text-transform:none;font-family:Barlow,sans-serif;font-size:11.5px}
+details.fold .body{padding:2px 18px 16px;font-size:12.5px;color:var(--t2);line-height:1.65}
+.tt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:6px 22px;counter-reset:tt;list-style:none}
+.tt-list li{counter-increment:tt;padding-left:26px;position:relative}
+.tt-list li::before{content:counter(tt);position:absolute;left:0;top:1px;width:17px;height:17px;border-radius:50%;border:.5px solid var(--gold-dim);color:var(--gold);font-family:"DM Mono",monospace;font-size:9.5px;display:flex;align-items:center;justify-content:center}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:6px 22px}
+.guide b{color:var(--t1);font-weight:500;font-family:"DM Mono",monospace;font-size:11px}
+.flag.setup{color:#0b0b0a;background:var(--gold)}.flag.er{color:var(--dn);background:var(--dn-bg)}
+.exp{width:22px;padding-right:0!important}
+.xbtn{background:transparent;border:.5px solid var(--border-2);color:var(--t3);width:20px;height:20px;border-radius:3px;font-size:10px;line-height:1;cursor:pointer}
+.xbtn:hover,.xbtn.on{color:var(--gold);border-color:var(--gold-dim)}
+tr.hold-row>td{padding:0!important;background:var(--ink)!important}
+.hold-wrap{padding:12px 16px 14px 40px;border-left:2px solid var(--gold-dim);text-align:left;white-space:normal;font-family:Barlow,sans-serif}
+.hold-head{font-size:12px;color:var(--t3);margin-bottom:8px}.hold-head b{color:var(--gold);font-family:"DM Mono",monospace;font-weight:500}
+table.hold-t{width:auto;min-width:760px}table.hold-t th{position:static;background:transparent;border-bottom:.5px solid var(--border)}
+.hold-more{margin:8px 0 0}
+.hold-sort{margin-left:14px;white-space:nowrap;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.08em;color:var(--t4)}
+.hold-sort button{background:transparent;border:.5px solid var(--border-2);color:var(--t3);padding:2px 8px;margin-left:4px;border-radius:3px;font:inherit;cursor:pointer}
+.hold-sort button.on{color:var(--gold-bright);border-color:var(--gold-dim);background:var(--gold-bg)}.hold-sort button:disabled{opacity:.35;cursor:default}
+.letf{font-family:"DM Mono",monospace;font-size:10.5px;color:var(--t3)}
+/* chart drawer */
+td.sym .open{cursor:pointer}
+td.sym .ext{color:var(--t4);text-decoration:none;margin-left:5px;font-size:10px}
+td.sym .ext:hover{color:var(--gold)}
+tr.sel td{background:var(--gold-bg)!important}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(1100px,62vw);background:var(--surface);border-left:.5px solid var(--border-2);z-index:80;transform:translateX(100%);transition:transform .22s ease;display:flex;flex-direction:column;box-shadow:-20px 0 40px rgba(0,0,0,.5)}
+#drawer.open{transform:none}
+#drawer .dh{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:.5px solid var(--border)}
+#drawer .dh .s{font-family:"DM Mono",monospace;font-size:17px;font-weight:500;color:var(--t1)}
+#drawer .dh .n{color:var(--t2);font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#drawer .dh button,#drawer .dh a{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.08em;background:transparent;border:.5px solid var(--border-2);color:var(--t2);padding:5px 10px;border-radius:3px;cursor:pointer;text-decoration:none;white-space:nowrap}
+#drawer .dh button:hover,#drawer .dh a:hover{color:var(--gold);border-color:var(--gold-dim)}
+#drawer .stats{display:flex;flex-wrap:wrap;gap:6px 18px;padding:9px 16px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
+#drawer .stats b{color:var(--t1);font-weight:500}
+#tvbox{flex:1;min-height:0}
+#drawer .hint{padding:7px 16px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--t4);border-top:.5px solid var(--border)}
+#cal{height:420px}
+.funnel{position:relative;display:grid;grid-template-columns:minmax(260px,32%) 1fr;border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:16px;overflow:hidden}
+.funnel .fv{position:relative;height:224px;border-right:.5px solid var(--border);background:radial-gradient(ellipse at 50% 35%,rgba(201,165,90,.06),transparent 70%)}
+.funnel .fv canvas{position:absolute;inset:0;width:100%;height:100%}
+.funnel .rows{display:grid;grid-template-rows:repeat(7,1fr);height:224px;padding:12px 0}
+.funnel .rw{display:grid;grid-template-columns:minmax(110px,1.3fr) 80px 70px minmax(80px,2fr);align-items:center;gap:12px;padding:0 16px;font-family:"DM Mono",monospace;border-top:.5px dashed rgba(255,255,255,.035)}
+.funnel .rw:first-child{border-top:0}
+.funnel .lb{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.funnel .n{font-size:15px;color:var(--t1);text-align:right}
+.funnel .rw.last .n,.funnel .rw.last .lb{color:var(--gold-bright)}
+.funnel .ch{font-size:10px;color:var(--t4);text-align:right}
+.funnel svg{display:block;width:100%;height:16px}
+.funnel .ftog{position:absolute;top:8px;left:10px;z-index:2;background:transparent;border:0;color:var(--t4);font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.14em;cursor:pointer;padding:2px 4px}
+.funnel .ftog:hover{color:var(--gold)}
+.funnel .mini{display:none;grid-column:1/-1;padding:7px 16px 8px 82px;font-family:"DM Mono",monospace;font-size:11px;color:var(--t3);white-space:nowrap;overflow-x:auto}
+.funnel .mini b{color:var(--t1);font-weight:500}.funnel .mini i{font-style:normal;color:var(--t4);margin:0 6px}.funnel .mini b.g{color:var(--gold-bright)}
+.funnel.closed .fv,.funnel.closed .rows{display:none}.funnel.closed .mini{display:block}
+@media (max-width:900px){.funnel{grid-template-columns:1fr}.funnel .fv{height:180px;border-right:0;border-bottom:.5px solid var(--border)}.funnel .rows{height:auto;grid-template-rows:none}.funnel .rw{grid-template-columns:1.4fr 64px 56px 1fr;padding:6px 14px;gap:8px}}
+.turn{border:.5px solid var(--border);border-radius:7px;background:var(--surface);margin-bottom:12px;overflow:hidden}
+.turn .th{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 14px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
+.turn .th .nm{font-family:inherit;font-size:13px;color:var(--t1);font-weight:500}
+.turn .th b{color:var(--t1);font-weight:500}
+.turn .empty{padding:10px 14px;font-size:12px;color:var(--t4)}
+.flag.rsf{color:#0b0b0a;background:#7c9cff}.flag.rsh{color:#7c9cff;background:rgba(124,156,255,.12)}
+.turn-none{padding:16px;border:.5px dashed var(--border-2);border-radius:7px;color:var(--t3);font-size:13px}
+/* CANSLIM letters + fundamentals strip */
+.cs{font-family:"DM Mono",monospace;font-size:10px;white-space:nowrap;cursor:help}
+.cs i{font-style:normal;display:inline-block;width:7.5px;text-align:center;color:#4a453e}
+.cs i.y{color:#d9b765}.cs i.u{color:#26231f}
+td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.funds small{font-size:9.5px;margin-left:4px}
+#d-fund{display:none;flex-wrap:wrap;gap:4px 22px;padding:8px 16px 9px;border-bottom:.5px solid var(--border);font-family:"DM Mono",monospace;font-size:10.5px;color:var(--t3);line-height:1.7}
+#d-fund.on{display:flex}
+#d-fund .g{display:flex;align-items:baseline;gap:7px;white-space:nowrap}
+#d-fund .k{font-size:9px;letter-spacing:.14em;color:var(--t4);text-transform:uppercase}
+#d-fund b{color:var(--t1);font-weight:500}#d-fund .up{color:#8fcf8a}#d-fund .dn{color:#e0a17a}#d-fund .dim{color:var(--t4)}
+#d-fund .cs{font-size:12px}#d-fund .cs i{width:10px}
+#d-fund svg{align-self:center}
+.notes{margin-top:22px;border:.5px solid var(--border);border-radius:7px;background:var(--surface);padding:6px 0}
+.notes .nh{padding:8px 18px 6px;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.note{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:8px 18px;border-top:.5px solid var(--border);font-size:13.5px;line-height:1.6;color:var(--t2)}
+.note b{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:400;padding-top:3px}
+.note.Setups b{color:var(--gold)}
+.wk{display:inline-block;width:30px;height:20px;line-height:20px;text-align:center;border-radius:3px;font-family:"DM Mono",monospace;font-size:10px;color:#0b0b0a}
+.wk.off{background:transparent;border:.5px dashed var(--border-2);color:var(--t4)}
+.hist-note{font-size:12px;color:var(--t3);margin:6px 0 10px}
+.chip-d{display:inline-block;font-family:"DM Mono",monospace;font-size:11px;padding:2px 8px;margin:0 4px 4px 0;border-radius:3px;background:var(--dn-bg);color:var(--dn)}
+@media (max-width:700px){.note{grid-template-columns:1fr;gap:2px}}
+@media (max-width:900px){#drawer{width:100vw}}
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  .grid2,.grid-rrg,.method{grid-template-columns:1fr}
+  .sec-head p{display:none}
+  nav .asof{display:none}
+}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px}
+.kpi{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:12px 14px}
+.kpi .k{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--t4)}
+.kpi .v{font-family:"DM Mono",monospace;font-size:22px;color:var(--t1);margin-top:3px}
+.kpi .s{font-size:11px;color:var(--t3)}
+.kpi.g .v{color:var(--gold-bright)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.st{font-family:"DM Mono",monospace;font-size:10px;padding:1px 6px;border-radius:2px;letter-spacing:.06em}
+.st.closed{color:var(--t1);background:var(--surface-3)}.st.running{color:#0b0b0a;background:var(--gold)}
+.st.stopped{color:var(--dn);background:var(--dn-bg)}.st.waiting{color:#7c9cff;background:rgba(124,156,255,.12)}
+.st.no{color:var(--t4);background:transparent;border:.5px dashed var(--border-2)}
+.rpos{color:var(--up)}.rneg{color:var(--dn)}
+.note2{font-size:12.5px;color:var(--t3);line-height:1.65;max-width:980px;margin:6px 0 14px}
+.note2 b{color:var(--t2);font-weight:500}
+.bar{display:inline-block;height:8px;border-radius:1px;vertical-align:middle;margin-left:6px}
+.controls .seg button{background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;font-family:Barlow,sans-serif;font-size:11.5px;cursor:pointer;margin-right:4px}
+.controls .seg button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
+.controls .seg button b{font-family:"DM Mono",monospace;font-weight:500;color:var(--gold);margin-left:5px;font-size:10.5px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <span class="brand">MJ — <em>Setup tracker</em></span>
+  <a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
+  <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a>
+  <span class="asof" id="asof"></span>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>Do the <em>setups</em> work?</h1>
+    <p class="note2">Every RS-leader <b>SETUP</b> and every <b>Weekly scan</b> name is logged on the day it appears and followed for 20 sessions, scored the way you'd trade it: buy the break of the pivot, stop under the tight area. The backtest rebuilds the same SETUP shape over the past year so there's a track record from day one.</p>
+    <div class="kpis" id="kpis"></div>
+  </header>
+
+  <section id="live">
+    <div class="sec-head"><h2>Live log</h2><div class="line"></div><p id="live-sub"></p></div>
+    <div class="controls"><span class="seg" id="seg"></span></div>
+    <div class="tbl-wrap"><table class="t" id="live-t"></table></div>
+  </section>
+
+  <section id="backtest">
+    <div class="sec-head"><h2>Backtest — RS setups, past year</h2><div class="line"></div><p id="bt-sub"></p></div>
+    <p class="note2" id="bt-note"></p>
+    <div class="two">
+      <div class="tbl-wrap"><table class="t" id="by-rs"></table></div>
+      <div class="tbl-wrap"><table class="t" id="by-tight"></table></div>
+    </div>
+    <div class="tbl-wrap" style="margin-top:14px"><table class="t" id="by-month"></table></div>
+  </section>
+
+  <section id="how">
+    <div class="sec-head"><h2>How it's scored</h2><div class="line"></div></div>
+    <div class="note2">
+      <b>Entry</b> — the first break above the pivot (the 20-day high on the signal day) within 10 sessions, at the open if it gaps over, otherwise at the pivot. No break in 10 sessions = <b>no trigger</b> (it never set off your buy stop).<br>
+      <b>Stop</b> — the lowest low of the 10 sessions up to the signal (under the tight area). Hit = <b>stopped</b>, at the open if it gaps below.<br>
+      <b>Exit</b> — otherwise the close 20 sessions after entry (<b>closed</b>); still inside that window = <b>running</b>.<br>
+      <b>R</b> — result in multiples of the risk (entry − stop). <b>MFE</b> — the best R reached along the way, i.e. what a good trail could have kept. <b>Hit 2R</b> — % of trades that reached +2R at some point.<br>
+      This is a fixed, mechanical exit to compare setups fairly; your own selling rules (partial at 2–3R, 10/20-day trail) will differ. The backtest has no top-theme filter (theme history isn't stored) and uses today's universe, so it slightly flatters survivors.
+    </div>
+  </section>
+  <footer id="footer"></footer>
+</div>
+<script>
+const D = {"asof":"Wed 04 Nov 2026","generated":"05 Nov 2026 10:59 SGT","backtest":{"summary":{"n":2645,"trades":1710,"running":111,"trigger_rate":70,"win_rate":42,"avg_R":-0.01,"avg_win":1.23,"avg_loss":-0.9,"hit_2R":16,"stopped":46,"ret20_avg":0.5},"by_rs":[{"label":"RS 80\u201389","n":1896,"trades":1197,"running":80,"trigger_rate":68,"win_rate":42,"avg_R":0.01,"avg_win":1.29,"avg_loss":-0.91,"hit_2R":18,"stopped":46,"ret20_avg":0.2},{"label":"RS 90\u201394","n":572,"trades":390,"running":20,"trigger_rate":72,"win_rate":44,"avg_R":-0.02,"avg_win":1.09,"avg_loss":-0.89,"hit_2R":13,"stopped":44,"ret20_avg":1.6},{"label":"RS 95\u201399","n":177,"trades":123,"running":11,"trigger_rate":76,"win_rate":36,"avg_R":-0.19,"avg_win":1.03,"avg_loss":-0.87,"hit_2R":8,"stopped":47,"ret20_avg":-0.5}],"by_tight":[{"label":"Tight < 1.5 ADR","n":19,"trades":10,"running":1,"trigger_rate":61,"win_rate":50,"avg_R":0.51,"avg_win":2.04,"avg_loss":-1.02,"hit_2R":20,"stopped":50,"ret20_avg":1.9},{"label":"1.5\u20132.0","n":425,"trades":275,"running":14,"trigger_rate":68,"win_rate":37,"avg_R":-0.02,"avg_win":1.47,"avg_loss":-0.9,"hit_2R":23,"stopped":52,"ret20_avg":0.8},{"label":"2.0\u20132.5","n":2201,"trades":1425,"running":96,"trigger_rate":70,"win_rate":43,"avg_R":-0.01,"avg_win":1.18,"avg_loss":-0.9,"hit_2R":15,"stopped":45,"ret20_avg":0.4}],"by_month":[{"label":"2025-10","n":80,"trades":57,"running":0,"trigger_rate":71,"win_rate":32,"avg_R":-0.14,"avg_win":1.77,"avg_loss":-1.03,"hit_2R":23,"stopped":68,"ret20_avg":-0.3},{"label":"2025-11","n":199,"trades":150,"running":0,"trigger_rate":75,"win_rate":55,"avg_R":0.24,"avg_win":1.06,"avg_loss":-0.76,"hit_2R":12,"stopped":27,"ret20_avg":4.1},{"label":"2025-12","n":199,"trades":152,"running":0,"trigger_rate":76,"win_rate":53,"avg_R":0.46,"avg_win":1.65,"avg_loss":-0.86,"hit_2R":24,"stopped":34,"ret20_avg":6.3},{"label":"2026-01","n":108,"trades":90,"running":0,"trigger_rate":83,"win_rate":42,"avg_R":0.08,"avg_win":1.43,"avg_loss":-0.92,"hit_2R":24,"stopped":49,"ret20_avg":3.0},{"label":"2026-02","n":199,"trades":115,"running":0,"trigger_rate":58,"win_rate":26,"avg_R":-0.44,"avg_win":1.06,"avg_loss":-0.97,"hit_2R":13,"stopped":65,"ret20_avg":-6.5},{"label":"2026-03","n":280,"trades":182,"running":0,"trigger_rate":65,"win_rate":53,"avg_R":0.28,"avg_win":1.23,"avg_loss":-0.78,"hit_2R":14,"stopped":32,"ret20_avg":3.8},{"label":"2026-04","n":161,"trades":128,"running":0,"trigger_rate":80,"win_rate":60,"avg_R":0.32,"avg_win":1.12,"avg_loss":-0.89,"hit_2R":22,"stopped":32,"ret20_avg":4.1},{"label":"2026-05","n":170,"trades":116,"running":0,"trigger_rate":68,"win_rate":48,"avg_R":0.18,"avg_win":1.34,"avg_loss":-0.91,"hit_2R":23,"stopped":41,"ret20_avg":1.1},{"label":"2026-06","n":201,"trades":156,"running":0,"trigger_rate":78,"win_rate":47,"avg_R":0.06,"avg_win":1.1,"avg_loss":-0.88,"hit_2R":19,"stopped":42,"ret20_avg":-1.3},{"label":"2026-07","n":269,"trades":189,"running":0,"trigger_rate":70,"win_rate":44,"avg_R":0.03,"avg_win":1.24,"avg_loss":-0.93,"hit_2R":16,"stopped":46,"ret20_avg":2.9},{"label":"2026-08","n":284,"trades":172,"running":0,"trigger_rate":61,"win_rate":18,"avg_R":-0.59,"avg_win":0.66,"avg_loss":-0.87,"hit_2R":5,"stopped":59,"ret20_avg":-5.4},{"label":"2026-09","n":244,"trades":145,"running":2,"trigger_rate":60,"win_rate":32,"avg_R":-0.28,"avg_win":1.17,"avg_loss":-0.96,"hit_2R":12,"stopped":58,"ret20_avg":-1.9},{"label":"2026-10","n":230,"trades":58,"running":100,"trigger_rate":73,"win_rate":7,"avg_R":-0.94,"avg_win":0.9,"avg_loss":-1.07,"hit_2R":2,"stopped":90,"ret20_avg":-4.1},{"label":"2026-11","n":21,"trades":0}],"from":"23 Oct 2025","base_ret20":1.6,"bench_ret20":1.4,"recent":[{"symbol":"AMPL","date":"2026-11-04","rs":82,"tight":2.1,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":16.16,"pivot":17.84,"days":null},{"symbol":"BBY","date":"2026-11-04","rs":90,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":93.18,"pivot":101.49,"days":null},{"symbol":"BIIB","date":"2026-11-04","rs":88,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":240.02,"pivot":258.78,"days":null},{"symbol":"CXM","date":"2026-11-04","rs":80,"tight":2.1,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":6.46,"pivot":7.03,"days":null},{"symbol":"EPAM","date":"2026-11-04","rs":88,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":130.99,"pivot":145.89,"days":null},{"symbol":"LZ","date":"2026-11-04","rs":83,"tight":2.5,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":6.43,"pivot":7.16,"days":null},{"symbol":"NIQ","date":"2026-11-04","rs":89,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":19.11,"pivot":20.69,"days":null},{"symbol":"VSTM","date":"2026-11-04","rs":81,"tight":1.2,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":9.14,"pivot":10.25,"days":null},{"symbol":"WK","date":"2026-11-04","rs":86,"tight":2.1,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":80.23,"pivot":87.06,"days":null},{"symbol":"ARQT","date":"2026-11-03","rs":88,"tight":1.3,"ret20":null,"bench20":null,"status":"running","R":0.31,"mfe":0.63,"entry":33.3,"stop":30.91,"pivot":33.3,"days":0},{"symbol":"KVYO","date":"2026-11-03","rs":87,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":19.36,"pivot":22.14,"days":null},{"symbol":"MAZE","date":"2026-11-03","rs":81,"tight":1.9,"ret20":null,"bench20":null,"status":"running","R":0.06,"mfe":0.12,"entry":33.19,"stop":29.75,"pivot":33.19,"days":0},{"symbol":"NCNO","date":"2026-11-03","rs":83,"tight":2.3,"ret20":null,"bench20":null,"status":"running","R":-0.07,"mfe":0.08,"entry":23.59,"stop":21.44,"pivot":23.59,"days":0},{"symbol":"PAYC","date":"2026-11-03","rs":94,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":255.67,"pivot":275.22,"days":null},{"symbol":"PCOR","date":"2026-11-03","rs":85,"tight":2.1,"ret20":null,"bench20":null,"status":"running","R":1.18,"mfe":1.26,"entry":66.93,"stop":59.58,"pivot":64.51,"days":0},{"symbol":"RHP","date":"2026-11-03","rs":87,"tight":2.4,"ret20":null,"bench20":null,"status":"running","R":0.01,"mfe":0.1,"entry":136.3,"stop":128.1,"pivot":136.3,"days":0},{"symbol":"TDC","date":"2026-11-03","rs":84,"tight":2.4,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":32.33,"pivot":35.29,"days":null},{"symbol":"DOCS","date":"2026-11-02","rs":89,"tight":2.3,"ret20":null,"bench20":null,"status":"running","R":-0.04,"mfe":0.04,"entry":34.8,"stop":31.82,"pivot":34.8,"days":0},{"symbol":"LW","date":"2026-11-02","rs":84,"tight":2.1,"ret20":null,"bench20":null,"status":"running","R":-0.02,"mfe":0.05,"entry":56.69,"stop":52.66,"pivot":56.69,"days":0},{"symbol":"PAR","date":"2026-11-02","rs":80,"tight":2.5,"ret20":null,"bench20":null,"status":"running","R":0.24,"mfe":0.62,"entry":18.5,"stop":16.45,"pivot":18.5,"days":0},{"symbol":"WSM","date":"2026-11-02","rs":81,"tight":2.3,"ret20":null,"bench20":null,"status":"running","R":0.39,"mfe":0.5,"entry":263.65,"stop":247.19,"pivot":263.65,"days":0},{"symbol":"ANF","date":"2026-10-30","rs":97,"tight":2.4,"ret20":null,"bench20":null,"status":"running","R":0.28,"mfe":0.33,"entry":167.09,"stop":152.73,"pivot":167.09,"days":2},{"symbol":"CE","date":"2026-10-30","rs":81,"tight":1.9,"ret20":null,"bench20":null,"status":"running","R":-0.18,"mfe":0.22,"entry":50.57,"stop":46.05,"pivot":49.5,"days":1},{"symbol":"CLF","date":"2026-10-30","rs":85,"tight":2.1,"ret20":null,"bench20":null,"status":"running","R":-0.89,"mfe":0.23,"entry":14.58,"stop":12.63,"pivot":14.58,"days":2},{"symbol":"CRGY","date":"2026-10-30","rs":84,"tight":2.1,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":13.12,"pivot":14.24,"days":null},{"symbol":"EBAY","date":"2026-10-30","rs":87,"tight":2.5,"ret20":null,"bench20":null,"status":"running","R":0.06,"mfe":0.22,"entry":124.59,"stop":115.76,"pivot":124.59,"days":0},{"symbol":"FRPT","date":"2026-10-30","rs":86,"tight":2.3,"ret20":null,"bench20":null,"status":"running","R":0.24,"mfe":0.26,"entry":69.58,"stop":62.43,"pivot":69.58,"days":2},{"symbol":"MMS","date":"2026-10-30","rs":80,"tight":2.2,"ret20":null,"bench20":null,"status":"running","R":0.98,"mfe":1.0,"entry":64.43,"stop":60.27,"pivot":64.43,"days":2},{"symbol":"NOG","date":"2026-10-30","rs":93,"tight":2.2,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":26.72,"pivot":28.73,"days":null},{"symbol":"BTE","date":"2026-10-29","rs":88,"tight":2.1,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":5.19,"pivot":5.61,"days":null},{"symbol":"IBTA","date":"2026-10-29","rs":95,"tight":1.7,"ret20":null,"bench20":null,"status":"running","R":0.36,"mfe":0.64,"entry":58.72,"stop":46.72,"pivot":50.53,"days":1},{"symbol":"PACS","date":"2026-10-29","rs":87,"tight":2.5,"ret20":null,"bench20":null,"status":"running","R":-0.03,"mfe":0.28,"entry":50.38,"stop":45.81,"pivot":50.38,"days":0},{"symbol":"PVH","date":"2026-10-29","rs":83,"tight":2.3,"ret20":null,"bench20":null,"status":"running","R":0.87,"mfe":0.88,"entry":89.99,"stop":81.6,"pivot":88.53,"days":3},{"symbol":"BLMN","date":"2026-10-28","rs":83,"tight":2.5,"ret20":null,"bench20":null,"status":"running","R":0.37,"mfe":0.57,"entry":10.39,"stop":8.84,"pivot":10.39,"days":4},{"symbol":"EL","date":"2026-10-28","rs":97,"tight":2.4,"ret20":null,"bench20":null,"status":"running","R":0.1,"mfe":0.27,"entry":111.11,"stop":102.0,"pivot":110.29,"days":4},{"symbol":"FLYW","date":"2026-10-28","rs":84,"tight":2.4,"ret20":null,"bench20":null,"status":"running","R":1.57,"mfe":1.81,"entry":19.54,"stop":18.09,"pivot":19.54,"days":3},{"symbol":"HRB","date":"2026-10-28","rs":83,"tight":2.5,"ret20":null,"bench20":null,"status":"running","R":1.33,"mfe":1.34,"entry":50.57,"stop":46.89,"pivot":50.54,"days":3},{"symbol":"JANX","date":"2026-10-28","rs":82,"tight":1.9,"ret20":null,"bench20":null,"status":"waiting","R":null,"mfe":null,"entry":null,"stop":16.27,"pivot":19.18,"days":null},{"symbol":"MDT","date":"2026-10-28","rs":87,"tight":1.8,"ret20":null,"bench20":null,"status":"running","R":1.91,"mfe":2.09,"entry":96.89,"stop":92.67,"pivot":96.89,"days":4},{"symbol":"REGN","date":"2026-10-28","rs":81,"tight":2.1,"ret20":null,"bench20":null,"status":"running","R":2.31,"mfe":3.65,"entry":826.14,"stop":780.83,"pivot":825.52,"days":4}]},"live":{"rows":[{"symbol":"AMN","date":"2026-11-04","source":"Weekly scan","price":47.74,"rs":93,"theme":"Health Services","cs":"1011110","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[47.74],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":43.04,"pivot":49.62,"days":null},{"symbol":"HNGE","date":"2026-11-04","source":"Weekly scan","price":120.87,"rs":90,"theme":"Health Services","cs":"1011110","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[120.87],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":108.5,"pivot":124.94,"days":null},{"symbol":"RCEL","date":"2026-11-04","source":"Weekly scan","price":16.32,"rs":87,"theme":"Medical Devices","cs":"00111-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[16.32],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":14.28,"pivot":16.9,"days":null},{"symbol":"BOOM","date":"2026-11-04","source":"Weekly scan","price":7.9,"rs":84,"theme":"Medical Devices","cs":"10011-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[7.9],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":5.06,"pivot":9.79,"days":null},{"symbol":"APPN","date":"2026-11-04","source":"Weekly scan","price":49.82,"rs":88,"theme":"Software & Cloud","cs":"1010110","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[49.82],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":46.63,"pivot":54.12,"days":null},{"symbol":"MEOH","date":"2026-11-04","source":"Weekly scan","price":65.22,"rs":80,"theme":"Industrials","cs":"10111-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[65.22],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":59.77,"pivot":72.32,"days":null},{"symbol":"HTFL","date":"2026-11-04","source":"Weekly scan","price":56.57,"rs":78,"theme":"Medical Devices","cs":"00100-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[56.57],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":54.0,"pivot":60.56,"days":null},{"symbol":"WK","date":"2026-11-04","source":"Weekly scan","price":85.28,"rs":86,"theme":"Software & Cloud","cs":"1011100","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[85.28],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":80.23,"pivot":87.06,"days":null},{"symbol":"KVYO","date":"2026-11-04","source":"Weekly scan","price":21.36,"rs":83,"theme":"Software & Cloud","cs":"0001110","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[21.36],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":19.47,"pivot":22.14,"days":null},{"symbol":"CBRL","date":"2026-11-04","source":"Weekly scan","price":70.27,"rs":81,"theme":"Consumer Discretionary","cs":"10111-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[70.27],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":65.0,"pivot":73.67,"days":null},{"symbol":"BETR","date":"2026-11-04","source":"Weekly scan","price":20.19,"rs":79,"theme":"Financials","cs":"00010-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[20.19],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":14.88,"pivot":23.63,"days":null},{"symbol":"BSP","date":"2026-11-04","source":"Weekly scan","price":46.58,"rs":79,"theme":"Technology","cs":"-0-00-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[46.58],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":42.9,"pivot":59.5,"days":null},{"symbol":"XERS","date":"2026-11-04","source":"Weekly scan","price":10.46,"rs":70,"theme":"Pharma","cs":"1011010","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[10.46],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":10.06,"pivot":11.42,"days":null},{"symbol":"NTSK","date":"2026-11-04","source":"Weekly scan","price":22.77,"rs":77,"theme":"Software & Cloud","cs":"-011010","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[22.77],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":21.42,"pivot":26.71,"days":null},{"symbol":"BLLN","date":"2026-11-04","source":"Weekly scan","price":113.89,"rs":68,"theme":"Health Services","cs":"--00010","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[113.89],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":102.0,"pivot":119.2,"days":null},{"symbol":"ELF","date":"2026-11-04","source":"Weekly scan","price":113.63,"rs":75,"theme":"Consumer Discretionary","cs":"10100-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[113.63],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":109.68,"pivot":118.91,"days":null},{"symbol":"KMTS","date":"2026-11-04","source":"Weekly scan","price":30.5,"rs":67,"theme":"Medical Devices","cs":"00110-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[30.5],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":27.17,"pivot":31.91,"days":null},{"symbol":"SENS","date":"2026-11-04","source":"Weekly scan","price":9.02,"rs":65,"theme":"Medical Devices","cs":"0010010","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[9.02],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":7.25,"pivot":9.75,"days":null},{"symbol":"CSTL","date":"2026-11-04","source":"Weekly scan","price":35.75,"rs":64,"theme":"Health Services","cs":"0001000","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[35.75],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":32.69,"pivot":38.72,"days":null},{"symbol":"NSIT","date":"2026-11-04","source":"Weekly scan","price":175.62,"rs":72,"theme":"Retail","cs":"10110-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[175.62],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":161.33,"pivot":182.12,"days":null},{"symbol":"CE","date":"2026-11-04","source":"Weekly scan","price":49.75,"rs":71,"theme":"Industrials","cs":"00000-0","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[49.75],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":46.05,"pivot":51.55,"days":null},{"symbol":"PRGS","date":"2026-11-04","source":"Weekly scan","price":44.79,"rs":68,"theme":"Software & Cloud","cs":"0010010","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[44.79],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":42.75,"pivot":46.89,"days":null},{"symbol":"AZTA","date":"2026-11-04","source":"Weekly scan","price":39.14,"rs":66,"theme":"Technology","cs":"00110-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[39.14],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":35.05,"pivot":41.71,"days":null},{"symbol":"LION","date":"2026-11-04","source":"Weekly scan","price":12.72,"rs":62,"theme":"Consumer Discretionary","cs":"10010-0","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[12.72],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":12.02,"pivot":13.17,"days":null},{"symbol":"MNDY","date":"2026-11-04","source":"Weekly scan","price":96.8,"rs":62,"theme":"Software & Cloud","cs":"10000-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[96.8],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":88.33,"pivot":110.77,"days":null},{"symbol":"NSP","date":"2026-11-04","source":"Weekly scan","price":51.69,"rs":52,"theme":"Health Services","cs":"10100-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[51.69],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":43.88,"pivot":55.2,"days":null},{"symbol":"RBRK","date":"2026-11-04","source":"Weekly scan","price":118.99,"rs":60,"theme":"Software & Cloud","cs":"1011010","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[118.99],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":113.24,"pivot":139.92,"days":null},{"symbol":"EFOR","date":"2026-11-04","source":"Weekly scan","price":36.98,"rs":59,"theme":"Software & Cloud","cs":"0000010","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[36.98],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":34.01,"pivot":43.74,"days":null},{"symbol":"IOT","date":"2026-11-04","source":"Weekly scan","price":42.81,"rs":55,"theme":"Software & Cloud","cs":"1010010","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[42.81],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":40.28,"pivot":45.32,"days":null},{"symbol":"GCT","date":"2026-11-04","source":"Weekly scan","price":57.88,"rs":54,"theme":"Retail","cs":"01110-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[57.88],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":53.87,"pivot":62.03,"days":null},{"symbol":"LBRX","date":"2026-11-04","source":"Weekly scan","price":40.85,"rs":41,"theme":"Pharma","cs":"-000010","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[40.85],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":38.24,"pivot":42.0,"days":null},{"symbol":"SUPN","date":"2026-11-04","source":"Weekly scan","price":28.21,"rs":40,"theme":"Pharma","cs":"10110-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[28.21],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":26.26,"pivot":31.62,"days":null},{"symbol":"SOFI","date":"2026-11-04","source":"Weekly scan","price":17.38,"rs":47,"theme":"Financials","cs":"10000-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[17.38],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":14.23,"pivot":17.74,"days":null},{"symbol":"OIS","date":"2026-11-04","source":"Weekly scan","price":8.53,"rs":46,"theme":"Oil Services","cs":"1000000","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[8.53],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":7.73,"pivot":9.66,"days":null},{"symbol":"BCC","date":"2026-11-04","source":"Weekly scan","price":77.98,"rs":41,"theme":"Consumer Discretionary","cs":"--100-0","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[77.98],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":73.44,"pivot":82.0,"days":null},{"symbol":"FLOC","date":"2026-11-04","source":"Weekly scan","price":19.46,"rs":39,"theme":"Oil Services","cs":"--01010","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[19.46],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":18.35,"pivot":21.5,"days":null},{"symbol":"CTRI","date":"2026-11-04","source":"Weekly scan","price":20.54,"rs":33,"theme":"Infrastructure","cs":"1000010","regime":"Defensive Rotation","since":0.0,"exchange":"NYSE","spark":[20.54],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":18.6,"pivot":22.12,"days":null},{"symbol":"BJRI","date":"2026-11-04","source":"Weekly scan","price":61.75,"rs":32,"theme":"Consumer Discretionary","cs":"--000-0","regime":"Defensive Rotation","since":0.0,"exchange":"NASDAQ","spark":[61.75],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":55.59,"pivot":65.26,"days":null},{"symbol":"STLD","date":"2026-11-04","source":"Weekly scan","price":240.12,"rs":30,"theme":"Materials","cs":"1010010","regime":"Defensive Rotation","since":-0.0,"exchange":"NASDAQ","spark":[240.12],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":231.06,"pivot":259.24,"days":null},{"symbol":"SPHR","date":"2026-11-04","source":"Weekly scan","price":108.85,"rs":20,"theme":"Leisure & Travel","cs":"--000-0","regime":"Defensive Rotation","since":-0.0,"exchange":"NYSE","spark":[108.85],"status":"waiting","R":null,"mfe":null,"entry":null,"stop":102.38,"pivot":117.13,"days":null}],"rs":{"n":0,"trades":0},"scan":{"n":40,"trades":0}}};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d=1, sign=true) => v==null ? "–" : (sign && v>0 ? "+" : "") + Number(v).toFixed(d);
+const tv = (s, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + s : s);
+const R = v => v==null ? '–' : `<span class="${v>0?'rpos':'rneg'}">${fmt(v,2)}R</span>`;
+const ST = s => `<span class="st ${s==='no trigger'?'no':s.replace(' ','')}">${esc(s)}</span>`;
+const spark = (v, entry, stop, w=110, h=22) => { if(!v||v.length<2) return ""; const all=v.concat([entry,stop].filter(x=>x!=null)); const mn=Math.min(...all), mx=Math.max(...all), r=(mx-mn)||1, y=x=>(h-2-(x-mn)/r*(h-4)).toFixed(1);
+  return `<svg width="${w}" height="${h}">${stop!=null?`<line x1="0" x2="${w}" y1="${y(stop)}" y2="${y(stop)}" stroke="#d4706a" stroke-width=".6" stroke-dasharray="2 2"/>`:''}${entry!=null?`<line x1="0" x2="${w}" y1="${y(entry)}" y2="${y(entry)}" stroke="#c9a55a" stroke-width=".6" stroke-dasharray="2 2"/>`:''}<polyline points="${v.map((x,i)=>`${(i/(v.length-1)*w).toFixed(1)},${y(x)}`).join(' ')}" fill="none" stroke="${v[v.length-1]>=v[0]?'#5bbf7a':'#d4706a'}" stroke-width="1.3"/></svg>`; };
+function table(el, cols, rows){ el.innerHTML = `<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" title="${esc(c.tip||'')}">${c.h}</th>`).join('')}</tr></thead><tbody>${rows.map(x=>`<tr>${cols.map(c=>c.f(x)).join('')}</tr>`).join('')}</tbody>`; }
+const statCols = first => [
+  {h:first, l:1, f:x=>`<td class="l" style="color:var(--t1)">${esc(x.label)}</td>`},
+  {h:"Signals", f:x=>`<td>${x.n}</td>`}, {h:"Trades", tip:"Triggered and finished", f:x=>`<td>${x.trades}</td>`},
+  {h:"Open", tip:"Triggered, still inside the 20-day window. While trades are open, a month's numbers lean towards the losers (stops finish early, winners are still running)", f:x=>`<td style="color:${x.running?'#e8c070':'#45403a'}">${x.running||0}</td>`},
+  {h:"Win %", f:x=>`<td>${x.win_rate??'–'}${x.win_rate!=null?'%':''}</td>`},
+  {h:"Avg R", tip:"Expectancy per trade", f:x=>`<td>${R(x.avg_R)}${x.avg_R!=null?`<span class="bar" style="width:${Math.min(60,Math.abs(x.avg_R)*60)}px;background:${x.avg_R>0?'#5bbf7a':'#d4706a'}"></span>`:''}</td>`},
+  {h:"Avg win", f:x=>`<td>${R(x.avg_win)}</td>`}, {h:"Avg loss", f:x=>`<td>${R(x.avg_loss)}</td>`},
+  {h:"Hit 2R", f:x=>`<td>${x.hit_2R??'–'}${x.hit_2R!=null?'%':''}</td>`},
+];
+function kpi(k, v, s, g){ return `<div class="kpi ${g?'g':''}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`; }
+function render(){
+  if(!D){ document.body.innerHTML="<p style='padding:40px'>No data yet.</p>"; return; }
+  $("#asof").textContent = "Data " + D.asof;
+  const B = D.backtest, S = B.summary, L = D.live;
+  $("#eyebrow").textContent = `Market close ${D.asof} · backtest since ${B.from}`;
+  $("#kpis").innerHTML = [
+    kpi("Backtest trades", S.trades ?? 0, `${S.n} signals · ${S.trigger_rate??'–'}% triggered`),
+    kpi("Win rate", (S.win_rate??'–') + (S.win_rate!=null?'%':''), `${S.stopped??'–'}% stopped out`),
+    kpi("Expectancy", S.avg_R!=null ? fmt(S.avg_R,2)+'R' : '–', `avg win ${fmt(S.avg_win,2)}R · avg loss ${fmt(S.avg_loss,2)}R`, true),
+    kpi("Reached +2R", (S.hit_2R??'–') + (S.hit_2R!=null?'%':''), "at some point in 20 days"),
+    kpi("20-day return", fmt(S.ret20_avg)+'%', `vs ${fmt(B.base_ret20)}% for any RS 80+ stock · RSP ${fmt(B.bench_ret20)}%`),
+    kpi("Live log", L.rows.length, `RS setups ${L.rs.n} · scan names ${L.scan.n}`),
+  ].join('');
+  $("#bt-sub").textContent = `${S.n} signals since ${B.from}`;
+  $("#bt-note").innerHTML = `Same RS ≥ min, above the 50-day, ADR and liquidity rules as the leaders list, plus the SETUP shape (≤ 6% below the pivot, 10-day range ≤ 2.5 ADR, 0–4 ATR above the 50-day). One signal per stock per 20 sessions. The <b>20-day return</b> card compares a SETUP bought at the close with any stock passing the same RS filters, which tells you whether waiting for the shape adds edge.`;
+  table($("#by-rs"), statCols("RS bucket"), B.by_rs);
+  table($("#by-tight"), statCols("Tightness"), B.by_tight);
+  table($("#by-month"), statCols("Signal month"), B.by_month.slice().reverse());
+
+  // live log
+  let seg = "all";
+  const SEG = {all:["All", x=>true], rs:["RS setups", x=>x.source==="RS setup"], scan:["Weekly scan", x=>x.source==="Weekly scan"],
+               open:["Open", x=>x.status==="running"||x.status==="waiting"], done:["Finished", x=>x.status==="closed"||x.status==="stopped"]};
+  const cols = [
+    {h:"Logged", l:1, f:x=>`<td class="l" style="color:var(--t3)">${esc(x.date)}</td>`},
+    {h:"Ticker", l:1, f:x=>`<td class="sym l"><a href="${tv(x.symbol,x.exchange)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`},
+    {h:"Source", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.source)}</span></td>`},
+    {h:"Theme", l:1, f:x=>`<td class="l" style="color:var(--t2)">${esc(x.theme||'')}</td>`},
+    {h:"RS", f:x=>`<td>${x.rs??'–'}</td>`},
+    {h:"Status", l:1, f:x=>`<td class="l">${ST(x.status)}</td>`},
+    {h:"Pivot", f:x=>`<td>${fmt(x.pivot,2,false)}</td>`}, {h:"Stop", f:x=>`<td>${fmt(x.stop,2,false)}</td>`},
+    {h:"Entry", f:x=>`<td>${fmt(x.entry,2,false)}</td>`},
+    {h:"R", f:x=>`<td>${R(x.R)}</td>`}, {h:"MFE", tip:"Best R reached", f:x=>`<td>${R(x.mfe)}</td>`},
+    {h:"Since logged", f:x=>`<td class="${x.since>0?'up':x.since<0?'dn':''}">${fmt(x.since)}%</td>`},
+    {h:"Since signal", tip:"Gold = entry (pivot) · red = stop", f:x=>`<td>${spark(x.spark, x.entry ?? x.pivot, x.stop)}</td>`},
+    {h:"Regime", l:1, f:x=>`<td class="l" style="color:var(--t3)">${esc(x.regime||'')}</td>`},
+  ];
+  const draw = () => { const rows = L.rows.filter(SEG[seg][1]);
+    $("#seg").innerHTML = Object.entries(SEG).map(([k,[n,f]])=>`<button class="${k===seg?'on':''}" data-k="${k}">${n}<b>${L.rows.filter(f).length}</b></button>`).join('');
+    if (!rows.length) { $("#live-t").innerHTML = `<tbody><tr><td class="l" style="padding:16px;color:var(--t3)">Nothing logged yet. Entries are added each day the engine flags a SETUP or a weekly-scan name; results fill in as they trigger.</td></tr></tbody>`; return; }
+    table($("#live-t"), cols, rows); };
+  $("#seg").onclick = e => { const b = e.target.closest("button"); if (b) { seg = b.dataset.k; draw(); } };
+  draw();
+  $("#live-sub").textContent = `RS setups: ${L.rs.trades||0} finished${L.rs.avg_R!=null?`, ${fmt(L.rs.avg_R,2)}R avg`:''} · Weekly scan: ${L.scan.trades||0} finished${L.scan.avg_R!=null?`, ${fmt(L.scan.avg_R,2)}R avg`:''}`;
+  $("#footer").innerHTML = `Generated ${esc(D.generated)} · Not investment advice · <a href="../">RS dashboard</a> · <a href="../scans/">Scans</a>`;
+}
+render();
+</script>
+</body>
+</html>
