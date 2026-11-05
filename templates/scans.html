@@ -106,6 +106,14 @@
   </section>
   <footer id="footer"></footer>
 </div>
+<aside id="drawer" aria-hidden="true">
+  <div class="dh"><div class="s" id="d-sym"></div><div class="n" id="d-name"></div>
+    <button id="d-prev" title="Previous (↑)">↑</button><button id="d-next" title="Next (↓)">↓</button>
+    <a id="d-tv" target="_blank" rel="noopener">TradingView ↗</a><button id="d-close" title="Close (Esc)">✕</button></div>
+  <div class="stats" id="d-stats"></div>
+  <div id="tvbox"><div id="tvchart" style="height:100%"></div></div>
+  <div class="hint">↑ ↓ next / previous · Esc close · SMA 10 / 21 / 50 / 200</div>
+</aside>
 <script>
 const D = /*__DATA__*/null;
 const $ = s => document.querySelector(s);
@@ -117,12 +125,13 @@ const pct = (v, s=10) => v==null ? `<td>–</td>` : `<td style="background:${v>0
 const CS="CANSLIM", csH = cs => !cs ? '<span class="cs" style="color:#26231f">·······</span>' : `<span class="cs">${[...CS].map((l,i)=>`<i class="${cs[i]==='1'?'y':cs[i]==='-'?'u':''}">${l}</i>`).join('')}</span>`;
 const spark = (v, w=80, h=20) => { if(!v||v.length<2) return ""; const mn=Math.min(...v), mx=Math.max(...v), r=(mx-mn)||1;
   return `<svg width="${w}" height="${h}"><polyline points="${v.map((x,i)=>`${(i/(v.length-1)*w).toFixed(1)},${(h-2-(x-mn)/r*(h-4)).toFixed(1)}`).join(' ')}" fill="none" stroke="${v[v.length-1]>=v[0]?'#5bbf7a':'#d4706a'}" stroke-width="1.3"/></svg>`; };
-const symTd = x => `<td class="sym l"><a href="${tv(x.symbol, x.exchange)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`;
+const symTd = x => `<td class="sym l"><span class="open" data-sym="${esc(x.symbol)}">${esc(x.symbol)}</span><a class="ext" href="${tv(x.symbol, x.exchange)}" target="_blank" rel="noopener" title="Open in TradingView">↗</a></td>`;
 const big = v => v==null ? '–' : v>=1000 ? (v/1000).toFixed(1)+'T' : v>=1 ? v.toFixed(1)+'B' : Math.round(v*1000)+'M';
 
 function table(el, cols, rows, sortKey){
   let dir=-1;
   const draw=()=>{ const r=[...rows]; if(sortKey) r.sort((a,b)=>{const x=a[sortKey],y=b[sortKey]; if(x==null) return 1; if(y==null) return -1; return (typeof x==="string"?x.localeCompare(y):x-y)*dir;});
+    el._rows=r;
     el.innerHTML=`<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" data-k="${c.k||''}" title="${esc(c.tip||'')}">${c.h}</th>`).join('')}</tr></thead><tbody>${r.map(x=>`<tr>${cols.map(c=>c.f(x)).join('')}</tr>`).join('')}</tbody>`;
     el.querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; if(!k) return; dir=sortKey===k?-dir:-1; sortKey=k; draw();}); };
   draw();
@@ -189,7 +198,8 @@ function render(){
   // watchlists
   $("#wlgrid").innerHTML = D.watchlists.map(w => `<div class="wlc"><h3>${esc(w.code)} · ${esc(w.name)}<b>${w.n}</b></h3>
     ${w.screens.map(s=>`<div class="sc"><span>${esc(s.name)}</span><span>${s.n}</span></div>`).join('')}
-    <div class="tk">${w.tickers.length ? w.tickers.map(t=>`<a href="${tv(t)}" target="_blank" rel="noopener">${esc(t)}</a>`).join('') : '<span style="color:var(--t4)">none this week</span>'}</div></div>`).join('');
+    <div class="tk" data-wl="${esc(w.code)}">${w.tickers.length ? w.tickers.map(t=>`<a href="${tv(t)}" class="open" data-sym="${esc(t)}">${esc(t)}</a>`).join('') : '<span style="color:var(--t4)">none this week</span>'}</div></div>`).join('');
+  document.querySelectorAll(".wlc .tk").forEach((el,i) => { const w = D.watchlists[i]; const byS = Object.fromEntries(D.rows.map(r=>[r.symbol,r])); el._rows = w.tickers.map(t => byS[t] || {symbol:t}); });
 
   // episodic pivots
   const newsH = x => x.earnings_gap ? `<span class="flag ern">EARNINGS</span> ` : '';
@@ -242,6 +252,47 @@ function render(){
     <div><b>Differences from TradingView</b> — EPS growth uses reported EPS (TradingView uses diluted GAAP); FCF growth uses the latest fiscal year; “institutional transactions” uses 13F shares quarter on quarter; performance periods are 5/21/63/126 sessions. Expect a large overlap with your TradingView list, not an identical one.</div></div>`;
 }
 render();
+
+/* chart drawer — click any ticker; ↑ ↓ to flip through the table it came from */
+let curRows = [], curIdx = -1, curTable = null, tvLoaded = null;
+const loadTV = () => tvLoaded ||= new Promise((ok, no) => { const s = document.createElement("script");
+  s.src = "https://s3.tradingview.com/tv.js"; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+function openChart(el, sym){ curTable = el; curRows = (el && el._rows) || [{symbol: sym}]; curIdx = Math.max(0, curRows.findIndex(r => r.symbol === sym)); showChart(); }
+function showChart(){
+  const x = curRows[curIdx]; if (!x) return;
+  const tvSym = x.exchange ? x.exchange + ":" + x.symbol : x.symbol;
+  $("#d-sym").textContent = x.symbol; $("#d-name").textContent = x.name || "";
+  $("#d-tv").href = tv(x.symbol, x.exchange);
+  const pc = v => v==null ? null : fmt(v) + "%";
+  const st = [["RS", x.rs_rating], ["Δ1W", x.rs_chg_1w], ["Theme", x.theme], ["1W", pc(x.perf_1w)], ["1M", pc(x.perf_1m)], ["3M", pc(x.perf_3m)],
+    ["ADR", x.adr!=null ? x.adr+"%" : null], ["5-EMA", pc(x.ema5_gap)], ["Float", x.float_m!=null ? (x.float_est?'≈':'')+Math.round(x.float_m)+"M" : null],
+    ["EPS Q", x.eps_q!=null ? (x.eps_q>=999?'turn+':fmt(x.eps_q,0)+"%") : null], ["Rev Q", x.rev_q!=null ? (x.rev_q>999?'>999%':fmt(x.rev_q,0)+"%") : null],
+    ["Gap", x.gap!=null ? "+"+x.gap+"%" : null], ["Vol ×", x.rvol ?? x.vol_x], ["5-day run", x.run_5d!=null ? "+"+x.run_5d+"%" : null],
+    ["ER", x.earnings], ["Lists", x.wls ? x.wls.join(" ") : null]];
+  $("#d-stats").innerHTML = st.filter(s => s[1]!=null && s[1]!=="").map(s => `<span>${s[0]} <b>${esc(s[1])}</b></span>`).join("") +
+    `<span style="margin-left:auto">${curIdx+1} / ${curRows.length}</span>`;
+  document.querySelectorAll("tr.sel").forEach(r => r.classList.remove("sel"));
+  const tr = curTable && curTable.querySelector && curTable.querySelector(`[data-sym="${CSS.escape(x.symbol)}"]`)?.closest("tr");
+  if (tr) { tr.classList.add("sel"); tr.scrollIntoView({block:"nearest"}); }
+  $("#drawer").classList.add("open"); $("#drawer").setAttribute("aria-hidden","false");
+  loadTV().then(() => { $("#tvchart").innerHTML = "";
+    new TradingView.widget({container_id:"tvchart", autosize:true, symbol:tvSym, interval:"D", timezone:"Asia/Singapore", theme:"dark", style:"1",
+      locale:"en", hide_side_toolbar:false, allow_symbol_change:true, withdateranges:true, save_image:false, backgroundColor:"#121211",
+      gridColor:"rgba(255,255,255,0.04)", studies:[{id:"MASimple@tv-basicstudies",inputs:{length:10}},{id:"MASimple@tv-basicstudies",inputs:{length:21}},
+      {id:"MASimple@tv-basicstudies",inputs:{length:50}},{id:"MASimple@tv-basicstudies",inputs:{length:200}}]}); })
+  .catch(() => { $("#tvchart").innerHTML = `<p style="padding:30px;color:var(--t3)">Chart couldn't load — use TradingView ↗</p>`; });
+}
+function closeChart(){ $("#drawer").classList.remove("open"); $("#drawer").setAttribute("aria-hidden","true");
+  document.querySelectorAll("tr.sel").forEach(r => r.classList.remove("sel")); curIdx = -1; }
+const step = d => { if (curIdx < 0) return; curIdx = Math.max(0, Math.min(curRows.length-1, curIdx + d)); showChart(); };
+document.addEventListener("click", e => { const o = e.target.closest(".open[data-sym]"); if (o) { e.preventDefault(); openChart(o.closest("table") || o.closest(".tk"), o.dataset.sym); } });
+$("#d-prev").onclick = () => step(-1); $("#d-next").onclick = () => step(1); $("#d-close").onclick = closeChart;
+document.addEventListener("keydown", e => {
+  if (!$("#drawer").classList.contains("open") || e.target.matches("input,select,textarea")) return;
+  if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); step(1); }
+  else if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); step(-1); }
+  else if (e.key === "Escape") closeChart();
+});
 </script>
 </body>
 </html>
