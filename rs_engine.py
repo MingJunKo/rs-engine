@@ -482,7 +482,9 @@ def broad_universe(known: set, names: pd.DataFrame, demo: bool) -> list[str]:
     px = download_yahoo(cand, period="3mo", want=("Close", "Volume"))
     c, v = px["Close"], px["Volume"]
     dv = (c * v).tail(20).mean()
-    keep = c.columns[(c.iloc[-1] >= SETTINGS["min_price"] * 0.8) & (dv >= SETTINGS["min_dollar_volume"] * 0.5)]
+    # loose on purpose: your weekly screens reach down to $3 stocks trading ~300K shares a day; the leaders list
+    # still applies its own price and $-volume minimums
+    keep = c.columns[(c.iloc[-1] >= SETTINGS.get("broad_min_price", 3)) & (dv >= SETTINGS.get("broad_min_dollar_volume", 2e6))]
     pd.DataFrame({"ticker": sorted(keep)}).to_csv(cache, index=False)
     log(f"  broad universe: {len(keep)} liquid names added")
     return sorted(keep)
