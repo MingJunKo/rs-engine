@@ -1,122 +1,122 @@
 symbol,category,theme,name,rs_rating,rs_chg_1w,rank,rank_chg,rs_win_1m,rs_1m,chg_1d,chg_1w,chg_1m,chg_3m,off_high,breadth_50,quadrant,style
-RSPH,EW Sector,Health Care,Equal Weight Health Care,96,7,1.0,1.0,55.0,3.26,0.2,1.6,7.24,13.61,-0.4,,Weakening,defensive
-RSPS,EW Sector,Consumer Staples,Equal Weight Staples,94,20,2.0,3.0,40.0,4.75,-2.06,1.29,8.79,1.42,-3.71,,Leading,defensive
-RSPM,EW Sector,Materials,Equal Weight Materials,92,11,3.0,0.0,55.0,2.66,-2.17,1.52,6.61,-0.38,-2.43,,Leading,cyclical
-RSPU,EW Sector,Utilities,Equal Weight Utilities,91,25,4.0,2.0,60.0,4.8,-0.58,1.43,8.84,0.27,-6.66,,Leading,defensive
-RSPF,EW Sector,Financials,Equal Weight Financials,88,38,5.0,2.0,60.0,2.64,-0.67,2.89,6.6,-1.42,-2.78,,Improving,cyclical
-RSPD,EW Sector,Consumer Discretionary,Equal Weight Discretionary,87,54,6.0,3.0,55.0,4.59,-1.46,3.5,8.62,-3.19,-5.66,,Leading,growth
-RSPG,EW Sector,Energy,Equal Weight Energy,78,-13,7.0,-6.0,45.0,-0.96,-0.65,-3.27,2.85,12.98,-4.66,,Weakening,cyclical
-RSPR,EW Sector,Real Estate,Equal Weight Real Estate,58,33,8.0,2.0,65.0,3.09,-0.25,2.09,7.06,-4.43,-6.09,,Improving,defensive
-RSPN,EW Sector,Industrials,Equal Weight Industrials,55,20,9.0,-1.0,45.0,1.26,0.34,3.18,5.16,-4.49,-4.57,,Leading,cyclical
-RSPC,EW Sector,Communication Services,Equal Weight Communication,41,37,10.0,1.0,45.0,-5.44,0.88,0.7,-1.79,-4.51,-13.29,,Lagging,growth
-RSPT,EW Sector,Technology,Equal Weight Technology,32,-45,11.0,-7.0,45.0,-13.1,0.81,-6.3,-9.75,-2.95,-10.54,,Lagging,growth
-PHO,Group,Water,Water Purification & Infrastructure,98,11,1.0,11.0,80.0,6.45,-0.14,5.24,10.55,4.52,-0.14,75.0,Leading,defensive
-PPH,Group,Pharma,Large-Cap Pharmaceutical,97,34,2.0,25.0,50.0,6.12,-0.51,3.46,10.21,7.95,-0.61,64.0,Leading,defensive
-IHI,Group,Medical Devices,Medical Devices,95,24,3.0,19.0,60.0,5.32,-0.14,3.48,9.38,5.21,-12.05,62.0,Leading,defensive
-KIE,Group,Insurance,Insurance,93,44,4.0,33.0,60.0,4.06,-0.76,3.06,8.08,-0.48,-2.84,80.0,Leading,cyclical
-PBE,Group,Biotech,Dynamic Biotech,92,7,5.0,9.0,60.0,1.55,1.2,1.59,5.46,11.64,-1.08,80.0,Leading,defensive
-USO,Group,Crude Oil,Crude Oil,90,2,6.0,4.0,60.0,5.77,0.83,-3.48,9.85,37.68,-6.7,,Weakening,cyclical
-PEJ,Group,Leisure & Travel,Leisure & Travel,86,49,7.0,42.0,55.0,3.04,-0.55,2.42,7.02,-0.71,-2.93,80.0,Leading,cyclical
-XHS,Group,Health Services,Healthcare Facilities & Services,84,6,8.0,9.0,55.0,0.84,0.33,0.63,4.73,6.01,-1.72,70.0,Leading,defensive
-IBB,Group,Biotech,Biotech Megacap,83,11,9.0,12.0,60.0,-0.24,0.79,1.54,3.61,12.35,-1.1,50.0,Leading,defensive
-IHF,Group,Health Services,Health Care Providers,82,4,10.0,8.0,55.0,2.08,0.69,0.2,6.01,5.3,-2.45,100.0,Leading,defensive
-IGF,Group,Infrastructure,Global Infrastructure Assets,81,19,11.0,17.0,55.0,1.92,-0.29,1.08,5.85,-0.64,-4.05,100.0,Leading,defensive
-IBUY,Group,Internet & E-commerce,Global E-commerce,78,19,12.0,19.0,50.0,2.85,-1.08,1.45,6.82,-3.37,-7.52,60.0,Leading,growth
-XRT,Group,Retail,Retail,77,20,13.0,19.0,55.0,3.12,-1.92,1.71,7.09,-2.66,-3.64,68.0,Leading,cyclical
-IPAY,Group,Fintech,Digital Payments & Fintech,76,50,14.0,44.0,60.0,1.45,0.07,3.84,5.37,-2.61,-6.17,60.0,Improving,growth
-XOP,Group,Oil & Gas E&P,Oil & Gas E&P,73,-13,15.0,-2.0,45.0,-1.62,-1.05,-4.24,2.18,16.4,-6.51,41.0,Weakening,cyclical
-PBJ,Group,Food & Beverage,Food & Beverage,73,9,16.0,10.0,45.0,-0.11,-2.46,-0.78,3.74,-0.65,-6.56,60.0,Lagging,defensive
-BOAT,Group,Shipping,Global Shipping,72,-15,17.0,-6.0,55.0,-6.47,-0.31,-1.77,-2.86,20.15,-7.25,50.0,Lagging,cyclical
-XSW,Group,Software & Cloud,Software (Equal),71,-26,18.0,-15.0,60.0,-0.57,0.09,-3.25,3.27,7.43,-3.81,59.0,Weakening,growth
-FCG,Group,Oil & Gas E&P,Natural Gas E&P,70,-26,19.0,-14.0,45.0,-0.38,-1.33,-5.66,3.46,10.72,-6.7,34.0,Weakening,cyclical
-ITB,Group,Homebuilders,Homebuilders,69,24,20.0,20.0,55.0,5.22,-3.56,3.51,9.28,-6.51,-16.66,80.0,Leading,cyclical
-SCHH,Group,REITs,U.S. REITs,69,53,21.0,43.0,60.0,2.72,0.04,2.6,6.68,-2.98,-5.52,72.0,Improving,defensive
-MOO,Group,Agriculture,Agricultural Producers,68,51,22.0,41.0,25.0,-4.3,-0.69,1.13,-0.61,0.64,-8.0,43.0,Lagging,cyclical
-WCLD,Group,Software & Cloud,Cloud Computing (WisdomTree),66,-32,23.0,-21.0,55.0,-2.07,-0.49,-7.41,1.71,12.15,-8.36,67.0,Weakening,growth
-IYR,Group,REITs,Real Estate (iShares),65,55,24.0,46.0,60.0,2.92,-0.04,2.95,6.89,-3.36,-5.27,68.0,Improving,defensive
-ARKG,Group,Biotech,ARK Genomics,64,-20,25.0,-10.0,55.0,-16.03,2.53,-4.14,-12.79,20.05,-12.79,50.0,Lagging,growth
-BUG,Group,Cybersecurity,Cybersecurity (Global X),63,-36,26.0,-25.0,40.0,-5.53,0.77,-10.54,-1.89,13.58,-10.54,65.0,Weakening,growth
-IBIT,Group,Crypto,Bitcoin,62,-5,27.0,-2.0,45.0,-12.66,1.61,-3.61,-9.29,19.9,-27.23,,Lagging,growth
-IFRA,Group,Infrastructure,Infrastructure (iShares),61,6,28.0,5.0,50.0,0.01,-0.02,1.7,3.86,-4.0,-8.08,84.0,Improving,cyclical
-XHE,Group,Medical Devices,Health Equipment (Equal),60,-10,29.0,-6.0,55.0,-2.05,-0.14,-0.8,1.73,0.34,-4.55,55.0,Lagging,defensive
-ETH,Group,Crypto,Ethereum,59,5,30.0,4.0,40.0,-18.74,1.77,-2.55,-15.6,19.64,-35.18,,Lagging,growth
-XBI,Group,Biotech,Biotech (Equal),59,-1,31.0,-2.0,50.0,-4.46,1.92,0.08,-0.78,1.28,-8.6,30.0,Lagging,growth
-XHB,Group,Homebuilders,Homebuilders (Equal),57,7,32.0,4.0,45.0,1.97,-2.49,2.84,5.9,-7.51,-15.12,65.0,Leading,cyclical
-CGW,Group,Water,Water (Invesco),56,15,33.0,12.0,45.0,-2.25,-0.93,1.49,1.52,-3.13,-6.08,76.0,Lagging,defensive
-HACK,Group,Cybersecurity,Cybersecurity (ETFMG),55,-42,34.0,-30.0,35.0,-7.68,0.93,-10.25,-4.12,4.52,-10.25,59.0,Weakening,growth
-IYT,Group,Transports,Transportation,54,3,35.0,0.0,40.0,-0.3,-0.48,0.63,3.54,-4.5,-7.94,48.0,Improving,cyclical
-SHLD,Group,Aerospace & Defense,Global Defense Tech,53,-22,36.0,-17.0,60.0,1.02,-0.28,0.22,4.92,-5.92,-18.5,83.0,Improving,cyclical
-CLOU,Group,Software & Cloud,Cloud Computing (Global X),52,-40,37.0,-30.0,45.0,-9.55,0.29,-9.71,-6.06,2.2,-10.48,38.0,Lagging,growth
-OIH,Group,Oil Services,Oil Services,51,-32,38.0,-22.0,55.0,-6.05,-1.01,-5.81,-2.43,0.01,-15.16,20.0,Lagging,cyclical
-IGV,Group,Software & Cloud,Software (Expanded Tech),50,-40,39.0,-30.0,45.0,-9.91,0.75,-8.16,-6.43,1.33,-11.25,46.0,Lagging,growth
-AMLP,Group,Midstream,Energy MLPs,50,6,40.0,1.0,35.0,-4.39,-0.27,-0.94,-0.7,-1.4,-6.39,30.0,Lagging,cyclical
-KCE,Group,Capital Markets,Capital Markets,49,27,41.0,19.0,45.0,-3.13,0.15,2.93,0.61,-4.53,-8.15,39.0,Lagging,cyclical
-PAVE,Group,Infrastructure,U.S. Infrastructure,48,29,42.0,19.0,50.0,-2.43,0.7,3.53,1.33,-6.51,-8.44,61.0,Improving,cyclical
-KRE,Group,Banks,Regional Banks,47,5,43.0,0.0,45.0,-0.31,-1.15,0.41,3.54,-5.23,-5.95,69.0,Improving,cyclical
-SKYY,Group,Software & Cloud,Cloud Computing (First Trust),46,-46,44.0,-36.0,55.0,-11.57,0.93,-9.03,-8.16,1.63,-10.81,44.0,Lagging,growth
-CIBR,Group,Cybersecurity,Cybersecurity (First Trust),45,-50,45.0,-39.0,35.0,-11.7,0.49,-11.34,-8.29,-0.36,-11.62,46.0,Lagging,growth
-BETZ,Group,Leisure & Travel,Sports Betting,44,39,46.0,30.0,55.0,0.14,0.49,4.33,4.01,-8.29,-18.62,0.0,Improving,cyclical
-KBE,Group,Banks,Large-cap Banking,43,7,47.0,4.0,50.0,-0.05,-0.95,0.8,3.8,-5.68,-6.56,66.0,Improving,cyclical
-XES,Group,Oil Services,Oil & Gas Equip & Services,40,-33,48.0,-28.0,50.0,-9.26,-1.06,-6.02,-5.77,-4.79,-20.32,17.0,Lagging,cyclical
-GDX,Group,Gold & Silver,Gold Miners,38,-10,49.0,-11.0,45.0,-14.53,-1.96,-6.72,-11.23,-7.27,-33.01,3.0,Lagging,defensive
-PPA,Group,Aerospace & Defense,Aerospace & Defense (Invesco),36,22,50.0,16.0,55.0,0.42,0.75,3.35,4.29,-11.37,-12.29,61.0,Improving,cyclical
-XPH,Group,Pharma,Pharmaceuticals (Equal),35,27,51.0,22.0,55.0,-2.74,1.08,0.53,1.01,-8.11,-13.12,37.0,Improving,defensive
-ITA,Group,Aerospace & Defense,Aerospace & Defense,34,27,52.0,22.0,45.0,0.56,0.69,4.82,4.44,-14.21,-14.53,46.0,Improving,cyclical
-TAN,Group,Solar,Solar,29,20,53.0,18.0,35.0,-4.44,3.02,3.14,-0.76,-15.47,-41.38,54.0,Improving,growth
-XAR,Group,Aerospace & Defense,Aerospace & Defense (Equal),28,22,54.0,21.0,50.0,-2.55,1.29,4.29,1.21,-16.98,-21.07,42.0,Improving,cyclical
-DRAM,Group,Semiconductors,Memory,27,-3,55.0,-1.0,40.0,-25.62,2.85,-5.7,-22.75,-11.35,-40.98,0.0,Lagging,growth
-FXI,Group,China,China Large-Caps,27,25,56.0,22.0,30.0,-5.59,-0.06,2.12,-1.95,-8.01,-18.0,,Lagging,growth
-XSD,Group,Semiconductors,Semiconductors (Equal),26,-13,57.0,-10.0,40.0,-20.65,3.42,-6.11,-17.59,-10.55,-29.88,22.0,Lagging,growth
-AIQ,Group,AI & Robotics,Artificial Intelligence,25,-34,58.0,-28.0,45.0,-14.24,0.68,-6.47,-10.93,-4.52,-15.11,19.0,Lagging,growth
-XTN,Group,Transports,Trucking,24,0,59.0,0.0,35.0,-3.45,-0.46,0.26,0.27,-10.52,-14.29,48.0,Improving,cyclical
-UFO,Group,Space,Space Industry,22,-9,60.0,-8.0,35.0,-10.32,1.7,-1.36,-6.86,-12.91,-40.09,40.0,Lagging,growth
-IDGT,Group,AI Infrastructure,Digital Infra & Data Centers,20,-49,61.0,-37.0,45.0,-11.36,1.33,-6.53,-7.94,-9.62,-20.0,32.0,Lagging,growth
-SIL,Group,Gold & Silver,Silver Miners,19,-9,62.0,-6.0,40.0,-20.34,-1.45,-7.43,-17.27,-14.92,-39.53,6.0,Lagging,defensive
-JETS,Group,Airlines,Airlines,18,10,63.0,9.0,40.0,-4.68,-1.57,2.18,-1.0,-17.66,-17.66,54.0,Improving,cyclical
-XME,Group,Metals & Mining,Metals & Mining,17,-21,64.0,-16.0,40.0,-13.54,-0.92,-3.72,-10.21,-13.49,-27.06,21.0,Lagging,cyclical
-ARKX,Group,Space,Space Exploration,16,-27,65.0,-23.0,30.0,-12.49,1.15,-3.02,-9.12,-8.2,-20.75,32.0,Lagging,growth
-SMH,Group,Semiconductors,Semiconductors (VanEck),14,-31,66.0,-27.0,35.0,-21.24,2.01,-7.07,-18.2,-8.98,-22.48,28.0,Lagging,growth
-GRID,Group,Infrastructure,Smart Grid Infrastructure,13,-2,67.0,-2.0,35.0,-11.49,1.9,0.21,-8.08,-10.14,-15.71,48.0,Lagging,cyclical
-SOXX,Group,Semiconductors,Semiconductors (iShares),12,-28,68.0,-22.0,35.0,-24.05,2.5,-9.01,-21.12,-12.32,-28.96,20.0,Lagging,growth
-GLD,Group,Gold & Silver,Gold,11,-20,69.0,-16.0,40.0,-8.86,-0.66,-3.5,-5.35,-7.8,-27.55,,Lagging,defensive
-KWEB,Group,China,China Internet,9,6,70.0,7.0,25.0,-8.73,-0.3,0.65,-5.21,-18.43,-38.18,50.0,Lagging,growth
-COPX,Group,Metals & Mining,Copper Miners,8,-9,71.0,-9.0,30.0,-20.02,-1.55,-6.48,-16.94,-17.31,-25.65,11.0,Lagging,cyclical
-URNM,Group,Uranium,Uranium Miners,8,-33,72.0,-28.0,35.0,-16.97,-0.55,-7.66,-13.77,-21.31,-50.8,0.0,Lagging,cyclical
-SLX,Group,Metals & Mining,Steel,7,-5,73.0,-5.0,35.0,-9.15,-1.35,-2.32,-5.65,-9.83,-12.66,47.0,Lagging,cyclical
-QTUM,Group,Quantum,Quantum Computing,6,-30,74.0,-24.0,40.0,-18.62,1.15,-6.96,-15.49,-11.61,-21.31,25.0,Lagging,growth
-ROBO,Group,AI & Robotics,Robotics & Automation,5,-24,75.0,-20.0,35.0,-13.96,-0.45,-3.51,-10.64,-11.73,-17.57,50.0,Lagging,growth
-CHAT,Group,AI & Robotics,Generative AI,4,-23,76.0,-19.0,40.0,-25.09,2.23,-8.66,-22.2,-16.8,-28.76,11.0,Lagging,growth
-BOTZ,Group,AI & Robotics,Robotics & AI,3,-10,77.0,-10.0,40.0,-14.03,0.15,-3.46,-10.72,-13.35,-22.32,44.0,Lagging,growth
-CARZ,Group,Autos & EV,Automobiles,2,-9,78.0,-9.0,35.0,-17.51,0.73,-6.52,-14.33,-11.54,-23.58,47.0,Lagging,growth
-NCLD,Group,AI Infrastructure,Neocloud / GPU-as-a-Service,,,,,35.0,-36.65,9.77,-8.06,-34.2,,,0.0,,growth
-LYTE,Group,AI Infrastructure,Photonics / Optics,,,,,45.0,-41.26,-0.19,-18.55,-38.99,,,0.0,,growth
-RSP,Index,Benchmark,S&P 500 Equal Weight,74,-5,1.0,0.0,0.0,0.0,-0.33,0.8,3.86,0.16,-1.21,,,neutral
-TLT,Index,Long Bonds,20+ Year Treasury Bonds,64,-12,2.0,0.0,50.0,1.28,-0.76,-0.64,5.19,-1.9,-8.3,,Lagging,defensive
-SPY,Index,S&P 500,S&P 500,37,-28,3.0,0.0,45.0,-6.26,0.3,-1.99,-2.64,-1.76,-3.18,,Lagging,neutral
-DIA,Index,Dow 30,Dow 30,33,-28,4.0,0.0,40.0,-2.76,-0.44,-1.19,0.99,-4.42,-4.42,,Lagging,neutral
-QQQ,Index,Nasdaq-100,Nasdaq-100,22,-34,5.0,1.0,40.0,-12.74,0.62,-4.99,-9.38,-4.36,-9.79,,Lagging,growth
-IWM,Index,Small Caps,Russell 2000,21,-2,6.0,1.0,35.0,-4.93,0.23,-0.14,-1.27,-6.42,-8.05,,Improving,cyclical
-QQQE,Index,Nasdaq-100 EW,Nasdaq-100 Equal Weight,15,-43,7.0,-2.0,40.0,-8.7,0.05,-2.82,-5.18,-4.1,-6.88,,Lagging,growth
-SPMO,Index,Momentum,S&P 500 Momentum,3,-17,8.0,0.0,40.0,-16.29,0.54,-6.61,-13.06,-11.24,-17.5,,Lagging,growth
-IEF,Macro,Treasuries,7-10 Year Treasuries,41,-5,1.0,0.0,35.0,-1.29,-0.37,0.07,2.52,-1.95,-4.79,,Lagging,neutral
-HYG,Macro,Credit,High Yield Corporate Bonds,10,-17,2.0,0.0,50.0,-3.71,0.12,-0.8,0.0,-2.66,-3.15,,Lagging,neutral
-XLV,SPDR Sector,Health Care,Health Care,99,19,1.0,3.0,60.0,5.87,-0.31,2.7,9.95,12.53,-0.46,82.0,Weakening,defensive
-XLP,SPDR Sector,Consumer Staples,Consumer Staples,97,14,2.0,0.0,45.0,5.69,-2.07,2.07,9.76,4.93,-2.07,78.0,Leading,defensive
-XLE,SPDR Sector,Energy,Energy,89,-4,3.0,-2.0,50.0,1.19,-0.85,-2.24,5.09,17.04,-4.77,62.0,Weakening,cyclical
-XLU,SPDR Sector,Utilities,Utilities,87,18,4.0,2.0,60.0,4.6,-0.57,1.33,8.63,0.18,-7.13,87.0,Leading,defensive
-XLB,SPDR Sector,Materials,Materials,85,12,5.0,0.0,55.0,2.3,-2.01,1.56,6.24,0.36,-2.01,75.0,Leading,cyclical
-XLF,SPDR Sector,Financials,Financials,80,25,6.0,2.0,70.0,2.2,-0.64,2.34,6.14,-1.05,-1.99,68.0,Improving,cyclical
-XLY,SPDR Sector,Consumer Discretionary,Consumer Discretionary,79,-3,7.0,-4.0,45.0,2.31,-0.7,1.63,6.26,-0.89,-5.19,74.0,Leading,growth
-XLRE,SPDR Sector,Real Estate,Real Estate,75,57,8.0,1.0,60.0,3.39,0.07,2.9,7.38,-2.57,-4.29,63.0,Leading,defensive
-XLI,SPDR Sector,Industrials,Industrials,31,18,9.0,1.0,35.0,-3.02,0.95,2.02,0.72,-7.82,-7.9,70.0,Improving,cyclical
-XLK,SPDR Sector,Technology,Technology,23,-41,10.0,-3.0,40.0,-15.41,1.31,-6.85,-12.15,-4.95,-12.62,39.0,Lagging,growth
-XLC,SPDR Sector,Communication Services,Communication Services,13,10,11.0,0.0,35.0,-12.49,1.18,-2.07,-9.11,-8.2,-14.75,36.0,Lagging,growth
-IVE,Segment,Large Value,Large-Cap 500 Value,83,-11,1.0,0.0,55.0,-0.45,-0.61,-0.38,3.39,1.75,-1.26,,Lagging,cyclical
-IJJ,Segment,Mid Value,MidCap 400 Value,67,14,2.0,1.0,55.0,0.17,-0.55,1.52,4.04,-2.16,-3.06,,Improving,cyclical
-IJS,Segment,Small Value,Small-Cap 600 Value,45,-2,3.0,2.0,45.0,-2.06,-0.84,0.6,1.71,-3.62,-4.95,,Improving,cyclical
-IJH,Segment,Mid Cap,MidCap 400,42,8,4.0,2.0,45.0,-3.12,0.28,1.24,0.61,-3.43,-5.48,,Lagging,cyclical
-IVV,Segment,Large Cap,S&P 500,39,-29,5.0,-3.0,45.0,-6.23,0.33,-1.99,-2.62,-1.72,-3.15,,Lagging,neutral
-IJR,Segment,Small Cap,Small-Cap 600,36,4,6.0,1.0,50.0,-2.31,-0.3,0.98,1.46,-4.95,-5.9,,Improving,cyclical
-IJK,Segment,Mid Growth,MidCap 400 Growth,31,10,7.0,2.0,40.0,-6.19,1.15,0.89,-2.57,-4.77,-7.88,,Lagging,growth
-IJT,Segment,Small Growth,Small-Cap 600 Growth,30,8,8.0,0.0,45.0,-2.72,0.25,1.35,1.03,-6.47,-7.28,,Improving,growth
-IVW,Segment,Large Growth,Large-Cap 500 Growth,17,-35,9.0,-5.0,45.0,-10.81,1.12,-3.38,-7.37,-4.66,-7.92,,Lagging,growth
+RSPH,EW Sector,Health Care,Equal Weight Health Care,97,2,1.0,0.0,50.0,4.72,0.0,0.99,8.14,13.97,-0.4,,Weakening,defensive
+RSPS,EW Sector,Consumer Staples,Equal Weight Staples,93,15,2.0,2.0,35.0,4.52,0.0,1.82,7.93,1.71,-3.71,,Leading,defensive
+RSPM,EW Sector,Materials,Equal Weight Materials,92,13,3.0,0.0,55.0,3.0,0.0,1.57,6.36,0.59,-2.43,,Leading,cyclical
+RSPU,EW Sector,Utilities,Equal Weight Utilities,91,27,4.0,2.0,55.0,2.78,0.0,2.08,6.13,0.72,-6.66,,Leading,defensive
+RSPF,EW Sector,Financials,Equal Weight Financials,88,31,5.0,2.0,55.0,3.07,0.0,2.6,6.44,-1.0,-2.78,,Improving,cyclical
+RSPD,EW Sector,Consumer Discretionary,Equal Weight Discretionary,83,45,6.0,2.0,55.0,4.0,0.0,3.71,7.39,-2.45,-5.66,,Leading,growth
+RSPG,EW Sector,Energy,Equal Weight Energy,76,-12,7.0,-5.0,40.0,-0.96,0.0,-3.18,2.27,11.52,-4.66,,Weakening,cyclical
+RSPR,EW Sector,Real Estate,Equal Weight Real Estate,68,53,8.0,2.0,65.0,2.82,0.0,3.6,6.18,-2.97,-6.09,,Improving,defensive
+RSPN,EW Sector,Industrials,Equal Weight Industrials,57,23,9.0,0.0,45.0,1.19,0.0,3.15,4.49,-3.48,-4.57,,Leading,cyclical
+RSPC,EW Sector,Communication Services,Equal Weight Communication,36,29,10.0,1.0,40.0,-4.68,0.0,1.32,-1.57,-5.43,-13.29,,Lagging,growth
+RSPT,EW Sector,Technology,Equal Weight Technology,33,-38,11.0,-6.0,40.0,-13.36,0.0,-6.73,-10.54,-2.3,-10.54,,Lagging,growth
+PHO,Group,Water,Water Purification & Infrastructure,98,6,1.0,6.0,80.0,6.66,0.0,5.12,10.14,4.74,-0.14,75.0,Leading,defensive
+PPH,Group,Pharma,Large-Cap Pharmaceutical,96,33,2.0,26.0,45.0,6.18,0.0,3.86,9.64,7.2,-0.61,64.0,Leading,defensive
+IHI,Group,Medical Devices,Medical Devices,95,15,3.0,15.0,55.0,7.3,0.0,3.28,10.8,4.45,-12.05,64.0,Leading,defensive
+PBE,Group,Biotech,Dynamic Biotech,94,5,4.0,6.0,55.0,4.65,0.0,0.46,8.07,12.34,-1.08,80.0,Leading,defensive
+KIE,Group,Insurance,Insurance,92,38,5.0,29.0,55.0,4.29,0.0,3.37,7.7,-0.9,-2.84,81.0,Leading,cyclical
+USO,Group,Crude Oil,Crude Oil,90,-7,6.0,-2.0,55.0,5.7,0.0,-5.04,9.15,33.06,-6.7,,Weakening,cyclical
+PEJ,Group,Leisure & Travel,Leisure & Travel,89,33,7.0,25.0,50.0,3.01,0.0,2.07,6.37,0.66,-2.93,80.0,Leading,cyclical
+IBB,Group,Biotech,Biotech Megacap,87,11,8.0,12.0,55.0,2.74,0.0,-0.41,6.09,11.67,-1.1,50.0,Leading,defensive
+IHF,Group,Health Services,Health Care Providers,87,9,9.0,10.0,50.0,2.92,0.0,-0.17,6.28,6.35,-2.45,100.0,Leading,defensive
+XHS,Group,Health Services,Healthcare Facilities & Services,86,-5,10.0,-2.0,50.0,1.62,0.0,-0.6,4.94,7.63,-1.72,70.0,Leading,defensive
+IBUY,Group,Internet & E-commerce,Global E-commerce,82,21,11.0,18.0,45.0,3.51,0.0,1.61,6.89,-1.43,-7.52,60.0,Leading,growth
+XRT,Group,Retail,Retail,80,20,12.0,18.0,50.0,3.67,0.0,2.37,7.05,-0.96,-3.64,68.0,Leading,cyclical
+IGF,Group,Infrastructure,Global Infrastructure Assets,78,31,13.0,25.0,55.0,1.03,0.0,1.39,4.32,-0.61,-4.05,100.0,Leading,defensive
+BOAT,Group,Shipping,Global Shipping,77,-6,14.0,2.0,50.0,-4.6,0.0,-2.48,-1.48,19.07,-7.25,50.0,Lagging,cyclical
+PBJ,Group,Food & Beverage,Food & Beverage,75,6,15.0,11.0,40.0,-0.18,0.0,-0.19,3.08,-0.07,-6.56,60.0,Lagging,defensive
+XOP,Group,Oil & Gas E&P,Oil & Gas E&P,73,-13,16.0,-3.0,40.0,-1.59,0.0,-4.42,1.62,15.11,-6.51,39.0,Weakening,cyclical
+IPAY,Group,Fintech,Digital Payments & Fintech,72,36,17.0,32.0,55.0,1.89,0.0,3.69,5.21,-2.19,-6.17,60.0,Improving,growth
+XSW,Group,Software & Cloud,Software (Equal),71,-23,18.0,-12.0,55.0,0.03,0.0,-3.38,3.3,9.1,-3.81,59.0,Weakening,growth
+ITB,Group,Homebuilders,Homebuilders,69,25,19.0,22.0,55.0,4.16,0.0,5.09,7.56,-4.22,-16.66,80.0,Leading,cyclical
+SCHH,Group,REITs,U.S. REITs,69,49,20.0,42.0,60.0,2.33,0.0,3.28,5.67,-2.18,-5.52,72.0,Improving,defensive
+FCG,Group,Oil & Gas E&P,Natural Gas E&P,67,-30,21.0,-18.0,40.0,-0.42,0.0,-5.6,2.83,8.52,-6.7,34.0,Weakening,cyclical
+ARKG,Group,Biotech,ARK Genomics,66,-18,22.0,-7.0,55.0,-7.35,0.0,-9.69,-4.33,22.1,-12.79,50.0,Lagging,growth
+MOO,Group,Agriculture,Agricultural Producers,65,49,23.0,42.0,25.0,-3.94,0.0,1.84,-0.8,0.32,-8.0,43.0,Lagging,cyclical
+IYR,Group,REITs,Real Estate (iShares),64,50,24.0,42.0,60.0,2.53,0.0,3.67,5.88,-2.48,-5.27,70.0,Improving,defensive
+WCLD,Group,Software & Cloud,Cloud Computing (WisdomTree),63,-36,25.0,-24.0,50.0,-1.41,0.0,-7.45,1.81,14.33,-8.36,67.0,Weakening,growth
+XHE,Group,Medical Devices,Health Equipment (Equal),62,-13,26.0,-5.0,55.0,0.42,0.0,-1.64,3.7,1.37,-4.55,56.0,Lagging,defensive
+IBIT,Group,Crypto,Bitcoin,61,-8,27.0,-2.0,45.0,-12.03,0.0,-4.53,-9.16,20.72,-26.82,,Lagging,growth
+ETH,Group,Crypto,Ethereum,60,9,28.0,7.0,40.0,-17.73,0.0,-3.67,-15.04,20.16,-34.95,,Lagging,growth
+BUG,Group,Cybersecurity,Cybersecurity (Global X),59,-39,29.0,-27.0,40.0,-6.94,0.0,-9.78,-3.9,15.0,-10.54,65.0,Weakening,growth
+XHB,Group,Homebuilders,Homebuilders (Equal),59,16,30.0,12.0,45.0,1.42,0.0,4.09,4.73,-5.75,-15.12,65.0,Leading,cyclical
+XBI,Group,Biotech,Biotech (Equal),58,-7,31.0,-4.0,45.0,-0.55,0.0,-1.61,2.7,0.3,-8.6,32.0,Lagging,growth
+IFRA,Group,Infrastructure,Infrastructure (iShares),56,7,32.0,4.0,50.0,-1.41,0.0,1.66,1.81,-3.35,-8.08,84.0,Improving,cyclical
+IYT,Group,Transports,Transportation,55,19,33.0,17.0,40.0,0.47,0.0,2.34,3.75,-3.92,-7.94,48.0,Improving,cyclical
+CGW,Group,Water,Water (Invesco),55,33,34.0,26.0,45.0,-2.19,0.0,2.41,1.0,-2.88,-6.08,76.0,Lagging,defensive
+HACK,Group,Cybersecurity,Cybersecurity (ETFMG),54,-42,35.0,-30.0,35.0,-9.1,0.0,-8.71,-6.13,5.87,-10.25,59.0,Weakening,growth
+CLOU,Group,Software & Cloud,Cloud Computing (Global X),53,-32,36.0,-22.0,45.0,-8.59,0.0,-9.53,-5.61,4.46,-10.48,38.0,Lagging,growth
+KRE,Group,Banks,Regional Banks,52,4,37.0,0.0,45.0,0.72,0.0,1.07,4.01,-4.18,-5.95,71.0,Improving,cyclical
+KCE,Group,Capital Markets,Capital Markets,51,20,38.0,16.0,45.0,-1.94,0.0,2.07,1.26,-3.5,-8.15,39.0,Lagging,cyclical
+KBE,Group,Banks,Large-cap Banking,50,9,39.0,5.0,50.0,0.9,0.0,1.45,4.19,-4.54,-6.56,69.0,Improving,cyclical
+SHLD,Group,Aerospace & Defense,Global Defense Tech,50,-23,40.0,-17.0,60.0,2.19,0.0,0.14,5.53,-6.49,-18.5,83.0,Improving,cyclical
+IGV,Group,Software & Cloud,Software (Expanded Tech),49,-38,41.0,-30.0,45.0,-10.57,0.0,-8.27,-7.65,3.26,-8.88,46.0,Lagging,growth
+OIH,Group,Oil Services,Oil Services,47,-34,42.0,-25.0,55.0,-4.73,0.0,-5.86,-1.62,-1.78,-15.16,20.0,Lagging,cyclical
+SKYY,Group,Software & Cloud,Cloud Computing (First Trust),45,-45,43.0,-34.0,50.0,-11.67,0.0,-9.48,-8.79,3.58,-10.81,44.0,Lagging,growth
+CIBR,Group,Cybersecurity,Cybersecurity (First Trust),45,-42,44.0,-32.0,35.0,-12.93,0.0,-9.91,-10.09,0.86,-11.62,46.0,Lagging,growth
+BETZ,Group,Leisure & Travel,Sports Betting,44,38,45.0,28.0,55.0,0.45,0.0,3.94,3.72,-7.99,-18.62,0.0,Improving,cyclical
+AMLP,Group,Midstream,Energy MLPs,43,-12,46.0,-13.0,35.0,-4.7,0.0,-1.2,-1.59,-2.6,-6.39,30.0,Lagging,cyclical
+PAVE,Group,Infrastructure,U.S. Infrastructure,41,22,47.0,16.0,50.0,-2.84,0.0,2.79,0.33,-6.03,-8.44,61.0,Improving,cyclical
+GDX,Group,Gold & Silver,Gold Miners,39,-7,48.0,-9.0,45.0,-14.82,0.0,-7.56,-12.04,-7.53,-33.01,3.0,Lagging,defensive
+XPH,Group,Pharma,Pharmaceuticals (Equal),37,24,49.0,19.0,50.0,-1.02,0.0,-0.39,2.21,-8.53,-13.12,37.0,Improving,defensive
+ITA,Group,Aerospace & Defense,Aerospace & Defense,36,26,50.0,20.0,45.0,0.52,0.0,4.06,3.8,-13.43,-14.53,46.0,Improving,cyclical
+PPA,Group,Aerospace & Defense,Aerospace & Defense (Invesco),34,13,51.0,10.0,55.0,0.52,0.0,2.57,3.8,-10.63,-12.29,61.0,Improving,cyclical
+XES,Group,Oil Services,Oil & Gas Equip & Services,31,-43,52.0,-30.0,50.0,-8.12,0.0,-7.76,-5.12,-6.7,-20.32,17.0,Lagging,cyclical
+TAN,Group,Solar,Solar,30,27,53.0,24.0,35.0,-5.47,0.0,5.76,-2.39,-15.43,-41.38,54.0,Improving,growth
+DRAM,Group,Semiconductors,Memory,29,-16,54.0,-14.0,35.0,-22.49,0.0,-11.97,-19.96,-7.39,-40.98,0.0,Lagging,growth
+XTN,Group,Transports,Trucking,28,20,55.0,16.0,35.0,-2.66,0.0,2.61,0.52,-9.4,-14.29,48.0,Improving,cyclical
+FXI,Group,China,China Large-Caps,27,24,56.0,20.0,30.0,-4.82,0.0,2.25,-1.72,-7.68,-18.0,,Lagging,growth
+XAR,Group,Aerospace & Defense,Aerospace & Defense (Equal),26,22,57.0,18.0,50.0,-2.97,0.0,4.04,0.19,-17.22,-21.07,42.0,Improving,cyclical
+IDGT,Group,AI Infrastructure,Digital Infra & Data Centers,24,-46,58.0,-34.0,40.0,-13.41,0.0,-7.13,-10.59,-7.66,-20.0,32.0,Lagging,growth
+XME,Group,Metals & Mining,Metals & Mining,23,-17,59.0,-13.0,40.0,-13.43,0.0,-4.49,-10.61,-12.26,-27.06,21.0,Lagging,cyclical
+AIQ,Group,AI & Robotics,Artificial Intelligence,22,-37,60.0,-29.0,40.0,-14.01,0.0,-7.55,-11.2,-3.89,-15.11,19.0,Lagging,growth
+UFO,Group,Space,Space Industry,22,-1,61.0,-3.0,35.0,-11.37,0.0,-1.72,-8.48,-12.93,-40.09,40.0,Lagging,growth
+SIL,Group,Gold & Silver,Silver Miners,20,-4,62.0,-5.0,40.0,-20.33,0.0,-8.07,-17.73,-14.4,-39.53,6.0,Lagging,defensive
+JETS,Group,Airlines,Airlines,19,14,63.0,11.0,40.0,-4.85,0.0,2.37,-1.74,-15.41,-17.66,54.0,Improving,cyclical
+XSD,Group,Semiconductors,Semiconductors (Equal),18,-19,64.0,-16.0,40.0,-21.05,0.0,-6.99,-18.48,-12.49,-29.88,22.0,Lagging,growth
+ARKX,Group,Space,Space Exploration,15,-17,65.0,-13.0,30.0,-12.84,0.0,-2.89,-9.99,-9.39,-20.75,32.0,Lagging,growth
+SMH,Group,Semiconductors,Semiconductors (VanEck),13,-29,66.0,-23.0,35.0,-20.61,0.0,-8.66,-18.02,-9.27,-22.48,28.0,Lagging,growth
+GRID,Group,Infrastructure,Smart Grid Infrastructure,13,2,67.0,2.0,35.0,-12.05,0.0,-1.19,-9.17,-9.62,-15.71,48.0,Lagging,cyclical
+GLD,Group,Gold & Silver,Gold,12,-15,68.0,-13.0,40.0,-8.99,0.0,-3.82,-6.02,-7.8,-27.55,,Lagging,defensive
+KWEB,Group,China,China Internet,11,9,69.0,9.0,25.0,-8.13,0.0,1.26,-5.13,-17.97,-38.18,50.0,Lagging,growth
+SLX,Group,Metals & Mining,Steel,9,1,70.0,2.0,35.0,-8.55,0.0,-2.21,-5.57,-8.83,-12.66,47.0,Lagging,cyclical
+SOXX,Group,Semiconductors,Semiconductors (iShares),8,-31,71.0,-24.0,35.0,-23.61,0.0,-10.91,-21.11,-12.62,-28.96,20.0,Lagging,growth
+COPX,Group,Metals & Mining,Copper Miners,8,-9,72.0,-8.0,30.0,-19.51,0.0,-6.66,-16.89,-16.7,-25.65,11.0,Lagging,cyclical
+URNM,Group,Uranium,Uranium Miners,7,-34,73.0,-28.0,35.0,-20.45,0.0,-9.76,-17.85,-22.13,-50.8,0.0,Lagging,cyclical
+ROBO,Group,AI & Robotics,Robotics & Automation,6,-20,74.0,-18.0,35.0,-13.53,0.0,-4.65,-10.71,-10.35,-17.57,50.0,Lagging,growth
+QTUM,Group,Quantum,Quantum Computing,5,-30,75.0,-24.0,40.0,-18.67,0.0,-8.13,-16.02,-11.16,-21.31,25.0,Lagging,growth
+CHAT,Group,AI & Robotics,Generative AI,4,-27,76.0,-23.0,40.0,-25.2,0.0,-10.96,-22.75,-15.74,-28.76,11.0,Lagging,growth
+BOTZ,Group,AI & Robotics,Robotics & AI,3,-19,77.0,-18.0,40.0,-13.47,0.0,-5.02,-10.64,-12.51,-22.32,44.0,Lagging,growth
+CARZ,Group,Autos & EV,Automobiles,2,-11,78.0,-11.0,35.0,-17.42,0.0,-7.46,-14.72,-11.14,-23.58,47.0,Lagging,growth
+NCLD,Group,AI Infrastructure,Neocloud / GPU-as-a-Service,,,,,35.0,-38.82,0.0,-13.78,-36.82,-31.23,,0.0,,growth
+LYTE,Group,AI Infrastructure,Photonics / Optics,,,,,45.0,-42.88,0.0,-22.19,-41.01,-37.45,,0.0,,growth
+RSP,Index,Benchmark,S&P 500 Equal Weight,73,0,1.0,0.0,0.0,0.0,0.0,0.84,3.26,0.69,-1.21,,,neutral
+TLT,Index,Long Bonds,20+ Year Treasury Bonds,70,4,2.0,1.0,45.0,1.64,0.0,0.15,4.96,-1.33,-8.3,,Lagging,defensive
+SPY,Index,S&P 500,S&P 500,38,-29,3.0,-1.0,40.0,-6.24,0.0,-2.33,-3.18,-1.61,-3.18,,Lagging,neutral
+DIA,Index,Dow 30,Dow 30,35,-24,4.0,0.0,35.0,-2.67,0.0,-1.45,0.51,-3.6,-4.42,,Lagging,neutral
+IWM,Index,Small Caps,Russell 2000,25,-4,5.0,3.0,35.0,-3.69,0.0,-0.53,-0.55,-5.94,-8.05,,Improving,cyclical
+QQQE,Index,Nasdaq-100 EW,Nasdaq-100 Equal Weight,21,-32,6.0,-1.0,40.0,-8.7,0.0,-3.26,-5.72,-3.26,-6.88,,Lagging,growth
+QQQ,Index,Nasdaq-100,Nasdaq-100,17,-35,7.0,-1.0,35.0,-12.64,0.0,-5.56,-9.79,-4.01,-9.79,,Lagging,growth
+SPMO,Index,Momentum,S&P 500 Momentum,3,-27,8.0,-1.0,35.0,-15.71,0.0,-8.1,-12.96,-10.55,-17.5,,Lagging,growth
+IEF,Macro,Treasuries,7-10 Year Treasuries,46,1,1.0,0.0,30.0,-0.96,0.0,0.34,2.28,-1.57,-4.79,,Lagging,neutral
+HYG,Macro,Credit,High Yield Corporate Bonds,10,-17,2.0,0.0,45.0,-3.52,0.0,-0.79,-0.38,-2.59,-3.15,,Lagging,neutral
+XLV,SPDR Sector,Health Care,Health Care,99,17,1.0,2.0,55.0,6.65,0.0,2.39,10.13,12.33,-0.46,82.0,Weakening,defensive
+XLP,SPDR Sector,Consumer Staples,Consumer Staples,97,14,2.0,0.0,40.0,5.3,0.0,2.43,8.74,5.2,-2.07,78.0,Leading,defensive
+XLB,SPDR Sector,Materials,Materials,85,8,3.0,1.0,55.0,2.41,0.0,1.41,5.75,1.27,-2.01,75.0,Leading,cyclical
+XLE,SPDR Sector,Energy,Energy,84,-9,4.0,-3.0,45.0,1.29,0.0,-2.59,4.6,15.33,-4.77,62.0,Weakening,cyclical
+XLF,SPDR Sector,Financials,Financials,81,19,5.0,2.0,65.0,2.54,0.0,1.89,5.89,-0.72,-1.99,70.0,Improving,cyclical
+XLU,SPDR Sector,Utilities,Utilities,79,15,6.0,0.0,55.0,2.16,0.0,2.19,5.49,0.83,-7.13,87.0,Leading,defensive
+XLRE,SPDR Sector,Real Estate,Real Estate,78,60,7.0,2.0,60.0,2.89,0.0,3.66,6.25,-1.72,-4.29,67.0,Leading,defensive
+XLY,SPDR Sector,Consumer Discretionary,Consumer Discretionary,74,2,8.0,-3.0,40.0,1.7,0.0,1.73,5.02,-0.43,-5.19,74.0,Leading,growth
+XLI,SPDR Sector,Industrials,Industrials,32,20,9.0,1.0,35.0,-3.31,0.0,1.68,-0.15,-7.03,-7.9,70.0,Improving,cyclical
+XLK,SPDR Sector,Technology,Technology,17,-41,10.0,-2.0,35.0,-15.38,0.0,-7.59,-12.62,-4.65,-12.62,39.0,Lagging,growth
+XLC,SPDR Sector,Communication Services,Communication Services,14,5,11.0,0.0,30.0,-12.02,0.0,-1.65,-9.14,-8.46,-14.75,36.0,Lagging,growth
+IVE,Segment,Large Value,Large-Cap 500 Value,83,-9,1.0,0.0,50.0,-0.37,0.0,-0.38,2.88,1.99,-1.26,,Lagging,cyclical
+IJJ,Segment,Mid Value,MidCap 400 Value,64,14,2.0,2.0,55.0,0.39,0.0,1.74,3.67,-1.49,-3.06,,Improving,cyclical
+IJS,Segment,Small Value,Small-Cap 600 Value,48,-7,3.0,0.0,45.0,-1.25,0.0,0.76,1.98,-3.01,-4.95,,Improving,cyclical
+IJH,Segment,Mid Cap,MidCap 400,42,14,4.0,3.0,45.0,-2.99,0.0,1.06,0.18,-3.12,-5.48,,Lagging,cyclical
+IJR,Segment,Small Cap,Small-Cap 600,41,8,5.0,1.0,50.0,-1.63,0.0,0.92,1.58,-4.23,-5.9,,Improving,cyclical
+IVV,Segment,Large Cap,S&P 500,40,-28,6.0,-4.0,40.0,-6.21,0.0,-2.29,-3.15,-1.56,-3.15,,Lagging,neutral
+IJT,Segment,Small Growth,Small-Cap 600 Growth,31,6,7.0,1.0,45.0,-2.14,0.0,1.03,1.06,-5.63,-7.28,,Improving,growth
+IJK,Segment,Mid Growth,MidCap 400 Growth,27,10,8.0,1.0,40.0,-6.18,0.0,0.43,-3.12,-4.71,-7.88,,Lagging,growth
+IVW,Segment,Large Growth,Large-Cap 500 Growth,16,-34,9.0,-4.0,40.0,-10.84,0.0,-4.02,-7.92,-4.57,-7.92,,Lagging,growth
