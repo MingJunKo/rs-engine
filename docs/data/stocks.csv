@@ -489,11 +489,6 @@ FIVE,Five Below Inc.,Retail,84,6,60.0,9.16,252.01,7.48,20.05,9.04,-4.08,3.34,200
 CHH,Choice Hotels International Inc.,Consumer Discretionary,84,29,70.0,8.6,120.33,9.37,16.76,9.66,-1.18,3.23,64630942.13,4.16,False,True,00111-0,,,
 SEPN,Septerna Inc.,Pharma,84,-3,65.0,20.27,47.88,8.2,34.23,21.12,-0.64,6.57,14095882.83,3.38,True,True,0010110,155.0,26.02,XPH
 BOOM,DMC Global Inc.,Medical Devices,84,-13,35.0,10.6,7.9,2.2,32.11,5.05,-15.51,6.96,6236322.55,2.71,False,True,10011-0,,,
-APPF,AppFolio Inc.,Software & Cloud,84,19,50.0,15.61,236.85,15.54,16.5,22.02,-9.12,4.75,91098294.95,2.33,False,True,1010100,397.0,0.0,WCLD XSW
-FHI,Federated Hermes Inc.,Capital Markets,84,42,50.0,6.81,65.73,15.76,16.21,4.55,0.0,2.82,53051086.66,4.07,True,True,0010100,392.0,-1.75,KCE
-BNS,Bank Nova Scotia Halifax Pfd 3,Financials,84,4,60.0,4.29,96.43,2.0,6.88,10.16,0.0,1.45,107405902.62,2.9,True,True,00101-0,,,
-FIVE,Five Below Inc.,Retail,84,6,60.0,9.16,252.01,7.48,20.05,9.04,-4.08,3.34,200095847.05,2.29,True,True,1010100,609.0,-3.18,XRT
-ROL,Rollins Inc.,Industrials,84,36,60.0,10.3,38.38,14.57,26.46,4.72,-40.83,3.22,260421256.21,4.05,False,True,0000100,832.0,-0.48,XLI
 BRO,Brown & Brown Inc.,Financials,84,32,65.0,8.05,73.89,12.44,21.5,4.31,-9.34,2.98,190309219.02,3.05,False,True,0010100,809.0,-0.74,KIE XLF
 PM,Philip Morris International Inc,Consumer Staples,84,9,55.0,7.16,211.28,4.26,10.97,12.35,0.0,2.55,937571072.55,3.12,True,True,0011110,2924.0,2.09,XLP
 AVBH,Avidbank Holdings Inc. Common stock,Financials,84,-3,50.0,4.5,34.92,3.62,11.14,7.12,-0.09,1.97,2516919.08,4.13,True,True,--111-0,,,
@@ -578,7 +573,6 @@ TEVA,Teva Pharmaceutical Industries Limited,Pharma,81,18,45.0,9.75,41.85,4.7,6.9
 PRSU,Pursuit Attractions and Hospitality Inc.,Leisure & Travel,81,14,60.0,9.06,56.5,5.31,7.15,18.52,0.0,3.2,17223671.73,2.87,True,True,1011110,205.0,14.53,PEJ
 UCB,United Community Banks Inc.,Banks,81,-4,55.0,4.18,37.66,3.01,11.68,6.27,0.0,2.22,40680949.59,3.28,True,True,0010110,374.0,5.65,KBE KRE
 MLM,Martin Marietta Materials Inc.,Materials,81,28,55.0,4.49,556.56,9.13,13.81,3.56,-21.07,2.57,476532459.7,3.69,False,True,0000110,1076.0,0.19,PAVE XLB
-LMB,Limbach Holdings Inc.,Consumer Discretionary,81,37,60.0,13.91,58.11,14.57,13.16,21.24,-49.08,4.72,10551733.36,3.04,False,True,11011-0,,,
 MICC,The Magnum Ice Cream Company N.V.,Consumer Staples,81,13,60.0,6.41,20.14,4.35,17.23,6.45,-1.37,1.91,16138650.83,2.25,True,True,-0101-0,,,
 CBRL,Cracker Barrel Old Country Store Inc,Consumer Discretionary,81,-15,65.0,15.78,70.27,-0.85,25.23,21.15,-3.01,4.32,60368306.58,4.5,True,True,10111-0,,,
 ETR,Entergy Corporation,Infrastructure,81,5,55.0,2.85,111.9,3.73,8.38,5.71,-4.08,1.71,316316445.5,3.56,False,True,1010110,1332.0,3.58,IFRA XLU
