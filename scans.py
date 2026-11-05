@@ -19,6 +19,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import re
 import time
 from pathlib import Path
 
@@ -115,37 +116,76 @@ def btw(s, lo, hi):
     return (s >= lo) & (s <= hi)
 
 
-def screens(d: pd.DataFrame) -> dict[str, pd.Series]:
+def conditions(d: pd.DataFrame) -> dict[str, list[tuple[str, pd.Series]]]:
+    """Each screen as labelled conditions, so a stock can show exactly which filter it missed."""
     B10 = 10e9
-    base10 = (d.mcap > B10) & (d.float < 150e6) & btw(d.sma10_gap, 0, 10) & (d.above_low >= 100) \
-        & (d.avg_vol60 > 300e3) & (d.vol > 100e3)
-    small = btw(d.mcap, 300e6, B10) & (d.above_low >= 100) & (d.avg_vol60 > 300e3) & (d.float < 50e6) \
-        & btw(d.sma10_gap, 0, 20) & (d.vol > 100e3)
-    S = {
-        "s1":  (d.mcap > 300e6) & (d.above_low >= 50) & (d.avg_vol60 > 300e3) & (d.vol > 100e3) & (d.float < 50e6)
-               & btw(d.ema5_gap, 0, 3) & d.sma10_gt_20 & btw(d.perf_1w, -5, 5) & (d.volat_1m > 3.5),
-        "s2":  base10 & (d.volat_1m > 3) & (d.perf_6m > 50),
-        "s3":  base10 & (d.volat_1m > 3) & (d.perf_3m > 70),
-        "s4":  base10 & (d.perf_1m > 30),
-        "s5":  base10 & (d.perf_1w > 20),
-        "s6":  (d.mcap > 50e6) & d.above_sma20 & d.pe_gap_recent & (d.float < 150e6) & (d.avg_vol60 > 250e3),
-        "s7":  (d.mcap > B10) & (d.eps_q_yoy > 25) & (d.rev_q_yoy > 25) & (d.avg_vol60 > 500e3) & (d.float < 300e6)
-               & btw(d.sma10_gap, 0, 3) & (d.volat_1m > 2) & (d.above_low >= 70),
-        "s8":  (d.mcap > 300e6) & (d.eps_q_yoy > 25) & (d.rev_q_yoy > 25) & (d.avg_vol60 > 300e3) & (d.float < 100e6)
-               & (d.fcf_yoy > 25) & (d.above_low >= 70),
-        "s9":  btw(d.mcap, 300e6, B10) & (d.eps_q_yoy > 25) & (d.rev_q_yoy > 25) & (d.above_low >= 70)
-               & (d.avg_vol60 > 500e3) & (d.float < 50e6) & btw(d.sma10_gap, 0, 10) & (d.volat_1m > 3) & d.above_sma50,
-        "s10": small & (d.perf_6m > 100) & (d.volat_1m > 3),
-        "s11": small & (d.perf_3m > 70) & (d.volat_1m > 3),
-        "s12": small & (d.perf_1m > 30),
-        "s13": small & (d.perf_1w > 20),
-        "s14": (d.mcap > 2e9) & (d.rev_q_yoy > 25) & (d.sales_ttm_yoy > 25) & (d.inst_chg > 0) & (d.volat_1w > 4)
-               & d.above_low20 & d.above_low50 & (d.avg_vol60 > 2e6) & (d.vol > 1e6),
-        # weekly RS scan → straight into WL6
-        "s27": (d.mcap > 150e6) & (d.rev_q_yoy > 25) & d.ema10_gt_sma20 & (d.adr > 3.5) & (d.vol > 500e3)
-               & btw(d.perf_1w, -5, 5) & (d.avg_vol60 > 1e6) & d.above_sma50,
+    C = lambda lbl, ser: (lbl, ser.fillna(False).astype(bool))
+    cap10 = [C("Mkt cap > $10B", d.mcap > B10), C("Float < 150M sh", d.float < 150e6),
+             C("0–10% above SMA10", btw(d.sma10_gap, 0, 10)), C("≥ 100% above 52W low", d.above_low >= 100),
+             C("Avg vol 60D > 300K", d.avg_vol60 > 300e3), C("Vol > 100K", d.vol > 100e3)]
+    small = [C("Mkt cap $300M–10B", btw(d.mcap, 300e6, B10)), C("≥ 100% above 52W low", d.above_low >= 100),
+             C("Avg vol 60D > 300K", d.avg_vol60 > 300e3), C("Float < 50M sh", d.float < 50e6),
+             C("0–20% above SMA10", btw(d.sma10_gap, 0, 20)), C("Vol > 100K", d.vol > 100e3)]
+    v3 = C("Volatility 1M > 3%", d.volat_1m > 3)
+    eps = C("EPS Q YoY > 25%", d.eps_q_yoy > 25)
+    rev = C("Rev Q YoY > 25%", d.rev_q_yoy > 25)
+    return {
+        "s1": [C("Mkt cap > $300M", d.mcap > 300e6), C("≥ 50% above 52W low", d.above_low >= 50),
+               C("Avg vol 60D > 300K", d.avg_vol60 > 300e3), C("Vol > 100K", d.vol > 100e3), C("Float < 50M sh", d.float < 50e6),
+               C("0–3% above 5-EMA", btw(d.ema5_gap, 0, 3)), C("SMA10 > SMA20", d.sma10_gt_20),
+               C("1W −5% to +5%", btw(d.perf_1w, -5, 5)), C("Volatility 1M > 3.5%", d.volat_1m > 3.5)],
+        "s2": cap10 + [v3, C("6M > +50%", d.perf_6m > 50)],
+        "s3": cap10 + [v3, C("3M > +70%", d.perf_3m > 70)],
+        "s4": cap10 + [C("1M > +30%", d.perf_1m > 30)],
+        "s5": cap10 + [C("1W > +20%", d.perf_1w > 20)],
+        "s6": [C("Mkt cap > $50M", d.mcap > 50e6), C("Above SMA20", d.above_sma20),
+               C("Gap > 5% on 2× vol (5d)", d.pe_gap_recent), C("Float < 150M sh", d.float < 150e6),
+               C("Avg vol 60D > 250K", d.avg_vol60 > 250e3)],
+        "s7": [C("Mkt cap > $10B", d.mcap > B10), eps, rev, C("Avg vol 60D > 500K", d.avg_vol60 > 500e3),
+               C("Float < 300M sh", d.float < 300e6), C("0–3% above SMA10", btw(d.sma10_gap, 0, 3)),
+               C("Volatility 1M > 2%", d.volat_1m > 2), C("≥ 70% above 52W low", d.above_low >= 70)],
+        "s8": [C("Mkt cap > $300M", d.mcap > 300e6), eps, rev, C("Avg vol 60D > 300K", d.avg_vol60 > 300e3),
+               C("Float < 100M sh", d.float < 100e6), C("FCF growth > 25%", d.fcf_yoy > 25), C("≥ 70% above 52W low", d.above_low >= 70)],
+        "s9": [C("Mkt cap $300M–10B", btw(d.mcap, 300e6, B10)), eps, rev, C("≥ 70% above 52W low", d.above_low >= 70),
+               C("Avg vol 60D > 500K", d.avg_vol60 > 500e3), C("Float < 50M sh", d.float < 50e6),
+               C("0–10% above SMA10", btw(d.sma10_gap, 0, 10)), v3, C("Above SMA50", d.above_sma50)],
+        "s10": small + [C("6M > +100%", d.perf_6m > 100), v3],
+        "s11": small + [C("3M > +70%", d.perf_3m > 70), v3],
+        "s12": small + [C("1M > +30%", d.perf_1m > 30)],
+        "s13": small + [C("1W > +20%", d.perf_1w > 20)],
+        "s14": [C("Mkt cap > $2B", d.mcap > 2e9), C("Sales Q/Q > 25%", d.rev_q_yoy > 25), C("Sales TTM > 25%", d.sales_ttm_yoy > 25),
+                C("13F shares rising", d.inst_chg > 0), C("Volatility week > 4%", d.volat_1w > 4),
+                C("≥ 5% above 20D low", d.above_low20), C("≥ 5% above 50D low", d.above_low50),
+                C("Avg vol > 2M", d.avg_vol60 > 2e6), C("Vol > 1M", d.vol > 1e6)],
+        "s27": [C("Mkt cap > $150M", d.mcap > 150e6), rev, C("EMA10 > SMA20", d.ema10_gt_sma20), C("ADR > 3.5%", d.adr > 3.5),
+                C("Vol > 500K", d.vol > 500e3), C("1W −5% to +5%", btw(d.perf_1w, -5, 5)), C("Avg vol 60D > 1M", d.avg_vol60 > 1e6),
+                C("Above SMA50", d.above_sma50)],
     }
-    return {k: v.fillna(False).astype(bool) for k, v in S.items()}
+
+
+def screens(d: pd.DataFrame, conds=None) -> dict[str, pd.Series]:
+    conds = conds or conditions(d)
+    return {k: pd.concat([c for _, c in v], axis=1).all(axis=1) for k, v in conds.items()}
+
+
+def why(d, conds, member, tb, ta, bio, final):
+    """Per stock: the screen it came closest to (fewest misses) and what it missed, plus the tightness check."""
+    keys = list(conds)
+    miss = {k: pd.concat([~c for _, c in conds[k]], axis=1) for k in keys}
+    nmiss = pd.DataFrame({k: m.sum(axis=1) for k, m in miss.items()})
+    labels = {k: [l for l, _ in conds[k]] for k in keys}
+    tcommon = [("SMA10 > SMA20", d.sma10_gt_20), ("1W < 5%", d.perf_1w < 5), ("Volatility 1M > 3.5%", d.volat_1m > 3.5),
+               ("Within 5% of the 5-EMA", d.ema5_gap.abs() <= 5)]
+    out = {}
+    for t in d.index:
+        best = nmiss.loc[t].sort_values(kind="stable")
+        k = best.index[0]
+        rec = {"best": k, "miss": [labels[k][i] for i, m in enumerate(miss[k].loc[t].values) if m]}
+        if member[t]:
+            rec["tight_miss"] = [l for l, ser in tcommon if not bool(ser.fillna(False).get(t))]
+        rec["final"] = bool(final.get(t)); rec["bio"] = bool(bio.get(t))
+        out[t] = rec
+    return out
 
 
 WATCHLISTS = [("WL1", "Daily Tightness Swing", ["s1"]),
@@ -277,7 +317,8 @@ def run_scans(ctx: dict) -> dict:
     S_ = [t for t in stk.index if t in c.columns]
     o, h, l, c, v = (x[S_] for x in (o, h, l, c, v))
     d = fields(o, h, l, c, v, ctx["names"], ctx["F"], ctx["inst"], ctx["yoy"])
-    S = screens(d)
+    conds = conditions(d)
+    S = screens(d, conds)
     tb, ta = tight(d)
     bio = is_biotech(d, stk)
     turn_th = {g["theme"] for g in turners}
@@ -317,18 +358,26 @@ def run_scans(ctx: dict) -> dict:
                 "biotech": bool(bio.get(t)), "spark_px": [round(float(x), 2) for x in c[t].tail(22)]}
 
     rows = [row(t) for t in d.index[final]]
+    try:                                                    # "why isn't X on the list?" lookup, loaded on demand
+        W = why(d, conds, member, tb, ta, bio, final)
+        (ROOT / "docs" / "data").mkdir(parents=True, exist_ok=True)
+        (ROOT / "docs" / "data" / "scan_why.json").write_text(json.dumps(W, separators=(",", ":")))
+    except Exception as e:
+        print("  scan lookup skipped:", e)
     rows.sort(key=lambda x: (-(x["lead_theme"] + x["both"] + x["leader"]), -(x["rs_rating"] or 0)))
 
     eps = ep_scan(o, h, l, c, v, d)
     para = parabolic_scan(o, h, l, c, v, d)
-    news = catalysts([e["symbol"] for e in eps if e["days_ago"] <= 1][:15] + [p["symbol"] for p in para][:8]) \
+    news = catalysts([e["symbol"] for e in eps if e["days_ago"] <= 2][:25] + [p["symbol"] for p in para][:8]) \
         if ctx.get("live") else {}
     for e in eps + para:
         t = e["symbol"]
         r = stk.loc[t]
         e.update({"name": r["name"], "exchange": r.exchange, "theme": r.theme, "rs_rating": None if pd.isna(r.rs_rating) else int(r.rs_rating),
-                  "earnings_gap": bool(e.get("date") and d.at[t, "last_eps_date"] and
-                                       abs((pd.Timestamp(e["date"]) - pd.Timestamp(d.at[t, "last_eps_date"])).days) <= 3),
+                  "earnings_gap": bool((e.get("date") and d.at[t, "last_eps_date"] and
+                                        abs((pd.Timestamp(e["date"]) - pd.Timestamp(d.at[t, "last_eps_date"])).days) <= 3)
+                                       or any(re.search(r"\bearnings\b|\bQ[1-4]\b|quarter|results|guidance|revenue", n.get("title") or "", re.I)
+                                              for n in news.get(t, [])[:3])),
                   "news": news.get(t, []), "cs": r.get("cs"), "mcap_b": _r(d.at[t, "mcap"] / 1e9, 2),
                   "short_pct": d.at[t, "short_pct"], "spark_px": [round(float(x), 2) for x in c[t].tail(30)]})
 
