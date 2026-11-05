@@ -50,11 +50,11 @@ def main():
     log(f"{len(tickers)} stocks · scanning pre-market")
 
     import yfinance as yf
-    rows = []
+    rows, seen_pm, seen_any = [], 0, 0
     for i in range(0, len(tickers), 150):
         part = tickers[i:i + 150]
         try:
-            df = yf.download([t.replace(".", "-") for t in part], period="1d", interval="5m", prepost=True,
+            df = yf.download([t.replace(".", "-") for t in part], period="5d", interval="5m", prepost=True,
                              group_by="ticker", threads=True, progress=False, auto_adjust=False)
         except Exception as e:
             log(f"  chunk {i // 150 + 1} failed: {e}"); continue
@@ -68,16 +68,19 @@ def main():
             sub = sub.dropna(subset=["Close"])
             if sub.empty:
                 continue
-            ix = sub.index.tz_convert(NY) if sub.index.tz is not None else sub.index
+            seen_any += 1
+            ix = sub.index.tz_convert(NY) if sub.index.tz is not None else sub.index.tz_localize("UTC").tz_convert(NY)
             pm = sub[(ix.date == now.date()) & (ix.time < dt.time(9, 30))]
             if pm.empty:
                 continue
+            seen_pm += 1
             last, vol = float(pm.Close.iloc[-1]), float(pm.Volume.sum())
             gap = (last / prev[t] - 1) * 100
             if gap >= MIN_GAP and vol >= MIN_PM_VOL and last * vol >= MIN_PM_DVOL:
                 rows.append({"symbol": t, "gap": round(gap, 1), "pm_price": round(last, 2), "prev_close": round(prev[t], 2),
                              "pm_vol_k": int(vol / 1000)})
         time.sleep(1)
+    log(f"{seen_any} tickers returned data, {seen_pm} had pre-market bars today")
     rows.sort(key=lambda r: -r["gap"])
     rows = rows[:25]
     log(f"{len(rows)} pre-market gappers ≥ {MIN_GAP}%")
