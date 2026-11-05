@@ -31,11 +31,15 @@ def score(i, o, h, l, c):
     """Score one signal at bar i on numpy arrays of one stock."""
     n = len(c)
     piv = np.nanmax(h[max(0, i - 19):i + 1])
-    stop = np.nanmin(l[max(0, i - 9):i + 1])
-    out = {"pivot": piv, "stop": stop, "status": "waiting", "R": None, "mfe": None, "entry": None, "days": None}
+    base = np.nanmin(l[max(0, i - 9):i + 1])
+    # stop = under the prior day's low (known when you buy), never below the tight area's low
+    out = {"pivot": piv, "stop": max(base, l[n - 1]) if np.isfinite(l[n - 1]) else base, "status": "waiting",
+           "R": None, "mfe": None, "entry": None, "days": None}
     for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
         if h[j] > piv:
             entry = max(o[j], piv) if np.isfinite(o[j]) else piv
+            stop = max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base
+            out["stop"] = stop
             risk = entry - stop
             if not (risk > 0):
                 out["status"] = "bad risk"; return out
@@ -68,11 +72,12 @@ def manage(i, o, h, l, c, sma, rule):
     """Your selling rules. Same entry and initial stop as score(); exits at the close when price closes below the
     trailing average. Returns total R (weighted for the partial sale), status, exit bar."""
     n = len(c)
-    piv = np.nanmax(h[max(0, i - 19):i + 1]); stop = np.nanmin(l[max(0, i - 9):i + 1])
+    piv = np.nanmax(h[max(0, i - 19):i + 1]); base = np.nanmin(l[max(0, i - 9):i + 1])
     for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
         if h[j] <= piv:
             continue
         entry = max(o[j], piv) if np.isfinite(o[j]) else piv
+        stop = max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base
         risk = entry - stop
         if not (risk > 0):
             return None
@@ -92,6 +97,103 @@ def manage(i, o, h, l, c, sma, rule):
         done = j + MAX_HOLD <= n
         return {"R": banked + (1 - part) * (c[k] - entry) / risk, "status": "closed" if done else "running", "exit": k}
     return None
+
+
+def path(i, o, h, l, c, sma, nochase=0.02):
+    """The recommended trade, step by step, for the portfolio simulation: buy the pivot break (skip if it opens
+    > 2% over), stop under the prior day's low, sell ⅓ on day 3 if in profit (stop → breakeven), trail the rest
+    on the 10-day. Returns entry bar/price, stop and the sell events [(bar, fraction of the position, price)]."""
+    n = len(c)
+    piv = np.nanmax(h[max(0, i - 19):i + 1]); base = np.nanmin(l[max(0, i - 9):i + 1])
+    for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
+        if not (h[j] > piv):
+            continue
+        if nochase and o[j] > piv * (1 + nochase):
+            return None
+        entry = max(o[j], piv) if np.isfinite(o[j]) else piv
+        stop = max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base
+        if not (entry - stop > 0):
+            return None
+        left, st, ev = 1.0, stop, []
+        for k in range(j, min(n, j + MAX_HOLD)):
+            if l[k] <= st:
+                ev.append((k, left, st if k == j else min(o[k], st)))
+                return {"j": j, "entry": entry, "stop": stop, "events": ev}
+            if left == 1.0 and k == j + 3 and c[k] > entry:
+                ev.append((k, 1 / 3, c[k])); left, st = 2 / 3, max(st, entry)
+            if left < 1.0 and k > j + 3 and c[k] < sma[k]:
+                ev.append((k, left, c[k]))
+                return {"j": j, "entry": entry, "stop": stop, "events": ev}
+        k = min(n, j + MAX_HOLD) - 1
+        if j + MAX_HOLD <= n:
+            ev.append((k, left, c[k]))
+        return {"j": j, "entry": entry, "stop": stop, "events": ev}
+    return None
+
+
+def setup_signals(c, h, l, v, rating, rating_min=80, min_adr=2.5, min_price=5, min_dv=10e6, atr=None):
+    """The SETUP flag for every day (wide frames)."""
+    sma50 = c.rolling(50).mean()
+    a = atr(h, l, c)
+    adr = (h / l - 1).rolling(20).mean() * 100
+    pivot_dist = (c / h.rolling(20).max() - 1) * 100
+    tight = ((h.rolling(10).max() - l.rolling(10).min()) / c * 100) / adr
+    ext = (c - sma50) / a
+    dv = (c * v).rolling(20).mean()
+    return ((pivot_dist >= -6) & (tight <= 2.5) & (ext >= 0) & (ext <= 4) & (rating >= rating_min) & (c > sma50)
+            & (adr >= min_adr) & (c >= min_price) & (dv >= min_dv))
+
+
+def portfolio(trades, idx, C, start_cash=100_000.0, risk=0.005, max_pos=8, max_weight=0.25):
+    """Day-by-day book: up to max_pos positions, each sized to lose `risk` of equity at its stop (capped at
+    max_weight of equity and the cash available), signals taken highest RS first, profits compounded."""
+    by_entry = {}
+    for t in trades:
+        by_entry.setdefault(t["j"], []).append(t)
+    first = min(by_entry) if by_entry else len(idx) - 1
+    cash = start_cash
+    open_, eq_prev, curve, closed = [], cash, [], []
+    for d in range(first, len(idx)):
+        for t in sorted(by_entry.get(d, []), key=lambda x: -(x.get("rs") or 0)):
+            if len(open_) >= max_pos:
+                break
+            sh = eq_prev * risk / (t["entry"] - t["stop"])
+            sh = min(sh, eq_prev * max_weight / t["entry"], cash / t["entry"])
+            if sh * t["entry"] < 500:
+                continue
+            cash -= sh * t["entry"]
+            open_.append({**t, "sh": sh, "left": sh, "pnl": 0.0})
+        still = []
+        for p in open_:
+            for k, frac, px in p["events"]:
+                if k == d:
+                    q = min(p["left"], frac * p["sh"])
+                    cash += q * px; p["left"] -= q; p["pnl"] += q * (px - p["entry"])
+            if p["left"] > 1e-9:
+                still.append(p)
+            else:
+                closed.append({"sym": p["sym"], "date": idx[p["j"]].strftime("%Y-%m-%d"), "pnl": round(p["pnl"]),
+                               "R": round(p["pnl"] / (p["sh"] * (p["entry"] - p["stop"])), 2)})
+        open_ = still
+        mv = sum(p["left"] * (C[d, p["jx"]] if np.isfinite(C[d, p["jx"]]) else p["entry"]) for p in open_)
+        eq = cash + mv
+        curve.append((idx[d].strftime("%Y-%m-%d"), round(eq), round(mv / eq * 100) if eq else 0))
+        eq_prev = eq
+    eqs = np.array([x[1] for x in curve], float)
+    peak = np.maximum.accumulate(eqs) if len(eqs) else eqs
+    dd = float(((eqs / peak) - 1).min() * 100) if len(eqs) else 0.0
+    yrs = max(0.25, (idx[-1] - idx[first]).days / 365.25)
+    R = np.array([t["R"] for t in closed]) if closed else np.array([])
+    return {"curve": curve[::max(1, len(curve) // 600)] + ([curve[-1]] if curve else []),
+            "start": start_cash, "end": round(float(eqs[-1])) if len(eqs) else None,
+            "ret": round((eqs[-1] / start_cash - 1) * 100, 1) if len(eqs) else None,
+            "cagr": round(((eqs[-1] / start_cash) ** (1 / yrs) - 1) * 100, 1) if len(eqs) else None,
+            "max_dd": round(dd, 1), "trades": len(closed), "open": len(open_),
+            "win": round(100 * float((R > 0).mean())) if len(R) else None,
+            "avg_R": round(float(R.mean()), 2) if len(R) else None,
+            "exposure": round(float(np.mean([x[2] for x in curve])), 0) if curve else None,
+            "best": sorted(closed, key=lambda x: -x["pnl"])[:8], "years": round(yrs, 1),
+            "from": idx[first].strftime("%d %b %Y")}
 
 
 LOSS_TESTS = [
@@ -250,6 +352,7 @@ def run_tracker(ctx: dict) -> dict:
     S10, S20 = c.rolling(10).mean().values, c.rolling(20).mean().values
     Av = atr(h, l, c).values
     lossv = {name: [] for name, _ in LOSS_TESTS}
+    book = []
     RO = ctx["riskon"].reindex(idx).values if ctx.get("riskon") is not None else None
     BR = ctx["breadth"].reindex(idx).values if ctx.get("breadth") is not None else None
     IT = ctx["in_top"].reindex(idx) if ctx.get("in_top") is not None else None
@@ -280,6 +383,9 @@ def run_tracker(ctx: dict) -> dict:
                 if m:
                     managed[rule].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, **m, **attrs(i, jx, t)})
             at_ = attrs(i, jx, t)
+            pth = path(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], S10[:, jx])
+            if pth:
+                book.append({**pth, "jx": jx, "sym": t, "rs": _i(rating.iat[i, jx]), "top": at_["top"]})
             if at_["top"]:                                   # loss tests run on the recommended set: top-theme setups
                 for name, opt in LOSS_TESTS:
                     m = manage_v(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], S10[:, jx], Av[:, jx], opt)
@@ -352,6 +458,13 @@ def run_tracker(ctx: dict) -> dict:
     months = sorted({r["date"][:7] for r in bt})
     by_month = [{"label": m, **stats([r for r in bt if r["date"][:7] == m])} for m in months]
     gates = {"q10": gate_test(managed["q10"], idx), "fixed20": gate_test(managed["fixed20"], idx)}
+    pf_top = portfolio([b for b in book if b["top"]], idx, C)
+    pf_all = portfolio(book, idx, C)
+    f0 = idx.get_loc(pd.Timestamp(pf_top["from"])) if pf_top.get("from") else 0
+    bser = bench.reindex(idx).iloc[f0:]
+    bench_curve = [(d.strftime("%Y-%m-%d"), round(100_000 * v / bser.iloc[0])) for d, v in bser.items()][::max(1, len(bser) // 600)]
+    portfolio_out = {"top": pf_top, "all": pf_all, "bench": bench_curve,
+                     "bench_ret": round((bser.iloc[-1] / bser.iloc[0] - 1) * 100, 1)}
     loss_tests = []
     for name, _ in LOSS_TESTS:
         tr = lossv[name]
@@ -367,7 +480,7 @@ def run_tracker(ctx: dict) -> dict:
     top = sorted(managed["q10"], key=lambda t: -t["R"])[:12]
     curves["top_q10"] = [{"symbol": t["sym"], "date": idx[t["i"]].strftime("%Y-%m-%d"), "R": round(t["R"], 1),
                           "exit": idx[t["exit"]].strftime("%Y-%m-%d"), "status": t["status"]} for t in top]
-    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves, "gates": gates, "loss_tests": loss_tests,
+    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves, "gates": gates, "loss_tests": loss_tests, "portfolio": portfolio_out,
             "backtest": {"summary": stats(bt), "by_rs": by_rs, "by_tight": by_tight, "by_adr": by_adr, "by_mkt": by_mkt, "by_month": by_month,
                          "from": idx[start].strftime("%d %b %Y"), "base_ret20": base_ret20, "bench_ret20": bench_ret20,
                          "recent": sorted([r for r in bt if r["status"] in ("running", "waiting")], key=lambda r: r["date"], reverse=True)[:40]},

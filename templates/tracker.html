@@ -32,7 +32,7 @@
 <body>
 <nav><div class="wrap">
   <span class="brand">MJ — <em>Setup tracker</em></span>
-  <a href="#rcurve">R curve</a><a href="#gates">Gate test</a><a href="#losses">Loss control</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
+  <a href="#book">$100k</a><a href="#rcurve">R curve</a><a href="#gates">Gate test</a><a href="#losses">Loss control</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -43,6 +43,13 @@
     <p class="note2">Every RS-leader <b>SETUP</b> and every <b>Weekly scan</b> name is logged on the day it appears and followed for 20 sessions, scored the way you'd trade it: buy the break of the pivot, stop under the tight area. The backtest rebuilds the same SETUP shape over the past year so there's a track record from day one.</p>
     <div class="kpis" id="kpis"></div>
   </header>
+
+  <section id="book">
+    <div class="sec-head"><h2>$100,000 account</h2><div class="line"></div><p>Top-theme setups · 0.5% risk · max 8 positions · compounding · <a href="../backtest/" style="color:var(--gold)">10-year version →</a></p></div>
+    <div class="kpis" id="bkpis"></div>
+    <div class="card" style="margin-top:12px"><div class="leg" style="display:flex;gap:16px;font-size:11.5px;color:var(--t2);margin-bottom:6px"><span><i style="display:inline-block;width:16px;height:2.5px;background:#e8c070;margin-right:6px;vertical-align:middle"></i>Top-theme setups</span><span><i style="display:inline-block;width:16px;height:2.5px;background:#7c9cff;margin-right:6px;vertical-align:middle"></i>All RS setups</span><span><i style="display:inline-block;width:16px;height:2.5px;background:#8a8478;margin-right:6px;vertical-align:middle"></i>RSP buy &amp; hold</span></div><div id="bchart" style="height:260px"></div></div>
+    <p class="note2">Buy the pivot break (skip if it opens &gt; 2% above it), stop under the prior day's low, ⅓ sold on day 3 if in profit and the stop moved to breakeven, the rest sold on a close below the 10-day. Each position risks 0.5% of the account at its stop (max 25% of the account in one stock); when 8 are open, new signals are skipped. Same caveats as the rest of the page: today's universe, daily bars, no slippage or costs.</p>
+  </section>
 
   <section id="rcurve">
     <div class="sec-head"><h2>How many R over time</h2><div class="line"></div><p>Backtest, RS setups, with your selling rules</p></div>
@@ -142,6 +149,30 @@ function render(){
   table($("#by-adr"), statCols("Daily range"), B.by_adr || []);
   table($("#by-mkt"), statCols("Market"), B.by_mkt || []);
   table($("#by-month"), statCols("Signal month"), B.by_month.slice().reverse());
+
+  // $100k book
+  const PF = D.portfolio;
+  if (PF && PF.top && PF.top.curve) {
+    const T = PF.top, A = PF.all, usd = v => v==null ? '–' : '$' + Math.round(v).toLocaleString();
+    $("#bkpis").innerHTML = [
+      kpi("$100k became", usd(T.end), `${fmt(T.ret)}% since ${T.from}`, true),
+      kpi("Annualised", fmt(T.cagr)+'%', `RSP over the same period ${fmt(PF.bench_ret)}%`),
+      kpi("Worst drawdown", fmt(T.max_dd)+'%', ''),
+      kpi("Trades", T.trades, `win ${T.win??'–'}% · avg ${fmt(T.avg_R,2)}R · ${T.open} open`),
+      kpi("Invested", (T.exposure??'–')+'%', 'average share of the account in stocks'),
+      kpi("Without the theme gate", usd(A.end), `${fmt(A.ret)}% · drawdown ${fmt(A.max_dd)}%`),
+    ].join('');
+    const drawB = () => { const el = $("#bchart"), w = el.clientWidth || 900, h = 260, pl = 56, pb = 22;
+      const S = [[T.curve,"#e8c070",1.8],[A.curve,"#7c9cff",1.2],[PF.bench,"#8a8478",1.2]];
+      const t0 = new Date(T.curve[0][0]).getTime(), t1 = new Date(T.curve[T.curve.length-1][0]).getTime();
+      const v = S.flatMap(s=>s[0].map(p=>p[1])), mn = Math.min(...v), mx = Math.max(...v), r = (mx-mn)||1;
+      const X = d => pl + (new Date(d).getTime()-t0)/((t1-t0)||1)*(w-pl-8), Y = x => 8 + (1-(x-mn)/r)*(h-8-pb);
+      const ticks = [mn, 100000, mx].filter((x,i,a)=>x>=mn&&x<=mx&&a.indexOf(x)===i);
+      el.innerHTML = `<svg width="${w}" height="${h}">${ticks.map(t=>`<line x1="${pl}" x2="${w-8}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t===100000?'#45403a':'#232320'}" stroke-dasharray="${t===100000?'':'2 3'}"/><text x="${pl-6}" y="${Y(t)+3}" fill="#6b645a" font-size="10" text-anchor="end">$${Math.round(t/1000)}k</text>`).join('')}
+        ${S.map(([c,col,sw])=>`<polyline points="${c.map(p=>`${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="${sw}"/>`).join('')}
+        <text x="${pl}" y="${h-5}" fill="#6b645a" font-size="10">${T.curve[0][0]}</text><text x="${w-8}" y="${h-5}" fill="#6b645a" font-size="10" text-anchor="end">${T.curve[T.curve.length-1][0]}</text></svg>`; };
+    drawB(); addEventListener("resize", drawB);
+  } else $("#book").remove();
 
   // R curve
   const CV = D.curves || {}; let rule = "q10", cap = "cap3";

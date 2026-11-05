@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10-Year Backtest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/*__SHARED_CSS__*/
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:8px}
+.kpi{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:12px 14px}
+.kpi .k{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--t4)}
+.kpi .v{font-family:"DM Mono",monospace;font-size:22px;color:var(--t1);margin-top:3px}
+.kpi .s{font-size:11px;color:var(--t3)}
+.kpi.g .v{color:var(--gold-bright)}
+.note2{font-size:12.5px;color:var(--t3);line-height:1.65;max-width:1000px;margin:6px 0 14px}.note2 b{color:var(--t2);font-weight:500}
+.leg{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 8px;font-size:11.5px;color:var(--t2)}.leg i{display:inline-block;width:16px;height:2.5px;margin-right:6px;vertical-align:middle}
+.controls .seg button{background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;font-family:Barlow,sans-serif;font-size:11.5px;cursor:pointer;margin-right:4px}
+.controls .seg button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <span class="brand">MJ — <em>10-year backtest</em></span>
+  <a href="#curve">Equity</a><a href="#years">By year</a><a href="#notes">Read this first</a>
+  <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../tracker/" style="color:var(--gold)">Tracker</a>
+  <span class="asof" id="asof"></span>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>$100,000 <em>on the RS setups</em></h1>
+    <p class="note2">Top-theme RS setups · buy the pivot break (no chasing) · stop under the prior day's low · ⅓ sold on day 3, the rest trailed on the 10-day · 0.5% of equity at risk per trade · max 8 positions · compounding.</p>
+    <div class="kpis" id="kpis"></div>
+  </header>
+  <section id="curve">
+    <div class="sec-head"><h2>Equity curve</h2><div class="line"></div><p id="sub"></p></div>
+    <div class="controls"><span class="seg" id="scale"></span></div>
+    <div class="leg"><span><i style="background:#e8c070"></i>Top-theme setups</span><span><i style="background:#7c9cff"></i>All RS setups</span><span><i style="background:#8a8478"></i><span id="bname"></span> buy &amp; hold</span></div>
+    <div class="card"><div id="chart" style="height:320px"></div></div>
+  </section>
+  <section id="years">
+    <div class="sec-head"><h2>Year by year</h2><div class="line"></div></div>
+    <div class="tbl-wrap"><table class="t" id="ytbl"></table></div>
+    <div class="tbl-wrap" style="margin-top:14px"><table class="t" id="best"></table></div>
+  </section>
+  <section id="notes">
+    <div class="sec-head"><h2>Read this first</h2><div class="line"></div></div>
+    <div class="note2">
+      <b>Survivorship bias — the big one.</b> The stocks are today's universe: companies that still exist and are liquid in 2026. Stocks that went bust or were delisted over the decade are missing, and some of today's names were tiny or unlisted years ago, so their early "setups" are flattered. Real results over 10 years would be lower; treat the early years with the most suspicion.<br>
+      <b>Theme gate.</b> Built from the theme ETFs' RS on each day, using today's holdings; many thematic ETFs launched after 2016, so early-year theme rankings use fewer groups.<br>
+      <b>Execution.</b> Daily bars only: entries at the pivot (or the open if it gaps over), stops assumed hit on the breakout day if the day's low reached them, no slippage or commissions, no taxes. Real fills on fast breakouts are usually worse.<br>
+      <b>Use it for</b> the shape of the curve, the size and length of drawdowns, and the comparison with buy-and-hold, not as a promise of a return.
+    </div>
+  </section>
+  <footer id="footer"></footer>
+</div>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d=1, sign=true) => v==null ? "–" : (sign && v>0 ? "+" : "") + Number(v).toFixed(d);
+const usd = v => v==null ? "–" : "$" + Math.round(v).toLocaleString();
+const kpi = (k, v, s, g) => `<div class="kpi ${g?'g':''}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`;
+let logScale = true;
+function chart(){
+  const el = $("#chart"), w = el.clientWidth || 1000, h = 320, pl = 62, pr = 10, pt = 10, pb = 26;
+  const S = [[D.top.curve, "#e8c070", 1.8], [D.all.curve, "#7c9cff", 1.2], [D.bench, "#8a8478", 1.2]].filter(s => s[0] && s[0].length > 1);
+  const t0 = new Date(S[0][0][0][0]).getTime(), t1 = Math.max(...S.map(s => new Date(s[0][s[0].length-1][0]).getTime()));
+  const vals = S.flatMap(s => s[0].map(p => p[1])), f = v => logScale ? Math.log10(v) : v;
+  const mn = f(Math.min(...vals)), mx = f(Math.max(...vals)), r = (mx-mn) || 1;
+  const X = d => pl + (new Date(d).getTime()-t0)/(t1-t0)*(w-pl-pr), Y = v => pt + (1-(f(v)-mn)/r)*(h-pt-pb);
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  const ticks = logScale ? [25e3,50e3,1e5,2e5,5e5,1e6,2e6,5e6].filter(v => f(v)>=mn-0.02 && f(v)<=mx+0.02) : [0,1,2,3,4].map(i => lo + i*(hi-lo)/4);
+  const yrs = []; for (let y = new Date(t0).getFullYear()+1; y <= new Date(t1).getFullYear(); y++) yrs.push(y);
+  el.innerHTML = `<svg width="${w}" height="${h}">${ticks.map(t=>`<line x1="${pl}" x2="${w-pr}" y1="${Y(t)}" y2="${Y(t)}" stroke="${t===1e5?'#45403a':'#232320'}" stroke-dasharray="${t===1e5?'':'2 3'}"/><text x="${pl-6}" y="${Y(t)+3}" fill="#6b645a" font-size="10" text-anchor="end">${t>=1e6?'$'+(t/1e6)+'M':'$'+Math.round(t/1e3)+'k'}</text>`).join('')}
+    ${yrs.map(y=>{const x=X(y+'-01-01'); return `<line x1="${x}" x2="${x}" y1="${pt}" y2="${h-pb}" stroke="#1d1d1b"/><text x="${x}" y="${h-8}" fill="#6b645a" font-size="10" text-anchor="middle">${y}</text>`;}).join('')}
+    ${S.map(([c,col,sw])=>`<polyline points="${c.map(p=>`${X(p[0]).toFixed(1)},${Y(p[1]).toFixed(1)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="${sw}"/>`).join('')}</svg>`;
+  $("#scale").innerHTML = [[true,"Log scale"],[false,"Linear"]].map(([v,n])=>`<button class="${v===logScale?'on':''}" data-v="${v}">${n}</button>`).join('');
+}
+function render(){
+  if (!D) { document.body.innerHTML = "<p style='padding:40px'>Run Actions → 10-year backtest.</p>"; return; }
+  const T = D.top, A = D.all;
+  $("#asof").textContent = D.to; $("#bname").textContent = D.bench_name;
+  $("#eyebrow").textContent = `${D.from} → ${D.to} · ${T.years} years · ${D.n_stocks.toLocaleString()} stocks · ${D.n_signals.toLocaleString()} triggered setups`;
+  $("#sub").textContent = `Top-theme ${fmt(T.cagr)}%/yr · all setups ${fmt(A.cagr)}%/yr · ${D.bench_name} ${fmt(D.bench_cagr)}%/yr`;
+  $("#kpis").innerHTML = [
+    kpi("$100k became", usd(T.end), `${fmt(T.ret,0)}% total · top-theme setups`, true),
+    kpi("Per year", fmt(T.cagr)+'%', `${D.bench_name} buy & hold ${fmt(D.bench_cagr)}%`),
+    kpi("Worst drawdown", fmt(T.max_dd)+'%', `${D.bench_name}: ${fmt(D.bench_dd)}%`),
+    kpi("Trades", T.trades, `win ${T.win}% · avg ${fmt(T.avg_R,2)}R · ${T.exposure}% invested on average`),
+    kpi("All setups (no theme gate)", usd(A.end), `${fmt(A.cagr)}%/yr · drawdown ${fmt(A.max_dd)}%`),
+  ].join('');
+  chart(); $("#scale").onclick = e => { const b = e.target.closest("button"); if (b) { logScale = b.dataset.v === "true"; chart(); } };
+  const ys = Object.keys(D.years_top);
+  $("#ytbl").innerHTML = `<thead><tr><th class="l">Year</th><th>Top-theme setups</th><th>All setups</th><th>${esc(D.bench_name)}</th></tr></thead><tbody>${ys.map(y=>{const a=D.years_top[y], b=D.years_all[y], c=D.years_bench[y];
+    return `<tr><td class="l" style="color:var(--t1)">${y}</td>${[a,b,c].map(v=>`<td class="${v>0?'up':v<0?'dn':''}">${fmt(v)}%</td>`).join('')}</tr>`;}).join('')}</tbody>`;
+  $("#best").innerHTML = `<thead><tr><th class="l">Biggest winners (top-theme book)</th><th>Signal</th><th>P&amp;L</th><th>R</th></tr></thead><tbody>${(T.best||[]).map(b=>`<tr><td class="l sym">${esc(b.sym)}</td><td style="color:var(--t3)">${esc(b.date)}</td><td class="up">${usd(b.pnl)}</td><td>${fmt(b.R,1)}R</td></tr>`).join('')}</tbody>`;
+  $("#footer").textContent = `Generated ${D.generated} · Not investment advice`;
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(chart, 150); });
+}
+render();
+</script>
+</body>
+</html>
