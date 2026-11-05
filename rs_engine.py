@@ -485,6 +485,11 @@ def broad_universe(known: set, names: pd.DataFrame, demo: bool) -> list[str]:
     # loose on purpose: your weekly screens reach down to $3 stocks trading ~300K shares a day; the leaders list
     # still applies its own price and $-volume minimums
     keep = c.columns[(c.iloc[-1] >= SETTINGS.get("broad_min_price", 3)) & (dv >= SETTINGS.get("broad_min_dollar_volume", 2e6))]
+    old = set(pd.read_csv(cache).ticker) - known if cache.exists() else set()
+    got = c.columns[c.notna().sum() > 30]
+    if len(got) < 0.6 * len(cand) and old:          # Yahoo throttled the screen: keep last week's list too
+        log(f"  broad universe: only {len(got)} of {len(cand)} downloaded — keeping last week's list as well")
+        keep = sorted(set(keep) | old)
     pd.DataFrame({"ticker": sorted(keep)}).to_csv(cache, index=False)
     log(f"  broad universe: {len(keep)} liquid names added")
     return sorted(keep)
