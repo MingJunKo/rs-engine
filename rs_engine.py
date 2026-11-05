@@ -136,7 +136,9 @@ def fetch_names() -> pd.DataFrame:
     """Names, exchange, sector, industry for US listings (NASDAQ screener). Cached weekly."""
     cache = CFG_DIR / "names.csv"
     if cache.exists() and time.time() - cache.stat().st_mtime < 6 * 86400:
-        return pd.read_csv(cache)
+        c_ = pd.read_csv(cache)
+        if "mcap" in c_.columns:
+            return c_
     try:
         import requests
         rows = []
@@ -146,9 +148,14 @@ def fetch_names() -> pd.DataFrame:
                              headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
                              timeout=30)
             for d in r.json()["data"]["rows"]:
+                try:
+                    mc = float(str(d.get("marketCap") or "").replace(",", "") or "nan")
+                except ValueError:
+                    mc = float("nan")
                 rows.append({"ticker": d["symbol"].strip().replace("/", "."), "name": d["name"],
                              "exchange": tv, "sector": d.get("sector", ""),
-                             "industry": d.get("industry", "")})
+                             "industry": d.get("industry", ""), "mcap": mc,
+                             "ipo_year": d.get("ipoyear") or "", "country": d.get("country", "")})
         df = pd.DataFrame(rows).drop_duplicates("ticker")
         df["name"] = (df["name"].str.replace(r"\s+(Common Stock|Class [A-C] Common Stock|"
                                              r"Ordinary Shares|American Depositary Shares).*$", "",
@@ -506,7 +513,7 @@ def run(demo: bool, notify: bool):
         styles = {**meta["style"].to_dict(), **stock_style}
         px = demo_prices(all_tickers, styles)
     else:
-        px = download_yahoo(all_tickers)
+        px = download_yahoo(all_tickers, want=("Open", "Close", "High", "Low", "Volume"))
 
     close, high, low, vol = (px[k].ffill(limit=3) for k in ("Close", "High", "Low", "Volume"))
     if BENCH not in close:
@@ -519,6 +526,10 @@ def run(demo: bool, notify: bool):
             close = close.iloc[:-1]
             log("  US market still open — using the previous close")
     high, low, vol = high.reindex(close.index), low.reindex(close.index), vol.reindex(close.index)
+    if "Open" in px:
+        opn = px["Open"].reindex(close.index)
+    else:                                          # demo data has no opens: previous close ± a little
+        opn = close.shift(1) * (1 + np.random.default_rng(5).normal(0, 0.01, close.shape))
     asof = close.index[-1]
     log(f"Data as of {asof.date()}, {close.shape[1]} tickers with prices")
 
@@ -691,6 +702,7 @@ def run(demo: bool, notify: bool):
     leaders["setup"] = ((leaders.pivot_dist >= -6) & (leaders.tightness <= 2.5)
                         & (leaders.atr_ext.between(0, 4)))
     leaders["earnings"], leaders["er_days"] = None, np.nan
+    ecal = {}
     if not demo and len(leaders):
         try:
             ecal = earnings_calendar(asof)
@@ -877,6 +889,26 @@ def run(demo: bool, notify: bool):
     for c_ in ("cs", "cs_n", "funds", "funds_chg"):
         leaders[c_] = stk.loc[leaders.index, c_]
 
+    # ── MJ's weekly screens, Episodic Pivots, Parabolic Shorts (separate page: docs/scans) ──
+    scans_payload = None
+    try:
+        import scans as SC
+        fpath = ROOT / "data" / "fundamentals.json"
+        ipath = ROOT / "data" / "institutions.csv"
+        scans_payload = SC.run_scans({
+            "open": opn, "high": high, "low": low, "close": close, "vol": vol, "stk": stk, "leaders": leaders,
+            "top_themes": top_themes, "turners": turners, "names": names,
+            "F": json.loads(fpath.read_text()) if fpath.exists() else {},
+            "inst": pd.read_csv(ipath) if ipath.exists() else pd.DataFrame(columns=["ticker", "period", "holders", "shares"]),
+            "yoy": _yoy_series, "ecal": ecal, "asof": asof.strftime("%a %d %b %Y"), "asof_ts": asof,
+            "generated": dt.datetime.now(SGT).strftime("%d %b %Y %H:%M SGT"), "live": not demo})
+        f_ = scans_payload["funnel"]
+        log(f"  scans: {f_['base']} in watchlists → {f_['tight']} tight + {f_['rs_scan']} RS scan → {f_['final']} final · "
+            f"{len(scans_payload['ep'])} EPs (10d) · {len(scans_payload['parabolic'])} parabolic")
+    except Exception as e:
+        import traceback
+        log(f"  scans failed: {e}\n{traceback.format_exc()[-800:]}")
+
     # ════════════════════════════════════════════════════════════════
     #  OUTPUTS
     # ════════════════════════════════════════════════════════════════
@@ -964,6 +996,13 @@ def run(demo: bool, notify: bool):
         "universe": {"etfs": len(E), "stocks": len(S)},
         "funnel": funnel,
         "fund_meta": cs_detail.pop("_meta", {}),
+        "scans": ({"final": [{k: r[k] for k in ("symbol", "theme", "rs_rating", "lead_theme", "leader", "both", "tight",
+                                                "earnings", "er_days", "biotech", "turner")} for r in scans_payload["rows"]],
+                   "ep": [{k: e[k] for k in ("symbol", "days_ago", "gap", "rvol", "neglected", "holding", "earnings_gap",
+                                             "rs_rating", "theme")} | {"news": (e["news"][:1] or [None])[0]}
+                          for e in scans_payload["ep"] if e["days_ago"] <= 1],
+                   "parabolic": [{k: p[k] for k in ("symbol", "run_5d", "ext_ema10", "first_red")} for p in scans_payload["parabolic"]],
+                   "funnel": scans_payload["funnel"]} if scans_payload else None),
     }
 
     tpl = (ROOT / "templates" / "dashboard.html").read_text()
@@ -972,6 +1011,8 @@ def run(demo: bool, notify: bool):
                        .replace("</", "<\\/"))
     (DOCS / "index.html").write_text(html)
     (DOCS / ".nojekyll").write_text("")
+    if scans_payload:
+        SC.write_page(scans_payload, DOCS, _clean_json)
     (DOCS / "data").mkdir(parents=True, exist_ok=True)
     (DOCS / "data" / "fund.json").write_text(json.dumps(_clean_json(cs_detail), separators=(",", ":"), allow_nan=False))
 
@@ -1002,6 +1043,8 @@ def run(demo: bool, notify: bool):
         if g["stocks"]:
             lines.append(f"###Turning: {g['theme']}")
             lines.append(",".join(f"{stk.at[t, 'exchange']}:{t}" if stk.at[t, "exchange"] else t for t in g["stocks"]))
+    if scans_payload:
+        lines += SC.tradingview_sections(scans_payload)
     (DATA_OUT / "tradingview_leaders.txt").write_text("\n".join(lines) + "\n")
 
     # history snapshots (one row-set per day)
@@ -1046,6 +1089,17 @@ def run(demo: bool, notify: bool):
                 f"{g['theme']} ({g['etf']}, RS {int(g['rs'])}, {int(g['rs_chg_1w']):+d} in a week"
                 + (f", breadth {int(g['breadth'])}% {int(g['breadth_chg']):+d}" if pd.notna(g['breadth_chg']) else "") + ")"
                 + (" → watch " + ", ".join(g["stocks"][:4]) if g["stocks"] else "") for g in fresh_t[:4]))
+        if scans_payload:
+            ep0 = [x for x in scans_payload["ep"] if x["days_ago"] == 0]
+            if ep0:
+                alert.append("Episodic pivot today: " + "; ".join(
+                    f"{x['symbol']} gap +{x['gap']}% on {x['rvol']}× vol"
+                    + (" (earnings)" if x["earnings_gap"] else (f" — {x['news'][0]['title'][:60]}" if x["news"] else ""))
+                    for x in ep0[:5]))
+            pr = [x for x in scans_payload["parabolic"] if x["first_red"]]
+            if pr:
+                alert.append("Parabolic first red day (short trigger watch): " + ", ".join(
+                    f"{x['symbol']} (+{x['run_5d']}% in 5d)" for x in pr[:5]))
     new_state = {"date": d, "regime": regime, "setups": setups_now, "turners": [g["etf"] for g in turners]}
     new_state["prev"] = (old_state if old_state.get("date") != d else None) or None
     new_state["prev"] = {k: v for k, v in (new_state["prev"] or {}).items() if k != "prev"} or None

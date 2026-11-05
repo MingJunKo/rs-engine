@@ -50,7 +50,7 @@ def r(v, d=2):
 def fetch(sym):
     import yfinance as yf
     t = yf.Ticker(sym.replace(".", "-"))
-    rec = {"updated": dt.date.today().isoformat()}
+    rec = {"updated": dt.date.today().isoformat(), "v": 2}
 
     # quarterly EPS, as reported (same basis analysts use, like IBD/MarketSurge)
     try:
@@ -89,6 +89,14 @@ def fetch(sym):
         rec["err_a"] = str(e)[:80]
 
     try:
+        cf = t.cashflow                                      # annual free cash flow → FCF growth (screen 8)
+        if cf is not None and len(cf.columns) and "Free Cash Flow" in cf.index:
+            cf = cf[sorted(cf.columns)]
+            rec["fcf_a"] = [[c.strftime("%Y"), r(v, 0)] for c, v in cf.loc["Free Cash Flow"].items() if num(v) is not None]
+    except Exception as e:
+        rec["err_cf"] = str(e)[:80]
+
+    try:
         i = t.info or {}
         rec.update({
             "fpe": r(i.get("forwardPE"), 1), "tpe": r(i.get("trailingPE"), 1),
@@ -100,6 +108,7 @@ def fetch(sym):
             "eps_fwd_g": r((num(i.get("earningsGrowth")) or 0) * 100, 1) if i.get("earningsGrowth") is not None else None,
             "rev_g": r((num(i.get("revenueGrowth")) or 0) * 100, 1) if i.get("revenueGrowth") is not None else None,
             "industry": i.get("industry"), "sector": i.get("sector"),
+            "short_pct": r((num(i.get("shortPercentOfFloat")) or 0) * 100, 1) or None,
         })
     except Exception as e:
         rec["err_info"] = str(e)[:80]
@@ -109,8 +118,8 @@ def fetch(sym):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("tickers", nargs="*")
-    ap.add_argument("--max", type=int, default=650)
-    ap.add_argument("--minutes", type=float, default=75)
+    ap.add_argument("--max", type=int, default=1500)
+    ap.add_argument("--minutes", type=float, default=85)
     a = ap.parse_args()
 
     db = json.loads(OUT.read_text()) if OUT.exists() else {}
@@ -128,7 +137,7 @@ def main():
 
         def stale(t, rs):
             e = db.get(t)
-            if not e:
+            if not e or e.get("v", 1) < 2:                     # new fields (FCF, short float) since v2
                 return True
             age = (today - dt.date.fromisoformat(e["updated"])).days
             last_q = (e.get("eps_q") or [[None]])[-1][0]

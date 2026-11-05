@@ -68,6 +68,31 @@ def build_message(p: dict, settings: dict) -> str:
                                 " ◆setup" if x.get("setup") else "", " ★leader" if x.get("leader") else ""])
                 lines.append(f"  <code>{x['symbol']:<6}</code> {x['rs_rating']} ({(x['rs_chg_1w'] or 0):+d}) · "
                              f"{(x['off_high'] or 0):+.0f}% off high{tags}")
+    sc = p.get("scans")
+    if sc:
+        fin = [x for x in sc["final"] if not x["biotech"]]
+        f = sc["funnel"]
+        lines += ["", f"<b>Weekly scan</b> ({len(fin)} names · {f['base']} in watchlists → {f['tight']} tight + {f['rs_scan']} RS scan)",
+                  "<i>★ leading theme · ◆ RS leader · ✚ tech + fund screens · ↗ early-turner theme</i>"]
+        fin.sort(key=lambda x: (-(x["lead_theme"] + x["leader"] + x["both"]), -(x["rs_rating"] or 0)))
+        for x in fin[:15]:
+            tags = ("★" if x["lead_theme"] else "") + ("◆" if x["leader"] else "") + ("✚" if x["both"] else "") + ("↗" if x["turner"] else "")
+            er = f" · ER {e(x['earnings'])}" if x.get("er_days") is not None and x["er_days"] <= 7 else ""
+            lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating'] if x['rs_rating'] is not None else '–'} · {e(x['theme'] or '')} {tags}{er}")
+        if len(fin) > 15:
+            lines.append(f"… +{len(fin) - 15} more on the Scans page")
+        if sc.get("ep"):
+            lines += ["", "<b>Episodic pivots</b> (last 2 sessions)"]
+            for x in sc["ep"][:8]:
+                cat = "earnings" if x["earnings_gap"] else (e(x["news"]["title"][:70]) if x.get("news") else "check news")
+                lines.append(f"<code>{x['symbol']:<6}</code> gap +{x['gap']}% · {x['rvol']}× vol{' · neglected' if x['neglected'] else ''} — {cat}")
+        if sc.get("parabolic"):
+            lines += ["", "<b>Parabolic short watch</b>"] + [
+                f"<code>{x['symbol']:<6}</code> +{x['run_5d']}% in 5d · {x['ext_ema10']:+.0f}% vs 10-EMA{' · FIRST RED' if x['first_red'] else ''}"
+                for x in sc["parabolic"][:6]]
+        url_ = settings.get("dashboard_url")
+        if url_:
+            lines.append(f'<a href="{e(url_.rstrip("/"))}/scans/">Open the Scans page</a>')
     notes = [x for x in p.get("notes", []) if x["tag"] not in ("Regime", "Setups")]
     if notes:
         lines += ["", "<b>Desk notes</b>"] + [f"• <b>{e(x['tag'])}</b> — {e(x['text'])}" for x in notes]

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Scans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/*__SHARED_CSS__*/
+.sfun{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:6px;font-family:"DM Mono",monospace;font-size:11px;color:var(--t3)}
+.sfun b{font-size:20px;font-weight:400;color:var(--t1);margin-right:5px}
+.sfun .st{display:flex;align-items:baseline;padding:8px 14px;border:.5px solid var(--border);border-radius:6px;background:var(--surface)}
+.sfun .st.g b{color:var(--gold-bright)}
+.sfun i{font-style:normal;color:var(--t4)}
+.edge{display:flex;flex-wrap:wrap;gap:6px 16px;margin:14px 0 4px;font-size:11.5px;color:var(--t3)}
+.flag.lt{color:#0b0b0a;background:#d9b765}.flag.ld{color:var(--gold-bright);background:var(--gold-bg);border:.5px solid var(--gold-dim)}
+.flag.bf{color:#0b0b0a;background:#8fcf8a}.flag.tu{color:#7c9cff;background:rgba(124,156,255,.12)}
+.flag.ng{color:#0b0b0a;background:#7c9cff}.flag.hd{color:var(--up);background:var(--up-bg)}.flag.br{color:var(--dn);background:var(--dn-bg)}
+.flag.ern{color:#0b0b0a;background:#e0b25a}.flag.nine{color:var(--t1);background:var(--surface-3)}
+.wl{display:inline-block;font-family:"DM Mono",monospace;font-size:9px;padding:1px 5px;margin-left:3px;border-radius:2px;border:.5px solid var(--border-2);color:var(--t3)}
+.wl.RS{color:var(--gold);border-color:var(--gold-dim)}
+.tight{font-size:10.5px}.tight.below{color:#7c9cff}.tight.above{color:#8fcf8a}
+.wlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px}
+.wlc{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:13px 16px}
+.wlc h3{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:500;display:flex;gap:10px;align-items:baseline}
+.wlc h3 b{margin-left:auto;font-size:15px;color:var(--t1);letter-spacing:0;font-weight:400}
+.wlc .sc{display:flex;justify-content:space-between;font-size:11.5px;color:var(--t3);padding:3px 0;border-bottom:.5px dashed rgba(255,255,255,.04)}
+.wlc .sc span:last-child{font-family:"DM Mono",monospace;color:var(--t2)}
+.wlc .tk{margin-top:9px;font-family:"DM Mono",monospace;font-size:10.5px;color:var(--t2);line-height:1.9;max-height:94px;overflow:auto}
+.wlc .tk a{text-decoration:none;margin-right:7px}.wlc .tk a:hover{color:var(--gold)}
+.news{font-family:Barlow,sans-serif;font-size:11.5px;color:var(--t2);white-space:normal;max-width:420px;text-align:left;line-height:1.35}
+.news a{text-decoration:none;color:var(--t1)}.news a:hover{color:var(--gold)}
+.news small{color:var(--t4);font-family:"DM Mono",monospace;font-size:9.5px;margin-left:4px}
+.pm{border:.5px solid var(--gold-dim);background:var(--gold-bg);border-radius:7px;padding:12px 16px;margin-bottom:12px;font-size:12.5px;color:var(--t2)}
+.pm h3{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:6px}
+.empty{padding:14px 16px;border:.5px dashed var(--border-2);border-radius:7px;color:var(--t3);font-size:12.5px}
+.warnbox{font-size:12px;color:var(--t3);margin:8px 0 12px;line-height:1.6}
+.controls .seg button{background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;font-family:Barlow,sans-serif;font-size:11.5px;cursor:pointer;margin-right:4px}
+.controls .seg button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
+.controls .seg button b{font-family:"DM Mono",monospace;font-weight:500;color:var(--gold);margin-left:5px;font-size:10.5px}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <span class="brand">MJ — <em>Scans</em></span>
+  <a href="#result">Weekly result</a><a href="#watchlists">Watchlists</a><a href="#ep">Episodic pivots</a><a href="#para">Parabolic</a><a href="#method">Method</a>
+  <a href="../" style="color:var(--gold)">← RS dashboard</a>
+  <span class="asof" id="asof"></span>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>Weekly <em>scan result</em></h1>
+    <div class="sfun" id="sfun"></div>
+    <div class="edge">
+      <span><span class="flag lt">LEAD THEME</span> in one of the top RS themes</span>
+      <span><span class="flag ld">LEADER</span> on the RS leaders list</span>
+      <span><span class="flag bf">TECH+FUND</span> passed a momentum screen and an earnings/ownership screen</span>
+      <span><span class="flag tu">TURNING</span> its theme is an early turner</span>
+    </div>
+  </header>
+
+  <section id="result">
+    <div class="sec-head"><h2>Final watchlist</h2><div class="line"></div><p>WL6 → price &gt; $3 → biotech set aside</p></div>
+    <div class="controls">
+      <span class="seg" id="seg"></span>
+      <label><input type="checkbox" id="f-tb"> Pullback to 5-EMA only</label>
+      <label><input type="checkbox" id="f-er"> Hide earnings ≤ 7d</label>
+      <label><input type="checkbox" id="f-bio"> Show biotech</label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tbl-wrap"><table class="t" id="tbl"></table></div>
+  </section>
+
+  <section id="watchlists">
+    <div class="sec-head"><h2>Watchlists before the tightness pass</h2><div class="line"></div><p>Your screens 1–14, grouped as in TradingView</p></div>
+    <div class="wlgrid" id="wlgrid"></div>
+  </section>
+
+  <section id="ep">
+    <div class="sec-head"><h2>Episodic pivots</h2><div class="line"></div><p>Gap ≥ 8% on ≥ 3× volume · last 10 sessions</p></div>
+    <div id="pm"></div>
+    <div id="ep-wrap"></div>
+  </section>
+
+  <section id="para">
+    <div class="sec-head"><h2>Parabolic short watch</h2><div class="line"></div><p>Vertical runs · trade only the first crack</p></div>
+    <div id="para-wrap"></div>
+  </section>
+
+  <section id="method">
+    <div class="sec-head"><h2>Method</h2><div class="line"></div></div>
+    <details class="fold"><summary>How the weekly process is rebuilt <span>— your 15 screens, field by field</span></summary><div class="body" id="m-weekly"></div></details>
+    <details class="fold"><summary>Episodic pivots &amp; parabolic shorts <span>— rules</span></summary><div class="body guide">
+      <div><b>Episodic pivot</b> — gap ≥ 8% over the prior close, volume ≥ 3× the 50-day average, ≥ $10M traded, price ≥ $3, closing in the top half of the day's range. <b>NEGLECTED</b> = up less than 20% in the 3 months before the gap (Pradeep's best EPs come out of neglect). <b>9M</b> = 9 million+ shares. <b>HOLDING</b> = still above the gap-day low.</div>
+      <div><b>Catalyst</b> — <span class="flag ern">EARNINGS</span> when the gap came within 3 days of a reported quarter; otherwise the latest headlines (Yahoo / Nasdaq). Always read the actual news: an EP needs a real change in the story (earnings/sales surprise, guidance, FDA, contract, M&amp;A).</div>
+      <div><b>Pre-market</b> — on US trading days around 8:45am New York time the pre-market job lists stocks gapping ≥ 8% pre-market on real volume, with their headlines, and sends them to Telegram.</div>
+      <div><b>Parabolic short</b> — ≥ 50% in 5 days (≥ 25% for stocks over $10B), ≥ 25% above the 10-EMA, $20M+ traded. <b>FIRST RED</b> = today closed red after the run: the classic trigger. Before that, it's a watch, not a short. Size small; these squeeze.</div>
+    </div></details>
+  </section>
+  <footer id="footer"></footer>
+</div>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d=1, sign=true) => v==null ? "–" : (sign && v>0 ? "+" : "") + Number(v).toFixed(d);
+const tv = (s, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + s : s);
+const ratingColor = r => r==null ? "#2e2d29" : r>=90 ? "#5bbf7a" : r>=80 ? "#8fcf8a" : r>=70 ? "#b8d68f" : r>=50 ? "#d9c98e" : r>=30 ? "#e0a17a" : "#d4706a";
+const pct = (v, s=10) => v==null ? `<td>–</td>` : `<td style="background:${v>0?`rgba(91,191,122,${Math.min(.35,Math.abs(v)/s*.35)})`:`rgba(212,112,106,${Math.min(.35,Math.abs(v)/s*.35)})`};color:${v>0?'#cfe9d6':'#f0c9c6'}">${fmt(v)}%</td>`;
+const CS="CANSLIM", csH = cs => !cs ? '<span class="cs" style="color:#26231f">·······</span>' : `<span class="cs">${[...CS].map((l,i)=>`<i class="${cs[i]==='1'?'y':cs[i]==='-'?'u':''}">${l}</i>`).join('')}</span>`;
+const spark = (v, w=80, h=20) => { if(!v||v.length<2) return ""; const mn=Math.min(...v), mx=Math.max(...v), r=(mx-mn)||1;
+  return `<svg width="${w}" height="${h}"><polyline points="${v.map((x,i)=>`${(i/(v.length-1)*w).toFixed(1)},${(h-2-(x-mn)/r*(h-4)).toFixed(1)}`).join(' ')}" fill="none" stroke="${v[v.length-1]>=v[0]?'#5bbf7a':'#d4706a'}" stroke-width="1.3"/></svg>`; };
+const symTd = x => `<td class="sym l"><a href="${tv(x.symbol, x.exchange)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`;
+const big = v => v==null ? '–' : v>=1000 ? (v/1000).toFixed(1)+'T' : v>=1 ? v.toFixed(1)+'B' : Math.round(v*1000)+'M';
+
+function table(el, cols, rows, sortKey){
+  let dir=-1;
+  const draw=()=>{ const r=[...rows]; if(sortKey) r.sort((a,b)=>{const x=a[sortKey],y=b[sortKey]; if(x==null) return 1; if(y==null) return -1; return (typeof x==="string"?x.localeCompare(y):x-y)*dir;});
+    el.innerHTML=`<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" data-k="${c.k||''}" title="${esc(c.tip||'')}">${c.h}</th>`).join('')}</tr></thead><tbody>${r.map(x=>`<tr>${cols.map(c=>c.f(x)).join('')}</tr>`).join('')}</tbody>`;
+    el.querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k; if(!k) return; dir=sortKey===k?-dir:-1; sortKey=k; draw();}); };
+  draw();
+}
+
+function render(){
+  if(!D){ document.body.innerHTML="<p style='padding:40px'>No scan data yet.</p>"; return; }
+  $("#asof").textContent = "Data " + D.asof;
+  $("#eyebrow").textContent = `Market close ${D.asof} · ${D.coverage.n.toLocaleString()} stocks screened`;
+  const F = D.funnel;
+  $("#sfun").innerHTML = `<span class="st"><b>${F.base}</b> in your 6 watchlists</span><i>→</i><span class="st"><b>${F.tight}</b> tight at the 5-EMA</span><i>+</i><span class="st"><b>${F.rs_scan}</b> weekly RS scan</span><i>→</i><span class="st"><b>${F.wl6}</b> WL6</span><i>→</i><span class="st g"><b>${F.final - F.biotech}</b> final${F.biotech?` <span style="margin-left:6px;color:var(--t4)">(+${F.biotech} biotech set aside)</span>`:''}</span>`;
+  $("#footer").innerHTML = `Generated ${esc(D.generated)} · Not investment advice · <a href="../">RS dashboard</a> · <a href="../data/tradingview_leaders.txt">TradingView list</a> (includes these scans)`;
+
+  // final list
+  let seg = "all";
+  const SEG = {all:["All",x=>true], lt:["Leading theme",x=>x.lead_theme], both:["Tech + fund",x=>x.both], ld:["Leaders",x=>x.leader], tu:["Turning",x=>x.turner]};
+  const base = () => D.rows.filter(x => ($("#f-bio").checked || !x.biotech));
+  const drawSeg = () => $("#seg").innerHTML = Object.entries(SEG).map(([k,[n,f]])=>`<button class="${k===seg?'on':''}" data-k="${k}">${n}<b>${base().filter(f).length}</b></button>`).join('');
+  const cols = [
+    {h:"Ticker", k:"symbol", l:1, f:symTd},
+    {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}</td>`},
+    {h:"Edge", l:1, tip:"Why this one has extra edge", f:x=>`<td class="l">${x.lead_theme?'<span class="flag lt">LEAD THEME</span>':''}${x.leader?'<span class="flag ld">LEADER</span>':''}${x.both?'<span class="flag bf">TECH+FUND</span>':''}${x.turner?'<span class="flag tu">TURNING</span>':''}${x.biotech?'<span class="flag br">BIOTECH</span>':''}</td>`},
+    {h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.theme||'–')}</span></td>`},
+    {h:"RS", k:"rs_rating", f:x=>`<td><span class="rating" style="background:${ratingColor(x.rs_rating)}">${x.rs_rating??'–'}</span></td>`},
+    {h:"Δ1W", k:"rs_chg_1w", f:x=>`<td class="${x.rs_chg_1w>0?'up':x.rs_chg_1w<0?'dn':''}">${fmt(x.rs_chg_1w,0)}</td>`},
+    {h:"1M", f:x=>`<td>${spark(x.spark_px)}</td>`},
+    {h:"Price", k:"price", f:x=>`<td>${x.price.toFixed(2)}</td>`},
+    {h:"1W", k:"perf_1w", f:x=>pct(x.perf_1w,8)}, {h:"1M", k:"perf_1m", f:x=>pct(x.perf_1m,25)}, {h:"3M", k:"perf_3m", f:x=>pct(x.perf_3m,60)},
+    {h:"5-EMA", k:"ema5_gap", tip:"% above (+) or below (−) the 5-day EMA · blue = pullback scan, green = riding-it scan", f:x=>`<td class="tight ${x.tight||''}">${fmt(x.ema5_gap)}%</td>`},
+    {h:"ADR%", k:"adr", f:x=>`<td>${fmt(x.adr,1,false)}</td>`},
+    {h:"$Vol M", k:"dollar_vol", f:x=>`<td>${x.dollar_vol>=1000?(x.dollar_vol/1000).toFixed(1)+'B':fmt(x.dollar_vol,0,false)}</td>`},
+    {h:"Mkt cap", k:"mcap_b", f:x=>`<td>${big(x.mcap_b)}</td>`},
+    {h:"Float", k:"float_m", tip:"Float shares (≈ = estimated from shares outstanding)", f:x=>`<td>${x.float_m==null?'–':(x.float_est?'≈':'')+(x.float_m>=1000?(x.float_m/1000).toFixed(1)+'B':Math.round(x.float_m)+'M')}</td>`},
+    {h:"EPS Q", k:"eps_q", tip:"Latest quarter EPS vs a year earlier", f:x=>`<td class="${x.eps_q>=25?'up':x.eps_q<0?'dn':''}">${x.eps_q==null?'–':x.eps_q>=999?'turn+':fmt(x.eps_q,0)+'%'}</td>`},
+    {h:"Rev Q", k:"rev_q", f:x=>`<td class="${x.rev_q>=25?'up':x.rev_q<0?'dn':''}">${x.rev_q==null?'–':fmt(x.rev_q,0)+'%'}</td>`},
+    {h:"CANSLIM", l:1, f:x=>`<td class="l">${csH(x.cs)}</td>`},
+    {h:"Funds", k:"funds_chg", f:x=>`<td>${x.funds==null?'–':x.funds.toLocaleString()}${x.funds_chg==null?'':` <small class="${x.funds_chg>0?'up':'dn'}">${fmt(x.funds_chg)}%</small>`}</td>`},
+    {h:"ER", k:"er_days", f:x=>`<td class="${x.er_days!=null&&x.er_days<=7?'dn':''}" style="${x.er_days!=null&&x.er_days<=7?'':'color:#6b645a'}">${x.earnings||'–'}</td>`},
+    {h:"Watchlists", l:1, tip:"Which of your watchlists it came from", f:x=>`<td class="l">${x.wls.map(w=>`<span class="wl ${w}">${w.replace('WL','')}</span>`).join('')}</td>`},
+  ];
+  const draw = () => { const f = SEG[seg][1];
+    const rows = base().filter(f).filter(x => (!$("#f-tb").checked || x.tight==='below') && (!$("#f-er").checked || !(x.er_days!=null && x.er_days<=7)));
+    $("#count").textContent = `${rows.length} shown`; table($("#tbl"), cols, rows, null); drawSeg(); };
+  $("#seg").onclick = e => { const b = e.target.closest("button"); if (b) { seg = b.dataset.k; draw(); } };
+  ["#f-tb","#f-er","#f-bio"].forEach(s => $(s).onchange = draw);
+  draw();
+
+  // watchlists
+  $("#wlgrid").innerHTML = D.watchlists.map(w => `<div class="wlc"><h3>${esc(w.code)} · ${esc(w.name)}<b>${w.n}</b></h3>
+    ${w.screens.map(s=>`<div class="sc"><span>${esc(s.name)}</span><span>${s.n}</span></div>`).join('')}
+    <div class="tk">${w.tickers.length ? w.tickers.map(t=>`<a href="${tv(t)}" target="_blank" rel="noopener">${esc(t)}</a>`).join('') : '<span style="color:var(--t4)">none this week</span>'}</div></div>`).join('');
+
+  // episodic pivots
+  const newsH = x => x.earnings_gap ? `<span class="flag ern">EARNINGS</span> ` : '';
+  const headline = x => (x.news||[]).slice(0,2).map(n=>`<div>${n.url?`<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:esc(n.title)}<small>${esc(n.src||'')} ${esc((n.when||'').slice(0,10))}</small></div>`).join('');
+  const showPM = pm => { if (pm && pm.rows && pm.rows.length) $("#pm").innerHTML = `<div class="pm"><h3>Pre-market gappers · ${esc(pm.asof)}</h3>${pm.rows.map(r=>`<div style="margin:4px 0"><b style="color:var(--t1);font-family:'DM Mono',monospace">${esc(r.symbol)}</b> <span class="up">+${r.gap}%</span> pre-market · ${r.pm_vol_k.toLocaleString()}K sh · prev close ${r.prev_close}${r.earnings?' <span class="flag ern">EARNINGS</span>':''}<div class="news" style="max-width:none">${headline(r)}</div></div>`).join('')}</div>`;
+    else if (pm && pm.asof) $("#pm").innerHTML = `<div class="pm"><h3>Pre-market · ${esc(pm.asof)}</h3>No stock gapping ≥ 8% on real pre-market volume.</div>`; };
+  showPM(D.premarket);
+  fetch("../data/premarket.json", {cache:"no-store"}).then(r=>r.ok?r.json():null).then(p=>{ if (p && (!D.premarket || p.asof !== D.premarket.asof)) showPM(p); }).catch(()=>{});
+  const E = D.ep || [];
+  if (!E.length) $("#ep-wrap").innerHTML = `<div class="empty">No episodic pivot in the last 10 sessions.</div>`;
+  else { $("#ep-wrap").innerHTML = `<div class="tbl-wrap"><table class="t" id="ep-t"></table></div>`;
+    table($("#ep-t"), [
+      {h:"Ticker", k:"symbol", l:1, f:symTd},
+      {h:"When", k:"days_ago", f:x=>`<td style="color:${x.days_ago===0?'#e8c070':''}">${x.days_ago===0?'today':x.days_ago+'d ago'}</td>`},
+      {h:"Gap", k:"gap", f:x=>`<td class="up">+${x.gap}%</td>`},
+      {h:"Day", k:"day_chg", f:x=>`<td class="${x.day_chg>0?'up':'dn'}">${fmt(x.day_chg)}%</td>`},
+      {h:"Vol ×", k:"rvol", tip:"Gap-day volume ÷ 50-day average", f:x=>`<td>${x.rvol}×</td>`},
+      {h:"3M before", k:"pre_3m", tip:"Change over the 3 months before the gap", f:x=>`<td>${fmt(x.pre_3m,0)}%</td>`},
+      {h:"Since", k:"since", tip:"Change since the gap-day close", f:x=>`<td class="${x.since>0?'up':x.since<0?'dn':''}">${fmt(x.since)}%</td>`},
+      {h:"Tags", l:1, f:x=>`<td class="l">${x.neglected?'<span class="flag ng">NEGLECTED</span>':''}${x.nine_m?'<span class="flag nine">9M</span>':''}${x.holding?'<span class="flag hd">HOLDING</span>':'<span class="flag br">LOST GAP</span>'}</td>`},
+      {h:"RS", k:"rs_rating", f:x=>`<td><span class="rating" style="background:${ratingColor(x.rs_rating)}">${x.rs_rating??'–'}</span></td>`},
+      {h:"Theme", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.theme||'–')}</span></td>`},
+      {h:"Catalyst", l:1, f:x=>`<td class="l"><div class="news">${newsH(x)}${headline(x) || (x.earnings_gap?'':'<span style="color:var(--t4)">check the news</span>')}</div></td>`},
+    ], E, null); }
+
+  // parabolic
+  const P = D.parabolic || [];
+  if (!P.length) $("#para-wrap").innerHTML = `<div class="empty">Nothing has gone vertical this week.</div>`;
+  else { $("#para-wrap").innerHTML = `<div class="tbl-wrap"><table class="t" id="pa-t"></table></div>`;
+    table($("#pa-t"), [
+      {h:"Ticker", k:"symbol", l:1, f:symTd},
+      {h:"Name", l:1, f:x=>`<td class="nm l">${esc(x.name)}</td>`},
+      {h:"Status", l:1, f:x=>`<td class="l">${x.first_red?'<span class="flag br">FIRST RED: TRIGGER</span>':'<span class="flag nine">STILL RUNNING</span>'}</td>`},
+      {h:"5-day run", k:"run_5d", f:x=>`<td class="up">+${x.run_5d}%</td>`},
+      {h:"Above 10-EMA", k:"ext_ema10", f:x=>`<td>${fmt(x.ext_ema10)}%</td>`},
+      {h:"Up days", k:"up_days", f:x=>`<td>${x.up_days}</td>`},
+      {h:"Vol ×", k:"vol_x", f:x=>`<td>${x.vol_x}×</td>`},
+      {h:"Mkt cap", k:"mcap_b", f:x=>`<td>${big(x.mcap_b)}</td>`},
+      {h:"Short float", k:"short_pct", f:x=>`<td>${x.short_pct==null?'–':x.short_pct+'%'}</td>`},
+      {h:"1M", f:x=>`<td>${spark(x.spark_px)}</td>`},
+      {h:"Catalyst", l:1, f:x=>`<td class="l"><div class="news">${headline(x)||'<span style="color:var(--t4)">–</span>'}</div></td>`},
+    ], P, null); }
+
+  // method
+  const C = D.coverage;
+  $("#m-weekly").innerHTML = `<div class="guide">
+    <div><b>WL1 Daily Tightness</b> — screen 1. <b>WL2 Strong Move &gt; $10B</b> — screens 2–5 (6M/3M/1M/1W momentum) and 7 (EPS &amp; revenue +25%). <b>WL3 Post-Earnings</b> — screen 6, a gap &gt; 5% on 2× volume <i>on any of the last 5 sessions</i> (still above the 20-day). <b>WL4 Fundamentals</b> — screen 8. <b>WL5 Strong Move</b> — screens 9–13. <b>WL12</b> — your FinViz institutional screen (14).</div>
+    <div><b>Tightness</b> — every watchlist name through your two scans: 5-EMA above price by 0–5% (pullback, blue) or below price by 0–5% (riding it, green), with SMA10 &gt; SMA20, 1-week change &lt; 5% and 1-month volatility &gt; 3.5%. Plus the weekly RS scan, straight in. Then price &gt; $3; biotech is set aside (tick “Show biotech” to see it).</div>
+    <div><b>Data coverage this run</b> — market cap ${C.mcap.toLocaleString()} of ${C.n.toLocaleString()}; real float ${C.float_real.toLocaleString()} (the rest use shares outstanding as an upper bound, shown with ≈); quarterly EPS/revenue ${C.fund.toLocaleString()}; 13F ${C.inst.toLocaleString()}. Coverage of float and fundamentals fills in over the next fundamentals runs.</div>
+    <div><b>Differences from TradingView</b> — EPS growth uses reported EPS (TradingView uses diluted GAAP); FCF growth uses the latest fiscal year; “institutional transactions” uses 13F shares quarter on quarter; performance periods are 5/21/63/126 sessions. Expect a large overlap with your TradingView list, not an identical one.</div></div>`;
+}
+render();
+</script>
+</body>
+</html>
