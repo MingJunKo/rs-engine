@@ -824,6 +824,8 @@ def run(demo: bool, notify: bool):
     ew = etf_df[etf_df.category == "EW Sector"]
     style_basket = {s: basket(list(ew[ew["style"] == s].index)) for s in STYLE_ORDER}
 
+    riskon_hist = []
+
     def ratio(num, den, label, note):
         n = style_basket[num] if num in style_basket else close.get(num)
         d = style_basket[den] if den in style_basket else close.get(den)
@@ -831,6 +833,7 @@ def run(demo: bool, notify: bool):
             return None
         r = (n / d).dropna()
         ma = r.rolling(50).mean()
+        riskon_hist.append(((r > ma) & (r > r.shift(21))).astype(int))       # for the tracker's market gate
         s = r.tail(126)
         return {"label": label, "note": note,
                 "series": [round(float(x / s.iloc[0] * 100), 2) for x in s],
@@ -926,7 +929,17 @@ def run(demo: bool, notify: bool):
     tracker_payload = None
     try:
         import tracker as TR
+        # history for the gate tests: risk-on gauge count, breadth, and whether each stock sat in a top theme
+        ro = pd.concat(riskon_hist, axis=1).reindex(close.index).fillna(0).sum(axis=1) if riskon_hist else None
+        grp = etf_df.index[etf_df.category.isin(["Group", "SPDR Sector"]) & etf_df.theme.isin(themes_with_stocks)]
+        th_of = meta.theme.to_dict()
+        er_ = etf_rating[grp].tail(420)
+        th_best = er_.T.groupby(er_.columns.map(th_of)).max().T                        # dates × themes
+        topset = th_best.apply(lambda row: set(row.dropna().nlargest(SETTINGS["top_themes"]).index), axis=1)
+        st_th = {t: set(v) for t, v in stk.all_themes.items()}
+        in_top_hist = pd.DataFrame({t: [bool(st_th[t] & ts) for ts in topset] for t in S}, index=er_.index)
         tracker_payload = TR.run_tracker({
+            "riskon": ro, "breadth": above50.mean(axis=1) * 100, "in_top": in_top_hist,
             "S": S, "open": opn, "high": high, "low": low, "close": close, "vol": vol, "rating": stk_rating,
             "bench": b_close, "atr": atr, "settings": SETTINGS, "regime": regime, "demo": demo,
             "setups": [{"symbol": t, "rs_rating": None if pd.isna(r.rs_rating) else int(r.rs_rating), "theme": r.theme,

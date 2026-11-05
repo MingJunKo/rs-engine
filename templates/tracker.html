@@ -32,7 +32,7 @@
 <body>
 <nav><div class="wrap">
   <span class="brand">MJ — <em>Setup tracker</em></span>
-  <a href="#rcurve">R curve</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
+  <a href="#rcurve">R curve</a><a href="#gates">Gate test</a><a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -54,6 +54,13 @@
       <div class="tbl-wrap"><table class="t" id="rtop"></table></div>
     </div>
     <p class="note2" id="rnote"></p>
+  </section>
+
+  <section id="gates">
+    <div class="sec-head"><h2>Which filters add edge?</h2><div class="line"></div><p>Gate test · max 3 new trades a day</p></div>
+    <div class="controls"><span class="seg" id="gate-seg"></span></div>
+    <div class="tbl-wrap"><table class="t" id="gate-t"></table></div>
+    <p class="note2">Each row keeps only the setups that pass that gate, then takes up to 3 new trades a day (highest RS first) and scores them with the selected selling rule, counting open trades at today's price. <b>R / trade</b> is the number that matters: a gate earns its place if it raises R per trade without cutting the trade count so far that the yearly R collapses. <b>Max DD</b> is the deepest dip in the cumulative R curve. Top-theme history is rebuilt from the theme ETFs' past RS; risk-on uses the same 7 gauges as the dashboard.</p>
   </section>
 
   <section id="live">
@@ -162,6 +169,23 @@ function render(){
   $("#rule-seg").onclick = e => { const b = e.target.closest("button"); if (b) { rule = b.dataset.k; drawR(); } };
   $("#cap-seg").onclick = e => { const b = e.target.closest("button"); if (b) { cap = b.dataset.c; drawR(); } };
   drawR();
+
+  // gate test
+  let grule = "q10";
+  const drawG = () => {
+    const G = (D.gates||{})[grule] || []; const base = G[0] ? G[0].R_trade : 0;
+    $("#gate-seg").innerHTML = [["q10","⅓ day 3 + 10-day trail"],["fixed20","Fixed 20-day"]].map(([k,n])=>`<button class="${k===grule?'on':''}" data-k="${k}">${n}</button>`).join('');
+    table($("#gate-t"), [
+      {h:"Gate", l:1, f:x=>`<td class="l" style="color:var(--t1)">${esc(x.gate)}</td>`},
+      {h:"Trades", f:x=>`<td>${x.trades}</td>`}, {h:"Per year", f:x=>`<td>${x.per_year}</td>`},
+      {h:"Win %", f:x=>`<td>${x.win??'–'}${x.win!=null?'%':''}</td>`},
+      {h:"R / trade", f:x=>`<td style="font-weight:500">${R(x.R_trade==null?null:+x.R_trade.toFixed(2))}${x.R_trade!=null?`<span class="bar" style="width:${Math.min(70,Math.abs(x.R_trade)*200)}px;background:${x.R_trade>0?'#5bbf7a':'#d4706a'}"></span>`:''}</td>`},
+      {h:"vs baseline", f:x=>`<td class="${x.R_trade>base?'up':x.R_trade<base?'dn':''}">${x.R_trade==null?'–':fmt(x.R_trade-base,2)+'R'}</td>`},
+      {h:"Total R", f:x=>`<td>${R(x.R)}</td>`}, {h:"R / year", f:x=>`<td>${R(x.R_year)}</td>`},
+      {h:"≥ 5R", f:x=>`<td>${x.big}</td>`}, {h:"Max DD", f:x=>`<td class="dn">${fmt(x.dd,1)}R</td>`},
+    ], G); };
+  $("#gate-seg").onclick = e => { const b = e.target.closest("button"); if (b) { grule = b.dataset.k; drawG(); } };
+  drawG();
 
   // live log
   let seg = "all";

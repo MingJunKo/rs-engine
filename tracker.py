@@ -123,6 +123,40 @@ def curve(trades, idx, cap=None):
             "months": sorted(months.items())}
 
 
+GATES = [
+    ("Baseline: every RS setup", lambda t: True),
+    ("Market: RSP above its 50-day", lambda t: t["mkt_up"]),
+    ("Market: ≥ 4 of 7 gauges risk-on", lambda t: (t["riskon"] or 0) >= 4),
+    ("Market: breadth > 50%", lambda t: (t["breadth"] or 0) > 50),
+    ("Theme: in a top-8 theme", lambda t: t["top"] is True),
+    ("Stock: ADR ≥ 4%", lambda t: t["adr"] >= 4),
+    ("Stock: RS ≥ 90", lambda t: (t["rs"] or 0) >= 90),
+    ("Top theme + risk-on", lambda t: t["top"] is True and (t["riskon"] or 0) >= 4),
+    ("Top theme + ADR ≥ 4%", lambda t: t["top"] is True and t["adr"] >= 4),
+    ("Top theme + ADR ≥ 4% + risk-on", lambda t: t["top"] is True and t["adr"] >= 4 and (t["riskon"] or 0) >= 4),
+    ("Top theme + ADR ≥ 4% + RSP > 50-day", lambda t: t["top"] is True and t["adr"] >= 4 and t["mkt_up"]),
+]
+
+
+def gate_test(trades, idx, ok=True):
+    """Apply each gate, then take at most 3 new trades a day (highest RS), and score with the R curve."""
+    out = []
+    years = max(0.5, (idx[-1] - idx[max(0, len(idx) - 400)]).days / 365.25)
+    for name, f in GATES:
+        sub = [t for t in trades if f(t)]
+        c = curve(sub, idx, cap=3)
+        tot = c["total"] + c["open_R"]
+        # max drawdown of the closed-trade R curve
+        dd, peak = 0.0, 0.0
+        for _, v in c["points"]:
+            peak = max(peak, v); dd = min(dd, v - peak)
+        n = c["trades"] + c["open"]
+        out.append({"gate": name, "trades": n, "per_year": round(n / years), "R": round(tot, 1),
+                    "R_trade": round(tot / n, 3) if n else None, "win": c["win"], "big": c["big"],
+                    "dd": round(dd, 1), "R_year": round(tot / years, 1)})
+    return out
+
+
 def stats(rows):
     t = [r for r in rows if r["status"] in ("stopped", "closed")]
     trig = [r for r in rows if r["status"] in ("stopped", "closed", "running")]
@@ -161,6 +195,16 @@ def run_tracker(ctx: dict) -> dict:
            & (adr >= st.get("min_adr", 2.5)) & (c >= st["min_price"]) & (dv >= st["min_dollar_volume"]))
     start = max(130, len(idx) - 400)                      # ~1.5 years once the 50-day and RS have warmed up
     S10, S20 = c.rolling(10).mean().values, c.rolling(20).mean().values
+    RO = ctx["riskon"].reindex(idx).values if ctx.get("riskon") is not None else None
+    BR = ctx["breadth"].reindex(idx).values if ctx.get("breadth") is not None else None
+    IT = ctx["in_top"].reindex(idx) if ctx.get("in_top") is not None else None
+    ADRv = ((h / l - 1).rolling(20).mean() * 100).values
+    BUP = (bench > bench.rolling(50).mean()).reindex(idx).values
+
+    def attrs(i, jx, t):
+        it = IT[t].iat[i] if IT is not None and t in IT.columns else None
+        return {"adr": float(ADRv[i, jx]), "mkt_up": bool(BUP[i]), "riskon": None if RO is None else float(RO[i]),
+                "breadth": None if BR is None else float(BR[i]), "top": None if it is None or pd.isna(it) else bool(it)}
     managed = {r: [] for r in RULES}
     bt = []
     O, H, L, C = o.values, h.values, l.values, c.values
@@ -179,11 +223,11 @@ def run_tracker(ctx: dict) -> dict:
             for rule in ("q10", "p2r20"):
                 m = manage(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], (S10 if rule == "q10" else S20)[:, jx], rule)
                 if m:
-                    managed[rule].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, **m})
+                    managed[rule].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, **m, **attrs(i, jx, t)})
             if r["status"] in ("stopped", "closed", "running") and r["R"] is not None:
                 managed["fixed20"].append({"i": i, "rs": _i(rating.iat[i, jx]), "sym": t, "R": r["R"],
                                            "status": "running" if r["status"] == "running" else "closed",
-                                           "exit": min(len(idx) - 1, i + 1 + (r["days"] or 0))})
+                                           "exit": min(len(idx) - 1, i + 1 + (r["days"] or 0)), **attrs(i, jx, t)})
             ret20 = (C[i + 20, jx] / C[i, jx] - 1) * 100 if i + 20 < len(idx) else None
             b20 = (Bv[i + 20] / Bv[i] - 1) * 100 if i + 20 < len(idx) else None
             bt.append({"symbol": t, "date": idx[i].strftime("%Y-%m-%d"), "rs": _i(rating.iat[i, jx]),
@@ -246,12 +290,13 @@ def run_tracker(ctx: dict) -> dict:
     by_mkt = bucket(bt, "mkt_up", [0, 1, 2], ["RSP below 50-day", "RSP above 50-day"])
     months = sorted({r["date"][:7] for r in bt})
     by_month = [{"label": m, **stats([r for r in bt if r["date"][:7] == m])} for m in months]
+    gates = {"q10": gate_test(managed["q10"], idx), "fixed20": gate_test(managed["fixed20"], idx)}
     curves = {rule: {"label": RULES[rule], "all": curve(tr, idx), "cap3": curve(tr, idx, cap=3)}
               for rule, tr in managed.items()}
     top = sorted(managed["q10"], key=lambda t: -t["R"])[:12]
     curves["top_q10"] = [{"symbol": t["sym"], "date": idx[t["i"]].strftime("%Y-%m-%d"), "R": round(t["R"], 1),
                           "exit": idx[t["exit"]].strftime("%Y-%m-%d"), "status": t["status"]} for t in top]
-    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves,
+    return {"asof": ctx["asof_label"], "generated": ctx["generated"], "curves": curves, "gates": gates,
             "backtest": {"summary": stats(bt), "by_rs": by_rs, "by_tight": by_tight, "by_adr": by_adr, "by_mkt": by_mkt, "by_month": by_month,
                          "from": idx[start].strftime("%d %b %Y"), "base_ret20": base_ret20, "bench_ret20": bench_ret20,
                          "recent": sorted([r for r in bt if r["status"] in ("running", "waiting")], key=lambda r: r["date"], reverse=True)[:40]},
