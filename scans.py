@@ -331,7 +331,7 @@ def run_scans(ctx: dict) -> dict:
         for t in d.index[m]:
             member[t].append(code)
         wls.append({"code": code, "name": name, "n": int(m.sum()),
-                    "screens": [{"key": k, "name": SCREEN_NAMES[k], "n": int(S[k].sum())} for k in scr],
+                    "screens": [{"key": k, "name": SCREEN_NAMES[k], "n": int(S[k].sum()), "tickers": sorted(d.index[S[k]])} for k in scr],
                     "tickers": sorted(d.index[m], key=lambda t: -(stk.at[t, "rs_rating"] if pd.notna(stk.at[t, "rs_rating"]) else 0))})
     wl6 = (in_wl & (tb | ta)) | S["s27"]
     final = wl6 & (d.price > 3)
@@ -383,7 +383,8 @@ def run_scans(ctx: dict) -> dict:
 
     cover = {"mcap": int(d.mcap.notna().sum()), "float_real": int((~d.float_est & d.float.notna()).sum()),
              "fund": int(d.eps_q_yoy.notna().sum()), "inst": int(d.inst_chg.notna().sum()), "n": len(d)}
-    return {"asof": ctx["asof"], "generated": ctx["generated"], "watchlists": wls,
+    rs_scan = {"key": "s27", "tickers": sorted(d.index[S["s27"]])}
+    return {"asof": ctx["asof"], "generated": ctx["generated"], "watchlists": wls, "rs_scan": rs_scan,
             "funnel": {"base": int(in_wl.sum()), "tight": int((in_wl & (tb | ta)).sum()), "rs_scan": int(S["s27"].sum()),
                        "wl6": int(wl6.sum()), "final": len(rows), "biotech": sum(r["biotech"] for r in rows)},
             "rows": rows, "ep": eps, "parabolic": para, "coverage": cover, "top_themes": top_themes,

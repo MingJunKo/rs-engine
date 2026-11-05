@@ -916,6 +916,25 @@ def run(demo: bool, notify: bool):
         import traceback
         log(f"  scans failed: {e}\n{traceback.format_exc()[-800:]}")
 
+    # ── Setup tracker: how did the RS setups and weekly-scan names actually do? (docs/tracker) ──
+    tracker_payload = None
+    try:
+        import tracker as TR
+        tracker_payload = TR.run_tracker({
+            "S": S, "open": opn, "high": high, "low": low, "close": close, "vol": vol, "rating": stk_rating,
+            "bench": b_close, "atr": atr, "settings": SETTINGS, "regime": regime, "demo": demo,
+            "setups": [{"symbol": t, "rs_rating": None if pd.isna(r.rs_rating) else int(r.rs_rating), "theme": r.theme,
+                        "lead_theme": True, "cs": r.get("cs")} for t, r in leaders[leaders.setup].iterrows()],
+            "scan_rows": [r for r in scans_payload["rows"] if not r["biotech"]] if scans_payload else [],
+            "exchange": stk.exchange.to_dict(), "asof_label": asof.strftime("%a %d %b %Y"),
+            "generated": dt.datetime.now(SGT).strftime("%d %b %Y %H:%M SGT")})
+        b_ = tracker_payload["backtest"]["summary"]
+        log(f"  tracker: backtest {b_.get('trades', 0)} trades, win {b_.get('win_rate')}%, avg {b_.get('avg_R')}R · "
+            f"live log {len(tracker_payload['live']['rows'])} entries")
+    except Exception as e:
+        import traceback
+        log(f"  tracker failed: {e}\n{traceback.format_exc()[-800:]}")
+
     # ════════════════════════════════════════════════════════════════
     #  OUTPUTS
     # ════════════════════════════════════════════════════════════════
@@ -1020,6 +1039,8 @@ def run(demo: bool, notify: bool):
     (DOCS / ".nojekyll").write_text("")
     if scans_payload:
         SC.write_page(scans_payload, DOCS, _clean_json)
+    if tracker_payload:
+        TR.write_page(tracker_payload, DOCS, _clean_json)
     (DOCS / "data").mkdir(parents=True, exist_ok=True)
     (DOCS / "data" / "fund.json").write_text(json.dumps(_clean_json(cs_detail), separators=(",", ":"), allow_nan=False))
 
@@ -1042,7 +1063,12 @@ def run(demo: bool, notify: bool):
     out_all.sort_values("rs_rating", ascending=False).round(2).rename_axis("ticker").to_csv(DATA_OUT / "stocks.csv")
 
     # TradingView import file, one section per theme
-    lines = []
+    # ONE TradingView import file: RS sectors/themes, RS setups, leaders by theme, early turners, weekly scan,
+    # episodic pivots, parabolic watch. Each symbol appears once (first section wins).
+    lines = ["###RS sectors & themes (ETFs)", ",".join(e for e, r in theme_tbl.iterrows() if r.theme in top_themes)]
+    su = leaders[leaders.setup & ~leaders.er_soon]
+    if len(su):
+        lines += ["###RS setups", ",".join(f"{r.exchange}:{t}" if r.exchange else t for t, r in su.iterrows())]
     for th_name, g in leaders.groupby("theme", sort=False):
         lines.append(f"###{th_name}")
         lines.append(",".join(f"{r.exchange}:{t}" if r.exchange else t for t, r in g.iterrows()))
@@ -1052,7 +1078,14 @@ def run(demo: bool, notify: bool):
             lines.append(",".join(f"{stk.at[t, 'exchange']}:{t}" if stk.at[t, "exchange"] else t for t in g["stocks"]))
     if scans_payload:
         lines += SC.tradingview_sections(scans_payload)
-    (DATA_OUT / "tradingview_leaders.txt").write_text("\n".join(lines) + "\n")
+    seen_, out_ = set(), []
+    for i in range(0, len(lines) - 1, 2):                 # de-duplicate across sections
+        head, syms = lines[i], [x for x in lines[i + 1].split(",") if x]
+        keep_ = [x for x in syms if x.split(":")[-1] not in seen_]
+        seen_ |= {x.split(":")[-1] for x in keep_}
+        if keep_:
+            out_ += [head, ",".join(keep_)]
+    (DATA_OUT / "tradingview_leaders.txt").write_text("\n".join(out_) + "\n")
 
     # history snapshots (one row-set per day)
     d = asof.strftime("%Y-%m-%d")

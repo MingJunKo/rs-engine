@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setup Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/*__SHARED_CSS__*/
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px}
+.kpi{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:12px 14px}
+.kpi .k{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--t4)}
+.kpi .v{font-family:"DM Mono",monospace;font-size:22px;color:var(--t1);margin-top:3px}
+.kpi .s{font-size:11px;color:var(--t3)}
+.kpi.g .v{color:var(--gold-bright)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.st{font-family:"DM Mono",monospace;font-size:10px;padding:1px 6px;border-radius:2px;letter-spacing:.06em}
+.st.closed{color:var(--t1);background:var(--surface-3)}.st.running{color:#0b0b0a;background:var(--gold)}
+.st.stopped{color:var(--dn);background:var(--dn-bg)}.st.waiting{color:#7c9cff;background:rgba(124,156,255,.12)}
+.st.no{color:var(--t4);background:transparent;border:.5px dashed var(--border-2)}
+.rpos{color:var(--up)}.rneg{color:var(--dn)}
+.note2{font-size:12.5px;color:var(--t3);line-height:1.65;max-width:980px;margin:6px 0 14px}
+.note2 b{color:var(--t2);font-weight:500}
+.bar{display:inline-block;height:8px;border-radius:1px;vertical-align:middle;margin-left:6px}
+.controls .seg button{background:var(--surface);border:.5px solid var(--border-2);color:var(--t2);padding:4px 10px;border-radius:12px;font-family:Barlow,sans-serif;font-size:11.5px;cursor:pointer;margin-right:4px}
+.controls .seg button.on{border-color:var(--gold-dim);color:var(--t1);background:var(--gold-bg)}
+.controls .seg button b{font-family:"DM Mono",monospace;font-weight:500;color:var(--gold);margin-left:5px;font-size:10.5px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <span class="brand">MJ — <em>Setup tracker</em></span>
+  <a href="#live">Live log</a><a href="#backtest">Backtest</a><a href="#how">How it's scored</a>
+  <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a>
+  <span class="asof" id="asof"></span>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>Do the <em>setups</em> work?</h1>
+    <p class="note2">Every RS-leader <b>SETUP</b> and every <b>Weekly scan</b> name is logged on the day it appears and followed for 20 sessions, scored the way you'd trade it: buy the break of the pivot, stop under the tight area. The backtest rebuilds the same SETUP shape over the past year so there's a track record from day one.</p>
+    <div class="kpis" id="kpis"></div>
+  </header>
+
+  <section id="live">
+    <div class="sec-head"><h2>Live log</h2><div class="line"></div><p id="live-sub"></p></div>
+    <div class="controls"><span class="seg" id="seg"></span></div>
+    <div class="tbl-wrap"><table class="t" id="live-t"></table></div>
+  </section>
+
+  <section id="backtest">
+    <div class="sec-head"><h2>Backtest — RS setups, past year</h2><div class="line"></div><p id="bt-sub"></p></div>
+    <p class="note2" id="bt-note"></p>
+    <div class="two">
+      <div class="tbl-wrap"><table class="t" id="by-rs"></table></div>
+      <div class="tbl-wrap"><table class="t" id="by-tight"></table></div>
+    </div>
+    <div class="tbl-wrap" style="margin-top:14px"><table class="t" id="by-month"></table></div>
+  </section>
+
+  <section id="how">
+    <div class="sec-head"><h2>How it's scored</h2><div class="line"></div></div>
+    <div class="note2">
+      <b>Entry</b> — the first break above the pivot (the 20-day high on the signal day) within 10 sessions, at the open if it gaps over, otherwise at the pivot. No break in 10 sessions = <b>no trigger</b> (it never set off your buy stop).<br>
+      <b>Stop</b> — the lowest low of the 10 sessions up to the signal (under the tight area). Hit = <b>stopped</b>, at the open if it gaps below.<br>
+      <b>Exit</b> — otherwise the close 20 sessions after entry (<b>closed</b>); still inside that window = <b>running</b>.<br>
+      <b>R</b> — result in multiples of the risk (entry − stop). <b>MFE</b> — the best R reached along the way, i.e. what a good trail could have kept. <b>Hit 2R</b> — % of trades that reached +2R at some point.<br>
+      This is a fixed, mechanical exit to compare setups fairly; your own selling rules (partial at 2–3R, 10/20-day trail) will differ. The backtest has no top-theme filter (theme history isn't stored) and uses today's universe, so it slightly flatters survivors.
+    </div>
+  </section>
+  <footer id="footer"></footer>
+</div>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d=1, sign=true) => v==null ? "–" : (sign && v>0 ? "+" : "") + Number(v).toFixed(d);
+const tv = (s, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + s : s);
+const R = v => v==null ? '–' : `<span class="${v>0?'rpos':'rneg'}">${fmt(v,2)}R</span>`;
+const ST = s => `<span class="st ${s==='no trigger'?'no':s.replace(' ','')}">${esc(s)}</span>`;
+const spark = (v, entry, stop, w=110, h=22) => { if(!v||v.length<2) return ""; const all=v.concat([entry,stop].filter(x=>x!=null)); const mn=Math.min(...all), mx=Math.max(...all), r=(mx-mn)||1, y=x=>(h-2-(x-mn)/r*(h-4)).toFixed(1);
+  return `<svg width="${w}" height="${h}">${stop!=null?`<line x1="0" x2="${w}" y1="${y(stop)}" y2="${y(stop)}" stroke="#d4706a" stroke-width=".6" stroke-dasharray="2 2"/>`:''}${entry!=null?`<line x1="0" x2="${w}" y1="${y(entry)}" y2="${y(entry)}" stroke="#c9a55a" stroke-width=".6" stroke-dasharray="2 2"/>`:''}<polyline points="${v.map((x,i)=>`${(i/(v.length-1)*w).toFixed(1)},${y(x)}`).join(' ')}" fill="none" stroke="${v[v.length-1]>=v[0]?'#5bbf7a':'#d4706a'}" stroke-width="1.3"/></svg>`; };
+function table(el, cols, rows){ el.innerHTML = `<thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" title="${esc(c.tip||'')}">${c.h}</th>`).join('')}</tr></thead><tbody>${rows.map(x=>`<tr>${cols.map(c=>c.f(x)).join('')}</tr>`).join('')}</tbody>`; }
+const statCols = first => [
+  {h:first, l:1, f:x=>`<td class="l" style="color:var(--t1)">${esc(x.label)}</td>`},
+  {h:"Signals", f:x=>`<td>${x.n}</td>`}, {h:"Trades", tip:"Triggered and finished", f:x=>`<td>${x.trades}</td>`},
+  {h:"Open", tip:"Triggered, still inside the 20-day window. While trades are open, a month's numbers lean towards the losers (stops finish early, winners are still running)", f:x=>`<td style="color:${x.running?'#e8c070':'#45403a'}">${x.running||0}</td>`},
+  {h:"Win %", f:x=>`<td>${x.win_rate??'–'}${x.win_rate!=null?'%':''}</td>`},
+  {h:"Avg R", tip:"Expectancy per trade", f:x=>`<td>${R(x.avg_R)}${x.avg_R!=null?`<span class="bar" style="width:${Math.min(60,Math.abs(x.avg_R)*60)}px;background:${x.avg_R>0?'#5bbf7a':'#d4706a'}"></span>`:''}</td>`},
+  {h:"Avg win", f:x=>`<td>${R(x.avg_win)}</td>`}, {h:"Avg loss", f:x=>`<td>${R(x.avg_loss)}</td>`},
+  {h:"Hit 2R", f:x=>`<td>${x.hit_2R??'–'}${x.hit_2R!=null?'%':''}</td>`},
+];
+function kpi(k, v, s, g){ return `<div class="kpi ${g?'g':''}"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`; }
+function render(){
+  if(!D){ document.body.innerHTML="<p style='padding:40px'>No data yet.</p>"; return; }
+  $("#asof").textContent = "Data " + D.asof;
+  const B = D.backtest, S = B.summary, L = D.live;
+  $("#eyebrow").textContent = `Market close ${D.asof} · backtest since ${B.from}`;
+  $("#kpis").innerHTML = [
+    kpi("Backtest trades", S.trades ?? 0, `${S.n} signals · ${S.trigger_rate??'–'}% triggered`),
+    kpi("Win rate", (S.win_rate??'–') + (S.win_rate!=null?'%':''), `${S.stopped??'–'}% stopped out`),
+    kpi("Expectancy", S.avg_R!=null ? fmt(S.avg_R,2)+'R' : '–', `avg win ${fmt(S.avg_win,2)}R · avg loss ${fmt(S.avg_loss,2)}R`, true),
+    kpi("Reached +2R", (S.hit_2R??'–') + (S.hit_2R!=null?'%':''), "at some point in 20 days"),
+    kpi("20-day return", fmt(S.ret20_avg)+'%', `vs ${fmt(B.base_ret20)}% for any RS 80+ stock · RSP ${fmt(B.bench_ret20)}%`),
+    kpi("Live log", L.rows.length, `RS setups ${L.rs.n} · scan names ${L.scan.n}`),
+  ].join('');
+  $("#bt-sub").textContent = `${S.n} signals since ${B.from}`;
+  $("#bt-note").innerHTML = `Same RS ≥ min, above the 50-day, ADR and liquidity rules as the leaders list, plus the SETUP shape (≤ 6% below the pivot, 10-day range ≤ 2.5 ADR, 0–4 ATR above the 50-day). One signal per stock per 20 sessions. The <b>20-day return</b> card compares a SETUP bought at the close with any stock passing the same RS filters, which tells you whether waiting for the shape adds edge.`;
+  table($("#by-rs"), statCols("RS bucket"), B.by_rs);
+  table($("#by-tight"), statCols("Tightness"), B.by_tight);
+  table($("#by-month"), statCols("Signal month"), B.by_month.slice().reverse());
+
+  // live log
+  let seg = "all";
+  const SEG = {all:["All", x=>true], rs:["RS setups", x=>x.source==="RS setup"], scan:["Weekly scan", x=>x.source==="Weekly scan"],
+               open:["Open", x=>x.status==="running"||x.status==="waiting"], done:["Finished", x=>x.status==="closed"||x.status==="stopped"]};
+  const cols = [
+    {h:"Logged", l:1, f:x=>`<td class="l" style="color:var(--t3)">${esc(x.date)}</td>`},
+    {h:"Ticker", l:1, f:x=>`<td class="sym l"><a href="${tv(x.symbol,x.exchange)}" target="_blank" rel="noopener">${esc(x.symbol)}</a></td>`},
+    {h:"Source", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.source)}</span></td>`},
+    {h:"Theme", l:1, f:x=>`<td class="l" style="color:var(--t2)">${esc(x.theme||'')}</td>`},
+    {h:"RS", f:x=>`<td>${x.rs??'–'}</td>`},
+    {h:"Status", l:1, f:x=>`<td class="l">${ST(x.status)}</td>`},
+    {h:"Pivot", f:x=>`<td>${fmt(x.pivot,2,false)}</td>`}, {h:"Stop", f:x=>`<td>${fmt(x.stop,2,false)}</td>`},
+    {h:"Entry", f:x=>`<td>${fmt(x.entry,2,false)}</td>`},
+    {h:"R", f:x=>`<td>${R(x.R)}</td>`}, {h:"MFE", tip:"Best R reached", f:x=>`<td>${R(x.mfe)}</td>`},
+    {h:"Since logged", f:x=>`<td class="${x.since>0?'up':x.since<0?'dn':''}">${fmt(x.since)}%</td>`},
+    {h:"Since signal", tip:"Gold = entry (pivot) · red = stop", f:x=>`<td>${spark(x.spark, x.entry ?? x.pivot, x.stop)}</td>`},
+    {h:"Regime", l:1, f:x=>`<td class="l" style="color:var(--t3)">${esc(x.regime||'')}</td>`},
+  ];
+  const draw = () => { const rows = L.rows.filter(SEG[seg][1]);
+    $("#seg").innerHTML = Object.entries(SEG).map(([k,[n,f]])=>`<button class="${k===seg?'on':''}" data-k="${k}">${n}<b>${L.rows.filter(f).length}</b></button>`).join('');
+    if (!rows.length) { $("#live-t").innerHTML = `<tbody><tr><td class="l" style="padding:16px;color:var(--t3)">Nothing logged yet. Entries are added each day the engine flags a SETUP or a weekly-scan name; results fill in as they trigger.</td></tr></tbody>`; return; }
+    table($("#live-t"), cols, rows); };
+  $("#seg").onclick = e => { const b = e.target.closest("button"); if (b) { seg = b.dataset.k; draw(); } };
+  draw();
+  $("#live-sub").textContent = `RS setups: ${L.rs.trades||0} finished${L.rs.avg_R!=null?`, ${fmt(L.rs.avg_R,2)}R avg`:''} · Weekly scan: ${L.scan.trades||0} finished${L.scan.avg_R!=null?`, ${fmt(L.scan.avg_R,2)}R avg`:''}`;
+  $("#footer").innerHTML = `Generated ${esc(D.generated)} · Not investment advice · <a href="../">RS dashboard</a> · <a href="../scans/">Scans</a>`;
+}
+render();
+</script>
+</body>
+</html>
