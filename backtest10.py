@@ -85,7 +85,13 @@ def main(years="10y"):
     breadth = (close[S] > close[S].rolling(50).mean()).mean(axis=1).values * 100
     ADR = ((h[S] / l[S] - 1).rolling(20).mean() * 100).values
     S20 = close[S].rolling(20).mean().values
+    VOL = v[S].values
+    AV50 = v[S].rolling(50).mean().shift(1).values
+    RSL = (close[S].div(b_close, axis=0))
+    RSL_HI = (RSL >= RSL.rolling(63).max() * 0.995).values                     # RS line at a 3-month high
+    DEPTH = ((h[S].rolling(60).max() - l[S].rolling(60).min()) / h[S].rolling(60).max() * 100).values
     VARIANTS = {"base": {"stop_mode": "base"}, "prev": {"stop_mode": "prev"}, "p2r": {"partial": "2r", "sma": S20},
+                "volconf": {"confirm_vol": 1.5, "vol": "VOL", "avgv": "AV50"}, "pyr": {"pyramid": True},
                 "fixed20": {"partial": None, "hold": 20}, "trail20": {"sma": S20}}
     books = {k: [] for k in VARIANTS}
     book, start = [], 130
@@ -98,9 +104,12 @@ def main(years="10y"):
             ts = topset[i]
             at = {"jx": jx, "sym": t, "rs": int(rating.iat[i, jx]) if pd.notna(rating.iat[i, jx]) else None,
                   "top": None if ts is None else bool(stock_themes[t] & ts), "m50": bool(m50[i]), "m200": bool(m200[i]),
-                  "riskon": int(riskon[i]), "breadth": float(breadth[i]), "adr": float(ADR[i, jx])}
+                  "riskon": int(riskon[i]), "breadth": float(breadth[i]), "adr": float(ADR[i, jx]),
+                  "rsl_hi": bool(RSL_HI[i, jx]), "depth": float(DEPTH[i, jx])}
             for vk, kw in VARIANTS.items():
                 kw = dict(kw); sma = kw.pop("sma", S10)
+                if kw.get("vol") == "VOL":
+                    kw["vol"], kw["avgv"] = VOL[:, jx], AV50[:, jx]
                 p = T.path(i, O[:, jx], H[:, jx], L[:, jx], C[:, jx], sma[:, jx], **kw)
                 if p:
                     books[vk].append({**p, **at})
@@ -156,7 +165,17 @@ def main(years="10y"):
               ("Sizing: 0.5% risk, up to 12 positions", "base", top_, {"max_pos": 12}),
               ("Sizing: 0.75% risk, up to 12 positions", "base", top_, {"risk": 0.0075, "max_pos": 12}),
               ("Sizing: 1% risk, up to 12 positions", "base", top_, {"risk": 0.01, "max_pos": 12})]
-    for name, vk, f, *kw in [(*t, {}) for t in TESTS] + SIZING:
+    EDGE = [("Edge: breakout volume ≥ 1.5× (buy at the close)", "volconf", top_, {}),
+            ("Edge: RS line at a new high at the signal", "base", lambda b: top_(b) and b["rsl_hi"], {}),
+            ("Edge: base depth ≥ 20%", "base", lambda b: top_(b) and b["depth"] >= 20, {}),
+            ("Edge: base depth < 20%", "base", lambda b: top_(b) and b["depth"] < 20, {}),
+            ("Edge: skip stops wider than 8%", "base", lambda b: top_(b) and b.get("risk_pct", 0) <= 8, {}),
+            ("Edge: add ½ on the first 10-day pullback", "pyr", top_, {}),
+            ("Edge: RS line high + skip stops > 8%", "base", lambda b: top_(b) and b["rsl_hi"] and b.get("risk_pct", 0) <= 8, {}),
+            ("Edge: RS line high + add on pullback", "pyr", lambda b: top_(b) and b["rsl_hi"], {}),
+            ("Edge: RS line high + ADR ≥ 4%", "base", lambda b: top_(b) and b["rsl_hi"] and b["adr"] >= 4, {}),
+            ("Edge: RS line high, 1% risk, 12 positions", "base", lambda b: top_(b) and b["rsl_hi"], {"risk": 0.01, "max_pos": 12})]
+    for name, vk, f, *kw in [(*t, {}) for t in TESTS] + SIZING + EDGE:
         pf = T.portfolio([b for b in books[vk] if f(b)], idx, C, **(kw[0] if kw else {}))
         yr = yearly(pf["curve"]) if pf["curve"] else {}
         tests.append({"test": name, "end": pf["end"], "cagr": pf["cagr"], "dd": pf["max_dd"], "trades": pf["trades"],

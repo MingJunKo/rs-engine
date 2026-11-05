@@ -99,11 +99,15 @@ def manage(i, o, h, l, c, sma, rule):
     return None
 
 
-def path(i, o, h, l, c, sma, nochase=0.02, stop_mode="base", partial="day3", hold=None):
+def path(i, o, h, l, c, sma, nochase=0.02, stop_mode="base", partial="day3", hold=None, vol=None, avgv=None,
+         confirm_vol=None, pyramid=False):
     """The recommended trade, step by step, for the portfolio simulation: buy the pivot break (skip if it opens
-    > 2% over), stop under the prior day's low, sell ⅓ on day 3 if in profit (stop → breakeven), trail the rest
-    on `sma`. Variants: stop_mode "base" (10-day low), partial "2r" (⅓ at +2R) or None, hold=N (fixed exit after
-    N days, no trail). Returns entry bar/price, stop and the sell events [(bar, fraction of the position, price)]."""
+    > 2% over), stop under the 10-day low, sell ⅓ on day 3 if in profit (stop → breakeven), trail the rest on `sma`.
+    Variants: stop_mode "prev" (prior day's low), partial "2r" (⅓ at +2R) or None, hold=N (fixed exit after N days),
+    confirm_vol=1.5 (buy at the breakout day's close, only on ≥ 1.5× average volume), pyramid=True (add half the
+    original size once, the first time it pulls back to the 10-day and closes above it after day 3).
+    Events: (bar, fraction, price) — fraction > 0 sells that share of the original position (1.0 = all that's left),
+    < 0 buys that share more."""
     n = len(c)
     piv = np.nanmax(h[max(0, i - 19):i + 1]); base = np.nanmin(l[max(0, i - 9):i + 1])
     for j in range(i + 1, min(n, i + 1 + TRIGGER_WIN)):
@@ -111,29 +115,37 @@ def path(i, o, h, l, c, sma, nochase=0.02, stop_mode="base", partial="day3", hol
             continue
         if nochase and o[j] > piv * (1 + nochase):
             return None
-        entry = max(o[j], piv) if np.isfinite(o[j]) else piv
+        if confirm_vol:
+            if not (avgv[j] > 0 and vol[j] >= confirm_vol * avgv[j] and c[j] > piv):
+                return None
+            entry = c[j]
+        else:
+            entry = max(o[j], piv) if np.isfinite(o[j]) else piv
         stop = base if stop_mode == "base" else (max(base, l[j - 1]) if np.isfinite(l[j - 1]) else base)
         if not (entry - stop > 0):
             return None
         risk = entry - stop
-        left, st, ev = 1.0, stop, []
+        left, st, ev, added = 1.0, stop, [], False
+        k0 = j + 1 if confirm_vol else j                       # bought at the close: the day's low already happened
         last = min(n, j + (hold + 1 if hold else MAX_HOLD))
-        for k in range(j, last):
+        for k in range(k0, last):
             if l[k] <= st:
-                ev.append((k, left, st if k == j else min(o[k], st)))
-                return {"j": j, "entry": entry, "stop": stop, "events": ev}
+                ev.append((k, 1.0, st if k == j else min(o[k], st)))
+                return {"j": j, "entry": entry, "stop": stop, "events": ev, "risk_pct": risk / entry * 100}
             if left == 1.0:
                 if partial == "day3" and k == j + 3 and c[k] > entry:
                     ev.append((k, 1 / 3, c[k])); left, st = 2 / 3, max(st, entry)
                 elif partial == "2r" and h[k] >= entry + 2 * risk:
                     ev.append((k, 1 / 3, max(o[k], entry + 2 * risk))); left, st = 2 / 3, max(st, entry)
             if not hold and (left < 1.0 or partial is None) and k > j + 3 and c[k] < sma[k]:
-                ev.append((k, left, c[k]))
-                return {"j": j, "entry": entry, "stop": stop, "events": ev}
+                ev.append((k, 1.0, c[k]))
+                return {"j": j, "entry": entry, "stop": stop, "events": ev, "risk_pct": risk / entry * 100}
+            if pyramid and not added and left < 1.0 and k > j + 3 and l[k] <= sma[k] * 1.01 and c[k] > sma[k]:
+                ev.append((k, -0.5, c[k])); added = True
         k = last - 1
         if (hold and j + hold < n) or (not hold and j + MAX_HOLD <= n):
-            ev.append((k, left, c[k]))
-        return {"j": j, "entry": entry, "stop": stop, "events": ev}
+            ev.append((k, 1.0, c[k]))
+        return {"j": j, "entry": entry, "stop": stop, "events": ev, "risk_pct": risk / entry * 100}
     return None
 
 
@@ -172,9 +184,20 @@ def portfolio(trades, idx, C, start_cash=100_000.0, risk=0.005, max_pos=8, max_w
         still = []
         for p in open_:
             for k, frac, px in p["events"]:
-                if k == d:
+                if k != d:
+                    continue
+                if frac < 0:                                   # an add: buy more at px (cash permitting)
+                    q = min(-frac * p["sh"], max(0.0, cash) / px)
+                    if q > 0:
+                        p["cost"] = p.get("cost", p["entry"]) * p["left"] / (p["left"] + q) + px * q / (p["left"] + q)
+                        cash -= q * px; p["left"] += q
+                    continue
+                if frac >= 0.999:                              # "sell the rest" (stop or trail)
+                    q = p["left"]
+                else:
                     q = min(p["left"], frac * p["sh"])
-                    cash += q * px; p["left"] -= q; p["pnl"] += q * (px - p["entry"])
+                cost = p.get("cost", p["entry"])
+                cash += q * px; p["left"] -= q; p["pnl"] += q * (px - cost)
             if p["left"] > 1e-9:
                 still.append(p)
             else:
