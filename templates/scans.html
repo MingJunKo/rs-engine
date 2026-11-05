@@ -181,7 +181,8 @@ function render(){
     if (w.final) { el.innerHTML = `<b>${esc(q)}</b> is on the list${w.bio?' (in the biotech set-aside: tick “Show biotech”)':''}.`; return; }
     const parts = [];
     if (w.tight_miss) parts.push(`It is in a watchlist, but failed the tightness pass: <span class="m">${w.tight_miss.map(esc).join(' · ')}</span>.`);
-    parts.push(`Closest screen: <b>${esc(NAMES[w.best]||w.best)}</b>${w.miss.length?` — missed <span class="m">${w.miss.map(esc).join(' · ')}</span>`:''}.`);
+    parts.push(`Closest screen: <b>${esc(NAMES[w.best]||w.best)}</b>${w.miss.length?` — missed <span class="m">${w.miss.map(esc).join(' · ')}</span>`:' — passes it'}.`);
+    const nr = Object.entries(w.near||{}); if (nr.length) parts.push('Also close: ' + nr.map(([k,m])=>`<b>${esc(NAMES[k]||k)}</b>${m.length?` (missed <span class="m">${m.map(esc).join(' · ')}</span>)`:' (passes)'}`).join('; ') + '.');
     el.innerHTML = `<b>${esc(q)}</b>: ` + parts.join(' ');
   }, 200); });
 

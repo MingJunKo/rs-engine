@@ -181,6 +181,10 @@ def why(d, conds, member, tb, ta, bio, final):
         best = nmiss.loc[t].sort_values(kind="stable")
         k = best.index[0]
         rec = {"best": k, "miss": [labels[k][i] for i, m in enumerate(miss[k].loc[t].values) if m]}
+        near = {kk: [labels[kk][i] for i, m in enumerate(miss[kk].loc[t].values) if m]
+                for kk in best.index[1:] if best[kk] <= 2}
+        if near:
+            rec["near"] = near
         if member[t]:
             rec["tight_miss"] = [l for l, ser in tcommon if not bool(ser.fillna(False).get(t))]
         rec["final"] = bool(final.get(t)); rec["bio"] = bool(bio.get(t))
