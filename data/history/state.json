@@ -1,24 +1,24 @@
 {
- "date": "2026-11-04",
+ "date": "2026-11-05",
  "regime": "Defensive Rotation",
  "setups": [],
  "turners": [
-  "IYR",
   "TAN",
-  "MOO",
-  "BETZ",
-  "KCE"
+  "KWEB",
+  "XLRE",
+  "JETS",
+  "BETZ"
  ],
  "prev": {
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "regime": "Defensive Rotation",
   "setups": [],
   "turners": [
    "IYR",
-   "IPAY",
+   "TAN",
    "MOO",
    "BETZ",
-   "ITB"
+   "KCE"
   ]
  }
 }

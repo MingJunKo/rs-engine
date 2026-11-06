@@ -39,3 +39,27 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-04,BJRI,Weekly scan,61.75,32,Consumer Discretionary,False,--000-0,Defensive Rotation
 2026-11-04,STLD,Weekly scan,240.12,30,Materials,False,1010010,Defensive Rotation
 2026-11-04,SPHR,Weekly scan,108.85,20,Leisure & Travel,False,--000-0,Defensive Rotation
+2026-11-05,GKOS,Weekly scan,219.98,88,Medical Devices,True,1010110,Defensive Rotation
+2026-11-05,SEPN,Weekly scan,47.35,87,Pharma,True,0010110,Defensive Rotation
+2026-11-05,BRCB,Weekly scan,10.57,92,Consumer Discretionary,False,--001-0,Defensive Rotation
+2026-11-05,CROX,Weekly scan,152.93,92,Consumer Discretionary,False,10111-0,Defensive Rotation
+2026-11-05,LFST,Weekly scan,13.43,83,Health Services,True,1010110,Defensive Rotation
+2026-11-05,SIG,Weekly scan,121.92,91,Retail,False,10111-0,Defensive Rotation
+2026-11-05,ANDG,Weekly scan,66.27,90,Consumer Discretionary,False,-0111-0,Defensive Rotation
+2026-11-05,NRDS,Weekly scan,11.43,89,Software & Cloud,False,00001-0,Defensive Rotation
+2026-11-05,SN,Weekly scan,217.13,88,Homebuilders,False,10101-0,Defensive Rotation
+2026-11-05,MAX,Weekly scan,14.45,87,Consumer Discretionary,False,00101-0,Defensive Rotation
+2026-11-05,PACS,Weekly scan,50.2,79,Health Services,True,1010010,Defensive Rotation
+2026-11-05,MSGK,Weekly scan,317.35,73,Consumer Discretionary,False,10100-0,Defensive Rotation
+2026-11-05,PHR,Weekly scan,12.71,80,Consumer Discretionary,False,00001-0,Defensive Rotation
+2026-11-05,CDW,Weekly scan,158.39,79,Technology,False,0010010,Defensive Rotation
+2026-11-05,DIN,Weekly scan,35.88,74,Consumer Discretionary,False,00110-0,Defensive Rotation
+2026-11-05,GLBE,Weekly scan,43.33,69,Software & Cloud,False,10110-0,Defensive Rotation
+2026-11-05,SHOE,Weekly scan,15.18,69,Retail,False,00000-0,Defensive Rotation
+2026-11-05,PS,Weekly scan,50.34,67,Financials,False,--010-0,Defensive Rotation
+2026-11-05,CAVA,Weekly scan,60.01,66,Consumer Discretionary,False,00000-0,Defensive Rotation
+2026-11-05,TPG,Weekly scan,46.74,55,Capital Markets,False,0000010,Defensive Rotation
+2026-11-05,MRP,Weekly scan,26.5,53,Financials,False,00100-0,Defensive Rotation
+2026-11-05,EWTX,Weekly scan,38.87,43,Pharma,True,--00010,Defensive Rotation
+2026-11-05,FND,Weekly scan,51.47,48,Homebuilders,False,--000-0,Defensive Rotation
+2026-11-05,CWH,Weekly scan,5.1,46,Retail,False,--00000,Defensive Rotation
