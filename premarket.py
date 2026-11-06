@@ -112,6 +112,12 @@ def main():
         log("dry run: " + ", ".join(f"{r['symbol']} +{r['gap']}%" for r in rows)); return
     OUT.write_text(json.dumps({"date": today, "asof": now.strftime("%a %d %b %H:%M New York"), "rows": rows},
                               separators=(",", ":"), default=str))
+    # TradingView import file for the open: the alert-worthy gappers first, then the rest
+    good = [r["symbol"] for r in rows if r["earnings"] or (r.get("rs_rating") or 0) >= 70]
+    rest = [r["symbol"] for r in rows if r["symbol"] not in good]
+    tv = [f"###Pre-market {now:%d %b}: earnings or RS 70+", ",".join(good)] if good else []
+    tv += [f"###Pre-market {now:%d %b}: other gappers", ",".join(rest)] if rest else []
+    (OUT.parent / "tradingview_premarket.txt").write_text("\n".join(tv) + "\n" if tv else "")
     send(rows, now)
 
 

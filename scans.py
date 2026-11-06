@@ -437,9 +437,15 @@ def tradingview_sections(payload: dict) -> list[str]:
     keep = [r for r in payload["rows"] if not r["biotech"]]
     if keep:
         lines += ["###Weekly scan result", ",".join(sym(r["symbol"], r["exchange"]) for r in keep)]
-    eps = [e for e in payload["ep"] if e["days_ago"] <= 5]
+    # EPs: same quality bar as the Telegram alert — last 2 sessions, still holding the gap, $20M+ traded,
+    # and neglected / RS ≥ 80 / in a top theme. The full list (10 sessions) stays on the Scans page.
+    top = set(payload.get("top_themes") or [])
+    eps = [e for e in payload["ep"] if e["days_ago"] <= 1 and e["holding"]
+           and (e.get("vol_m") or 0) * (e.get("price") or 0) >= 20
+           and (e["neglected"] or (e.get("rs_rating") or 0) >= 80 or e.get("theme") in top)]
+    eps.sort(key=lambda e: (-e["neglected"], -(e.get("rs_rating") or 0)))
     if eps:
-        lines += ["###Episodic pivots", ",".join(sym(e["symbol"], e.get("exchange")) for e in eps)]
+        lines += ["###Episodic pivots (last 2 days)", ",".join(sym(e["symbol"], e.get("exchange")) for e in eps[:12])]
     if payload["parabolic"]:
         lines += ["###Parabolic short watch", ",".join(sym(p["symbol"], p.get("exchange")) for p in payload["parabolic"])]
     return lines

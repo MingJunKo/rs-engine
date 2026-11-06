@@ -84,7 +84,7 @@
   </section>
 
   <section id="ep">
-    <div class="sec-head"><h2>Episodic pivots</h2><div class="line"></div><p>Gap ≥ 8% on ≥ 3× volume · last 10 sessions</p></div>
+    <div class="sec-head"><h2>Episodic pivots</h2><div class="line"></div><p>Gap ≥ 8% on ≥ 3× volume · last 10 sessions · the TradingView list keeps only the best of the last 2</p></div>
     <div id="pm"></div>
     <div id="ep-wrap"></div>
   </section>
@@ -204,7 +204,7 @@ function render(){
   // episodic pivots
   const newsH = x => x.earnings_gap ? `<span class="flag ern">EARNINGS</span> ` : '';
   const headline = x => (x.news||[]).slice(0,2).map(n=>`<div>${n.url?`<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:esc(n.title)}<small>${esc(n.src||'')} ${esc((n.when||'').slice(0,10))}</small></div>`).join('');
-  const showPM = pm => { if (pm && pm.rows && pm.rows.length) $("#pm").innerHTML = `<div class="pm"><h3>Pre-market gappers · ${esc(pm.asof)}</h3>${pm.rows.map(r=>`<div style="margin:4px 0"><b style="color:var(--t1);font-family:'DM Mono',monospace">${esc(r.symbol)}</b> <span class="up">+${r.gap}%</span> pre-market${r.pm_vol_k?` · ${r.pm_vol_k.toLocaleString()}K sh`:''} · prev close ${r.prev_close}${r.earnings?' <span class="flag ern">EARNINGS</span>':''}<div class="news" style="max-width:none">${headline(r)}</div></div>`).join('')}</div>`;
+  const showPM = pm => { if (pm && pm.rows && pm.rows.length) $("#pm").innerHTML = `<div class="pm"><h3>Pre-market gappers · ${esc(pm.asof)} <a href="../data/tradingview_premarket.txt" download="Premarket_${esc(pm.date||'')}.txt" style="color:var(--gold);font-size:12px;font-weight:400;margin-left:8px">⇩ TradingView list</a></h3>${pm.rows.map(r=>`<div style="margin:4px 0"><b style="color:var(--t1);font-family:'DM Mono',monospace">${esc(r.symbol)}</b> <span class="up">+${r.gap}%</span> pre-market${r.pm_vol_k?` · ${r.pm_vol_k.toLocaleString()}K sh`:''} · prev close ${r.prev_close}${r.earnings?' <span class="flag ern">EARNINGS</span>':''}<div class="news" style="max-width:none">${headline(r)}</div></div>`).join('')}</div>`;
     else if (pm && pm.asof) $("#pm").innerHTML = `<div class="pm"><h3>Pre-market · ${esc(pm.asof)}</h3>No stock gapping ≥ 8% on real pre-market volume.</div>`; };
   showPM(D.premarket);
   fetch("../data/premarket.json", {cache:"no-store"}).then(r=>r.ok?r.json():null).then(p=>{ if (p && (!D.premarket || p.asof !== D.premarket.asof)) showPM(p); }).catch(()=>{});
