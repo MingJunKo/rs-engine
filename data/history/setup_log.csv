@@ -1,65 +1,84 @@
 date,symbol,source,price,rs,theme,lead_theme,cs,regime
-2026-11-04,AMN,Weekly scan,47.74,93,Health Services,True,1011110,Defensive Rotation
-2026-11-04,HNGE,Weekly scan,120.87,90,Health Services,True,1011110,Defensive Rotation
-2026-11-04,RCEL,Weekly scan,16.32,87,Medical Devices,True,00111-0,Defensive Rotation
-2026-11-04,BOOM,Weekly scan,7.9,84,Medical Devices,True,10011-0,Defensive Rotation
-2026-11-04,APPN,Weekly scan,49.82,88,Software & Cloud,False,1010110,Defensive Rotation
-2026-11-04,MEOH,Weekly scan,65.22,80,Industrials,False,10111-0,Defensive Rotation
-2026-11-04,HTFL,Weekly scan,56.57,78,Medical Devices,True,00100-0,Defensive Rotation
-2026-11-04,WK,Weekly scan,85.28,86,Software & Cloud,False,1011100,Defensive Rotation
-2026-11-04,KVYO,Weekly scan,21.36,83,Software & Cloud,False,0001110,Defensive Rotation
-2026-11-04,CBRL,Weekly scan,70.27,81,Consumer Discretionary,False,10111-0,Defensive Rotation
-2026-11-04,BETR,Weekly scan,20.19,79,Financials,False,00010-0,Defensive Rotation
-2026-11-04,BSP,Weekly scan,46.58,79,Technology,False,-0-00-0,Defensive Rotation
-2026-11-04,XERS,Weekly scan,10.46,70,Pharma,True,1011010,Defensive Rotation
-2026-11-04,NTSK,Weekly scan,22.77,77,Software & Cloud,False,-011010,Defensive Rotation
-2026-11-04,BLLN,Weekly scan,113.89,68,Health Services,True,--00010,Defensive Rotation
-2026-11-04,ELF,Weekly scan,113.63,75,Consumer Discretionary,False,10100-0,Defensive Rotation
-2026-11-04,KMTS,Weekly scan,30.5,67,Medical Devices,True,00110-0,Defensive Rotation
-2026-11-04,SENS,Weekly scan,9.02,65,Medical Devices,True,0010010,Defensive Rotation
-2026-11-04,CSTL,Weekly scan,35.75,64,Health Services,True,0001000,Defensive Rotation
-2026-11-04,NSIT,Weekly scan,175.62,72,Retail,False,10110-0,Defensive Rotation
-2026-11-04,CE,Weekly scan,49.75,71,Industrials,False,00000-0,Defensive Rotation
-2026-11-04,PRGS,Weekly scan,44.79,68,Software & Cloud,False,0010010,Defensive Rotation
-2026-11-04,AZTA,Weekly scan,39.14,66,Technology,False,00110-0,Defensive Rotation
-2026-11-04,LION,Weekly scan,12.72,62,Consumer Discretionary,False,10010-0,Defensive Rotation
-2026-11-04,MNDY,Weekly scan,96.8,62,Software & Cloud,False,10000-0,Defensive Rotation
-2026-11-04,NSP,Weekly scan,51.69,52,Health Services,True,10100-0,Defensive Rotation
-2026-11-04,RBRK,Weekly scan,118.99,60,Software & Cloud,False,1011010,Defensive Rotation
-2026-11-04,EFOR,Weekly scan,36.98,59,Software & Cloud,False,0000010,Defensive Rotation
-2026-11-04,IOT,Weekly scan,42.81,55,Software & Cloud,False,1010010,Defensive Rotation
-2026-11-04,GCT,Weekly scan,57.88,54,Retail,False,01110-0,Defensive Rotation
-2026-11-04,LBRX,Weekly scan,40.85,41,Pharma,True,-000010,Defensive Rotation
-2026-11-04,SUPN,Weekly scan,28.21,40,Pharma,True,10110-0,Defensive Rotation
-2026-11-04,SOFI,Weekly scan,17.38,47,Financials,False,10000-0,Defensive Rotation
-2026-11-04,OIS,Weekly scan,8.53,46,Oil Services,False,1000000,Defensive Rotation
-2026-11-04,BCC,Weekly scan,77.98,41,Consumer Discretionary,False,--100-0,Defensive Rotation
-2026-11-04,FLOC,Weekly scan,19.46,39,Oil Services,False,--01010,Defensive Rotation
-2026-11-04,CTRI,Weekly scan,20.54,33,Infrastructure,False,1000010,Defensive Rotation
-2026-11-04,BJRI,Weekly scan,61.75,32,Consumer Discretionary,False,--000-0,Defensive Rotation
-2026-11-04,STLD,Weekly scan,240.12,30,Materials,False,1010010,Defensive Rotation
-2026-11-04,SPHR,Weekly scan,108.85,20,Leisure & Travel,False,--000-0,Defensive Rotation
-2026-11-05,GKOS,Weekly scan,219.98,88,Medical Devices,True,1010110,Defensive Rotation
-2026-11-05,SEPN,Weekly scan,47.35,87,Pharma,True,0010110,Defensive Rotation
-2026-11-05,BRCB,Weekly scan,10.57,92,Consumer Discretionary,False,--001-0,Defensive Rotation
-2026-11-05,CROX,Weekly scan,152.93,92,Consumer Discretionary,False,10111-0,Defensive Rotation
-2026-11-05,LFST,Weekly scan,13.43,83,Health Services,True,1010110,Defensive Rotation
-2026-11-05,SIG,Weekly scan,121.92,91,Retail,False,10111-0,Defensive Rotation
-2026-11-05,ANDG,Weekly scan,66.27,90,Consumer Discretionary,False,-0111-0,Defensive Rotation
-2026-11-05,NRDS,Weekly scan,11.43,89,Software & Cloud,False,00001-0,Defensive Rotation
-2026-11-05,SN,Weekly scan,217.13,88,Homebuilders,False,10101-0,Defensive Rotation
-2026-11-05,MAX,Weekly scan,14.45,87,Consumer Discretionary,False,00101-0,Defensive Rotation
-2026-11-05,PACS,Weekly scan,50.2,79,Health Services,True,1010010,Defensive Rotation
-2026-11-05,MSGK,Weekly scan,317.35,73,Consumer Discretionary,False,10100-0,Defensive Rotation
-2026-11-05,PHR,Weekly scan,12.71,80,Consumer Discretionary,False,00001-0,Defensive Rotation
-2026-11-05,CDW,Weekly scan,158.39,79,Technology,False,0010010,Defensive Rotation
-2026-11-05,DIN,Weekly scan,35.88,74,Consumer Discretionary,False,00110-0,Defensive Rotation
-2026-11-05,GLBE,Weekly scan,43.33,69,Software & Cloud,False,10110-0,Defensive Rotation
-2026-11-05,SHOE,Weekly scan,15.18,69,Retail,False,00000-0,Defensive Rotation
-2026-11-05,PS,Weekly scan,50.34,67,Financials,False,--010-0,Defensive Rotation
-2026-11-05,CAVA,Weekly scan,60.01,66,Consumer Discretionary,False,00000-0,Defensive Rotation
-2026-11-05,TPG,Weekly scan,46.74,55,Capital Markets,False,0000010,Defensive Rotation
-2026-11-05,MRP,Weekly scan,26.5,53,Financials,False,00100-0,Defensive Rotation
-2026-11-05,EWTX,Weekly scan,38.87,43,Pharma,True,--00010,Defensive Rotation
-2026-11-05,FND,Weekly scan,51.47,48,Homebuilders,False,--000-0,Defensive Rotation
-2026-11-05,CWH,Weekly scan,5.1,46,Retail,False,--00000,Defensive Rotation
+2026-11-04,AMN,Weekly scan,47.74,93.0,Health Services,True,1011110,Defensive Rotation
+2026-11-04,HNGE,Weekly scan,120.87,90.0,Health Services,True,1011110,Defensive Rotation
+2026-11-04,RCEL,Weekly scan,16.32,87.0,Medical Devices,True,00111-0,Defensive Rotation
+2026-11-04,BOOM,Weekly scan,7.9,84.0,Medical Devices,True,10011-0,Defensive Rotation
+2026-11-04,APPN,Weekly scan,49.82,88.0,Software & Cloud,False,1010110,Defensive Rotation
+2026-11-04,MEOH,Weekly scan,65.22,80.0,Industrials,False,10111-0,Defensive Rotation
+2026-11-04,HTFL,Weekly scan,56.57,78.0,Medical Devices,True,00100-0,Defensive Rotation
+2026-11-04,WK,Weekly scan,85.28,86.0,Software & Cloud,False,1011100,Defensive Rotation
+2026-11-04,KVYO,Weekly scan,21.36,83.0,Software & Cloud,False,0001110,Defensive Rotation
+2026-11-04,CBRL,Weekly scan,70.27,81.0,Consumer Discretionary,False,10111-0,Defensive Rotation
+2026-11-04,BETR,Weekly scan,20.19,79.0,Financials,False,00010-0,Defensive Rotation
+2026-11-04,BSP,Weekly scan,46.58,79.0,Technology,False,-0-00-0,Defensive Rotation
+2026-11-04,XERS,Weekly scan,10.46,70.0,Pharma,True,1011010,Defensive Rotation
+2026-11-04,NTSK,Weekly scan,22.77,77.0,Software & Cloud,False,-011010,Defensive Rotation
+2026-11-04,BLLN,Weekly scan,113.89,68.0,Health Services,True,--00010,Defensive Rotation
+2026-11-04,ELF,Weekly scan,113.63,75.0,Consumer Discretionary,False,10100-0,Defensive Rotation
+2026-11-04,KMTS,Weekly scan,30.5,67.0,Medical Devices,True,00110-0,Defensive Rotation
+2026-11-04,SENS,Weekly scan,9.02,65.0,Medical Devices,True,0010010,Defensive Rotation
+2026-11-04,CSTL,Weekly scan,35.75,64.0,Health Services,True,0001000,Defensive Rotation
+2026-11-04,NSIT,Weekly scan,175.62,72.0,Retail,False,10110-0,Defensive Rotation
+2026-11-04,CE,Weekly scan,49.75,71.0,Industrials,False,00000-0,Defensive Rotation
+2026-11-04,PRGS,Weekly scan,44.79,68.0,Software & Cloud,False,0010010,Defensive Rotation
+2026-11-04,AZTA,Weekly scan,39.14,66.0,Technology,False,00110-0,Defensive Rotation
+2026-11-04,LION,Weekly scan,12.72,62.0,Consumer Discretionary,False,10010-0,Defensive Rotation
+2026-11-04,MNDY,Weekly scan,96.8,62.0,Software & Cloud,False,10000-0,Defensive Rotation
+2026-11-04,NSP,Weekly scan,51.69,52.0,Health Services,True,10100-0,Defensive Rotation
+2026-11-04,RBRK,Weekly scan,118.99,60.0,Software & Cloud,False,1011010,Defensive Rotation
+2026-11-04,EFOR,Weekly scan,36.98,59.0,Software & Cloud,False,0000010,Defensive Rotation
+2026-11-04,IOT,Weekly scan,42.81,55.0,Software & Cloud,False,1010010,Defensive Rotation
+2026-11-04,GCT,Weekly scan,57.88,54.0,Retail,False,01110-0,Defensive Rotation
+2026-11-04,LBRX,Weekly scan,40.85,41.0,Pharma,True,-000010,Defensive Rotation
+2026-11-04,SUPN,Weekly scan,28.21,40.0,Pharma,True,10110-0,Defensive Rotation
+2026-11-04,SOFI,Weekly scan,17.38,47.0,Financials,False,10000-0,Defensive Rotation
+2026-11-04,OIS,Weekly scan,8.53,46.0,Oil Services,False,1000000,Defensive Rotation
+2026-11-04,BCC,Weekly scan,77.98,41.0,Consumer Discretionary,False,--100-0,Defensive Rotation
+2026-11-04,FLOC,Weekly scan,19.46,39.0,Oil Services,False,--01010,Defensive Rotation
+2026-11-04,CTRI,Weekly scan,20.54,33.0,Infrastructure,False,1000010,Defensive Rotation
+2026-11-04,BJRI,Weekly scan,61.75,32.0,Consumer Discretionary,False,--000-0,Defensive Rotation
+2026-11-04,STLD,Weekly scan,240.12,30.0,Materials,False,1010010,Defensive Rotation
+2026-11-04,SPHR,Weekly scan,108.85,20.0,Leisure & Travel,False,--000-0,Defensive Rotation
+2026-11-05,GKOS,Weekly scan,219.98,88.0,Medical Devices,True,1010110,Defensive Rotation
+2026-11-05,SEPN,Weekly scan,47.35,87.0,Pharma,True,0010110,Defensive Rotation
+2026-11-05,BRCB,Weekly scan,10.57,92.0,Consumer Discretionary,False,--001-0,Defensive Rotation
+2026-11-05,CROX,Weekly scan,152.93,92.0,Consumer Discretionary,False,10111-0,Defensive Rotation
+2026-11-05,LFST,Weekly scan,13.43,83.0,Health Services,True,1010110,Defensive Rotation
+2026-11-05,SIG,Weekly scan,121.92,91.0,Retail,False,10111-0,Defensive Rotation
+2026-11-05,ANDG,Weekly scan,66.27,90.0,Consumer Discretionary,False,-0111-0,Defensive Rotation
+2026-11-05,NRDS,Weekly scan,11.43,89.0,Software & Cloud,False,00001-0,Defensive Rotation
+2026-11-05,SN,Weekly scan,217.13,88.0,Homebuilders,False,10101-0,Defensive Rotation
+2026-11-05,MAX,Weekly scan,14.45,87.0,Consumer Discretionary,False,00101-0,Defensive Rotation
+2026-11-05,PACS,Weekly scan,50.2,79.0,Health Services,True,1010010,Defensive Rotation
+2026-11-05,MSGK,Weekly scan,317.35,73.0,Consumer Discretionary,False,10100-0,Defensive Rotation
+2026-11-05,PHR,Weekly scan,12.71,80.0,Consumer Discretionary,False,00001-0,Defensive Rotation
+2026-11-05,CDW,Weekly scan,158.39,79.0,Technology,False,0010010,Defensive Rotation
+2026-11-05,DIN,Weekly scan,35.88,74.0,Consumer Discretionary,False,00110-0,Defensive Rotation
+2026-11-05,GLBE,Weekly scan,43.33,69.0,Software & Cloud,False,10110-0,Defensive Rotation
+2026-11-05,SHOE,Weekly scan,15.18,69.0,Retail,False,00000-0,Defensive Rotation
+2026-11-05,PS,Weekly scan,50.34,67.0,Financials,False,--010-0,Defensive Rotation
+2026-11-05,CAVA,Weekly scan,60.01,66.0,Consumer Discretionary,False,00000-0,Defensive Rotation
+2026-11-05,TPG,Weekly scan,46.74,55.0,Capital Markets,False,0000010,Defensive Rotation
+2026-11-05,MRP,Weekly scan,26.5,53.0,Financials,False,00100-0,Defensive Rotation
+2026-11-05,EWTX,Weekly scan,38.87,43.0,Pharma,True,--00010,Defensive Rotation
+2026-11-05,FND,Weekly scan,51.47,48.0,Homebuilders,False,--000-0,Defensive Rotation
+2026-11-05,CWH,Weekly scan,5.1,46.0,Retail,False,--00000,Defensive Rotation
+2026-11-06,WEST,Weekly scan,10.37,95.0,Consumer Staples,True,0011110,Defensive Rotation
+2026-11-06,MANH,Weekly scan,252.78,94.0,Software & Cloud,False,0010100,Defensive Rotation
+2026-11-06,AMPH,Weekly scan,27.66,85.0,Pharma,True,0011100,Defensive Rotation
+2026-11-06,SMG,Weekly scan,64.71,90.0,Industrials,False,0010110,Defensive Rotation
+2026-11-06,GPN,Weekly scan,97.4,88.0,Financials,False,0010100,Defensive Rotation
+2026-11-06,SLDE,Weekly scan,26.43,78.0,Insurance,True,1110010,Defensive Rotation
+2026-11-06,BTSG,Weekly scan,65.86,71.0,Health Services,True,1011010,Defensive Rotation
+2026-11-06,MAGN,Weekly scan,12.34,61.0,Materials,False,1000010,Defensive Rotation
+2026-11-06,TIC,Weekly scan,9.62,57.0,Consumer Discretionary,False,0000000,Defensive Rotation
+2026-11-06,ABX,Weekly scan,8.75,55.0,Financials,False,1000010,Defensive Rotation
+2026-11-06,NAVN,Weekly scan,25.42,51.0,Software & Cloud,False,--00010,Defensive Rotation
+2026-11-06,BX,Weekly scan,119.5,44.0,Financials,False,0000010,Defensive Rotation
+2026-11-06,LQDA,Weekly scan,44.49,33.0,Pharma,True,1000010,Defensive Rotation
+2026-11-06,KRO,Weekly scan,7.46,38.0,Materials,False,1000010,Defensive Rotation
+2026-11-06,PRM,Weekly scan,28.14,38.0,Industrials,False,0000010,Defensive Rotation
+2026-11-06,KLAR,Weekly scan,13.53,32.0,Financials,False,-0000-0,Defensive Rotation
+2026-11-06,FTK,Weekly scan,24.45,27.0,Industrials,False,0000010,Defensive Rotation
+2026-11-06,DKS,Weekly scan,140.82,26.0,,False,0000010,Defensive Rotation
+2026-11-06,LYNX,Weekly scan,11.34,,Industrials,False,---0--0,Defensive Rotation
