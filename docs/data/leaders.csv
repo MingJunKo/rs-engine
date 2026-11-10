@@ -1,61 +1,61 @@
 ticker,name,theme,rs_rating,rs_chg_1w,rs_win_1m,rs_score,price,chg_1w,chg_1m,chg_3m,off_high,adr,dollar_vol,rvol,atr_ext,pivot_dist,tightness,vol_dryup,setup,earnings,trend_template,near_high,extended,new,industry
-ARDT,Ardent Health Inc.,Health Care,99,21,65.0,42.2,15.9,32.17,43.63,43.76,0.0,5.08,10086935.47,6.99,5.63,-2.03,5.79,1.74,False,,True,True,True,True,Hospital/Nursing Management
-XERS,Xeris Biopharma Holdings Inc.,Pharma,98,12,50.0,45.33,13.08,22.13,28.36,63.7,0.0,5.29,34241956.81,2.84,4.73,-4.8,5.29,1.28,False,,True,True,True,False,Biotechnology: Pharmaceutical Preparations
-TDOC,Teladoc Health Inc.,Health Care,98,0,70.0,42.72,9.41,10.58,69.86,32.91,-3.19,6.4,43757860.26,1.32,5.43,-3.88,6.06,1.82,False,,False,True,True,True,Medical/Nursing Services
-TBBB,BBB Foods Inc. Class A Common Shares,Consumer Staples,98,17,60.0,38.57,64.21,13.45,20.99,57.96,-1.32,3.02,67133395.24,0.81,4.87,-2.58,5.4,1.31,False,,True,True,True,True,Food Chains
-KIDS,OrthoPediatrics Corp.,Medical Devices,98,-1,60.0,36.91,32.22,4.37,48.07,38.4,-3.85,5.48,12349532.68,0.7,5.18,-6.69,6.21,2.12,False,,True,True,True,True,Medical/Dental Instruments
-FCN,FTI Consulting Inc.,Health Services,98,1,80.0,29.9,195.71,7.04,39.3,29.72,-1.32,3.65,83877560.95,1.15,6.24,-3.26,6.47,1.38,False,,False,True,True,True,Professional Services
-BSY,Bentley Systems Incorporated,Water,98,5,75.0,25.66,44.94,9.88,29.06,27.55,-3.06,3.82,127777256.0,1.81,5.41,-6.71,5.7,1.39,False,,False,True,True,False,Computer Software: Prepackaged Software
-PGNY,Progyny Inc.,Health Services,98,33,60.0,22.82,34.37,17.75,23.5,23.41,0.0,3.96,29797962.55,1.29,4.94,-3.18,5.84,1.03,False,,True,True,True,True,Misc Health and Biotechnology Services
-SAM,Boston Beer Company Inc. (The),Consumer Staples,98,12,60.0,22.74,220.64,9.6,28.9,21.91,-15.15,3.84,46204943.84,0.68,4.85,-5.21,4.49,0.99,False,,False,False,True,True,Beverages (Production/Distribution)
-IDXX,IDEXX Laboratories Inc.,Medical Devices,98,38,60.0,21.47,676.04,22.65,31.75,13.48,-11.82,3.27,432449485.17,1.0,5.0,-5.28,7.84,1.53,False,01 Feb,False,True,True,True,Biotechnology: In Vitro & In Vivo Diagnostic Substances
-SIBN,SI-BONE Inc.,Medical Devices,97,16,70.0,26.83,24.27,14.32,28.69,28.82,-2.73,5.57,19681089.09,0.98,3.56,-6.37,5.07,1.71,False,,True,True,False,True,Medical/Dental Instruments
-TRUP,Trupanion Inc.,Health Care,97,4,80.0,24.32,34.72,15.23,34.47,19.48,-17.51,3.97,13024061.94,2.27,6.15,-0.86,4.69,1.15,False,,False,False,True,True,Medical Specialities
-GEHC,GE HealthCare Technologies Inc.,Medical Devices,97,3,75.0,19.75,83.75,9.38,30.48,14.88,-4.81,3.13,334374463.96,1.08,5.2,-4.35,6.63,1.44,False,,False,True,True,False,Medical Electronics
-LIVN,LivaNova PLC,Medical Devices,97,49,55.0,19.15,91.14,15.41,20.06,19.17,-3.24,3.59,65446639.31,0.64,3.11,-8.29,6.42,1.36,False,,True,True,False,True,Biotechnology: Electromedical & Electrotherapeutic Apparatus
-G,Genpact Limited,Health Services,96,15,55.0,21.16,42.27,6.69,21.92,24.52,-11.43,3.49,77381591.64,2.07,4.05,-1.4,3.06,1.08,False,04 Feb,False,True,True,True,Professional Services
-USPH,U.S. Physical Therapy Inc.,Health Services,96,31,50.0,20.53,99.49,15.92,19.12,22.44,0.0,3.6,16062716.44,1.68,4.34,-1.67,4.73,1.18,False,,False,True,True,True,Medical/Nursing Services
-ROP,Roper Technologies Inc.,Water,96,-2,80.0,20.35,476.6,2.14,30.85,18.0,-3.17,2.83,509144267.91,1.13,5.45,-6.04,5.73,1.51,False,26 Jan,False,True,True,False,Industrial Machinery/Components
-CON,Concentra Group Holdings Parent Inc.,Health Services,96,0,55.0,18.1,42.15,4.38,15.13,23.83,-3.24,3.0,55497842.53,1.27,3.94,-4.68,3.87,1.26,False,,True,True,False,True,Medical Specialities
-FIZZ,National Beverage Corp.,Consumer Staples,96,12,65.0,17.98,37.14,5.21,20.43,19.65,-1.35,2.96,12115530.86,0.86,3.85,-3.41,4.15,0.79,False,10 Dec,True,True,False,True,Beverages (Production/Distribution)
-TTEK,Tetra Tech Inc.,Water,96,2,70.0,15.68,40.29,4.24,20.59,15.22,-4.85,2.67,80841239.99,1.28,4.17,-3.47,5.0,1.21,False,11 Nov,False,True,True,True,Military/Government/Technical
-HLF,Herbalife Ltd. Common Shares,Health Care,95,37,60.0,25.83,15.28,17.09,19.19,32.64,-23.45,4.75,24512508.58,0.94,3.49,-3.05,4.03,1.17,False,,False,False,False,True,Other Pharmaceuticals
-KDP,Keurig Dr Pepper Inc.,Consumer Staples,95,0,55.0,19.53,36.63,2.2,17.18,25.92,-0.7,2.56,640830263.06,1.18,3.62,-3.33,3.86,1.59,False,,True,True,False,True,Beverages (Production/Distribution)
-PLMR,Palomar Holdings Inc. Common stock,Insurance,95,24,50.0,17.72,155.67,10.94,18.43,18.79,0.0,3.93,43088532.23,2.18,3.38,-3.95,4.72,1.44,False,,True,True,False,True,Property-Casualty Insurers
-MD,Pediatrix Medical Group Inc.,Health Services,95,7,50.0,17.69,31.29,4.93,19.25,19.98,-4.6,3.67,22459968.82,0.65,3.34,-7.26,4.54,1.18,False,,True,True,False,False,Hospital/Nursing Management
-TFX,Teleflex Incorporated,Medical Devices,95,18,55.0,15.8,150.87,7.94,21.48,13.72,-0.84,3.11,112261049.72,1.21,4.07,-3.7,5.58,1.23,False,,True,True,True,True,Medical/Dental Instruments
-MDT,Medtronic plc.,Medical Devices,95,7,55.0,14.04,101.8,5.45,16.01,14.79,-3.01,2.5,1639560502.14,0.38,3.46,-4.14,5.17,0.45,False,17 Nov,False,True,False,True,Biotechnology: Electromedical & Electrotherapeutic Apparatus
-CAH,Cardinal Health Inc.,Health Care,95,17,65.0,13.58,271.72,8.48,13.71,14.56,0.0,2.54,476633013.17,1.12,4.2,-5.09,6.21,1.07,False,04 Feb,True,True,True,True,Other Pharmaceuticals
-ZBH,Zimmer Biomet Holdings Inc.,Medical Devices,95,41,55.0,12.7,105.59,11.71,18.8,8.27,-4.14,3.04,238039778.71,1.24,3.01,-6.18,5.67,1.39,False,,True,True,False,True,Industrial Specialties
-AHCO,AdaptHealth Corp.,Health Services,94,80,55.0,33.1,7.41,27.54,22.18,41.95,-44.62,5.74,17352153.76,0.86,3.66,-4.63,4.99,1.28,False,,False,False,False,True,Medical/Nursing Services
-ENOV,Enovis Corporation,Medical Devices,94,71,80.0,31.25,27.16,36.41,55.82,12.05,-13.81,5.76,41567071.94,1.23,4.43,-9.13,6.43,1.28,False,,False,True,True,True,Industrial Specialties
-BHC,Bausch Health Companies Inc.,Health Care,94,-4,55.0,27.0,8.18,-0.24,35.43,28.82,-8.19,5.56,36215541.44,0.98,4.32,-9.51,6.18,2.32,False,,False,True,True,True,Biotechnology: Pharmaceutical Preparations
-RYAN,Ryan Specialty Holdings Inc.,Insurance,94,22,85.0,18.45,48.26,10.08,27.71,14.04,-16.46,3.4,91495515.62,1.35,4.57,-0.88,4.39,1.21,False,,False,False,True,True,Specialty Insurers
-VTRS,Viatris Inc.,Health Care,94,8,55.0,17.48,19.91,4.57,14.16,23.21,0.0,2.83,166714392.64,1.66,3.85,-0.25,3.28,1.0,False,,True,True,False,False,Biotechnology: Pharmaceutical Preparations
-EW,Edwards Lifesciences Corporation,Medical Devices,94,16,75.0,14.81,102.14,11.01,21.25,10.99,0.0,3.03,433957944.67,1.31,4.36,-1.95,5.26,1.53,False,,True,True,True,True,Industrial Specialties
-STE,STERIS plc (Ireland),Medical Devices,94,31,60.0,11.75,252.3,11.09,19.71,5.93,-5.28,2.65,192978153.63,1.97,4.83,-2.68,5.12,1.23,False,03 Feb,False,True,True,True,Industrial Specialties
-ACHC,Acadia Healthcare Company Inc.,Health Services,93,36,55.0,22.44,37.0,23.5,29.92,16.43,0.0,5.63,68914099.96,2.7,3.81,-6.04,5.04,1.67,False,,True,True,False,True,Medical Specialities
-KMPR,Kemper Corporation,Insurance,93,-3,75.0,21.86,33.39,0.51,21.55,28.03,-16.39,4.17,27915117.54,1.51,3.56,-8.72,5.69,1.04,False,09 Nov,False,False,False,True,Property-Casualty Insurers
-CCI,Crown Castle Inc.,Real Estate,93,-2,50.0,21.28,88.6,-0.1,28.61,22.11,-3.87,3.59,506633170.02,1.16,3.64,-5.24,3.08,1.1,False,,False,True,False,True,Real Estate Investment Trusts
-LH,Labcorp Holdings Inc.,Health Care,93,-5,65.0,13.44,366.57,1.43,16.67,14.33,-0.43,3.02,262191364.39,0.79,3.79,-1.81,4.25,1.19,False,,True,True,False,False,Medical Specialities
-AGL,agilon health inc.,Health Services,92,51,70.0,26.11,113.77,34.0,34.29,17.56,-12.38,7.12,20396829.17,1.32,3.1,-10.42,5.53,1.2,False,,True,True,False,True,Misc Health and Biotechnology Services
-BMI,Badger Meter Inc.,Water,92,13,60.0,17.74,158.18,6.6,23.91,16.3,-14.83,5.63,87464239.81,0.99,3.02,-5.2,2.84,1.46,False,28 Jan,False,True,False,True,Industrial Machinery/Components
-POOL,Pool Corporation,Medical Devices,92,1,65.0,15.78,211.7,2.79,33.87,6.56,-20.45,3.75,167640389.29,0.52,4.45,-4.99,4.05,0.94,False,,False,False,True,True,Industrial Specialties
-MTD,Mettler-Toledo International Inc.,Health Care,92,4,55.0,15.38,1722.15,2.83,12.6,20.64,-0.06,2.76,350683956.93,1.72,3.92,-4.67,3.33,0.98,False,04 Feb,True,True,False,False,Biotechnology: Laboratory Analytical Instruments
-AJG,Arthur J. Gallagher & Co.,Insurance,92,-1,60.0,13.57,281.61,2.01,20.32,11.86,-2.35,2.82,486558886.43,0.95,3.75,-4.39,4.89,1.39,False,28 Jan,True,True,False,True,Specialty Insurers
-RLI,RLI Corp.,Insurance,92,8,70.0,12.34,68.35,4.78,21.4,7.8,-1.97,2.9,61502485.78,0.94,3.91,-4.94,4.4,1.02,False,20 Jan,True,True,False,True,Property-Casualty Insurers
-BF.B,Brown Forman Corporation,Consumer Staples,92,18,45.0,11.23,30.58,6.51,15.22,9.4,-1.23,3.0,82623921.01,0.97,3.32,-3.35,4.51,1.04,False,03 Dec,True,True,False,True,
-ZTS,Zoetis Inc.,Health Care,92,14,60.0,10.5,82.11,3.0,13.12,10.47,-36.23,3.12,359575900.44,1.3,2.26,-8.04,4.98,1.1,False,,False,False,False,True,Biotechnology: Pharmaceutical Preparations
-MRNA,Moderna Inc.,Health Care,91,0,65.0,161.32,241.46,8.9,22.57,303.71,-6.55,10.65,3682246666.62,0.96,2.44,-7.49,3.17,0.76,False,06 Nov,True,True,False,False,Biotechnology: Biological Products (No Diagnostic Substances)
-AVAH,Aveanna Healthcare Holdings Inc.,Health Services,91,14,65.0,27.15,13.67,3.88,11.68,44.5,-4.94,3.9,26663612.57,0.65,0.99,-6.05,3.79,0.78,False,12 Nov,True,True,False,True,Medical/Nursing Services
-CRVL,CorVel Corp.,Health Services,91,3,60.0,20.9,83.16,1.14,8.92,34.76,-4.83,3.23,14161331.85,0.89,2.6,-7.35,3.94,0.96,False,02 Feb,True,True,False,False,Specialty Insurers
-EL,Estee Lauder Companies Inc. (The),Consumer Staples,91,-3,55.0,19.51,110.06,0.76,16.69,26.66,-7.02,4.21,408847326.84,1.16,2.06,-4.51,2.63,1.41,False,03 Feb,False,True,False,False,Package Goods/Cosmetics
-HCA,HCA Healthcare Inc.,Health Care,91,7,50.0,14.74,494.99,4.61,11.23,19.77,-8.71,3.31,693616178.37,1.04,2.97,-5.08,4.98,1.29,False,26 Jan,False,True,False,True,Hospital/Nursing Management
-PNR,Pentair plc. Ordinary Share,Water,91,0,55.0,12.75,68.12,2.81,30.89,2.58,-36.39,3.19,229392648.7,0.56,4.9,-6.52,8.19,1.31,False,,False,False,True,False,Industrial Machinery/Components
-PRVA,Privia Health Group Inc.,Health Services,91,47,55.0,11.95,23.94,11.45,18.57,7.02,-14.8,3.4,31169849.51,2.17,3.58,-0.17,3.98,1.17,False,,False,True,False,True,Medical/Nursing Services
-GILD,Gilead Sciences Inc.,Health Care,90,-8,55.0,17.67,166.89,-2.22,13.45,26.13,-4.35,2.85,1149332305.36,0.94,2.72,-5.49,4.37,1.26,False,,False,True,False,False,Biotechnology: Biological Products (No Diagnostic Substances)
-KR,Kroger Company (The),Consumer Staples,90,2,50.0,14.37,67.7,1.41,10.24,20.69,-9.36,2.82,429885289.87,0.65,3.1,-5.5,3.5,0.75,False,03 Dec,False,True,False,False,Food Chains
-HWKN,Hawkins Inc.,Water,90,-7,65.0,14.27,150.95,-1.04,18.12,15.71,-11.83,3.01,20813299.47,0.61,3.77,-4.7,5.7,1.0,False,27 Jan,False,True,False,False,Specialty Chemicals
-ERIE,Erie Indemnity Company,Insurance,90,1,60.0,12.55,273.07,4.47,20.54,8.93,-6.76,3.18,56978488.85,0.85,3.26,-7.14,5.98,1.12,False,,False,True,False,True,Specialty Insurers
-GKOS,Glaukos Corporation,Medical Devices,89,-10,55.0,22.48,219.98,-7.42,36.39,21.25,-10.83,5.93,410065171.2,0.93,2.83,-13.8,6.16,2.28,False,,True,True,False,True,Medical/Dental Instruments
-SEPN,Septerna Inc.,Pharma,89,3,65.0,22.22,47.35,7.61,28.32,21.88,-1.74,6.28,14224721.46,1.05,3.14,-1.81,3.31,0.99,False,09 Nov,True,True,False,False,Biotechnology: Pharmaceutical Preparations
+XERS,Xeris Biopharma Holdings Inc.,Pharma,99,24,55.0,69.26,15.86,55.95,51.34,89.03,0.0,5.51,39093956.95,2.04,7.67,-0.5,6.71,1.38,False,,True,True,True,True,Biotechnology: Pharmaceutical Preparations
+ARDT,Ardent Health Inc.,Health Care,99,27,65.0,58.93,17.97,53.2,59.03,63.81,0.0,5.18,11426173.82,2.85,7.57,-3.23,7.55,1.89,False,,True,True,True,True,Hospital/Nursing Management
+ONT,Onterris Inc.,Health Services,98,58,70.0,52.45,23.59,49.3,70.82,43.75,-19.27,6.54,10722515.63,1.61,5.88,-1.63,6.45,1.01,False,,False,False,True,True,Professional Services
+ARHS,Arhaus Inc.,Retail,98,3,60.0,46.93,15.02,19.78,55.01,52.64,0.0,5.83,27836446.74,2.09,6.83,-0.99,4.35,1.53,False,,True,True,True,True,Other Specialty Stores
+TBBB,BBB Foods Inc. Class A Common Shares,Consumer Staples,98,16,60.0,40.27,67.58,18.62,21.57,63.08,0.0,3.0,67976604.91,1.36,6.44,-0.37,6.11,1.35,False,,True,True,True,False,Food Chains
+KIDS,OrthoPediatrics Corp.,Medical Devices,98,-1,55.0,40.2,33.99,11.7,57.0,40.22,0.0,5.55,12978812.94,1.68,6.12,-1.56,5.73,2.16,False,,True,True,True,False,Medical/Dental Instruments
+ASO,Academy Sports and Outdoors Inc.,Retail,98,2,55.0,34.25,71.18,15.1,33.07,44.05,0.0,3.78,90058113.75,2.07,6.65,-0.15,4.84,0.86,False,08 Dec,False,True,True,True,Other Specialty Stores
+PGNY,Progyny Inc.,Health Services,98,29,60.0,29.42,35.95,22.24,28.71,35.3,0.0,3.72,31853865.86,1.48,6.6,-0.14,6.32,1.11,False,,True,True,True,True,Misc Health and Biotechnology Services
+UPBD,Upbound Group Inc.,Retail,97,0,50.0,36.94,24.68,8.06,60.26,32.5,-0.8,5.02,28343555.99,1.25,6.88,-2.41,7.09,1.6,False,,False,True,True,True,Diversified Commercial Services
+TDOC,Teladoc Health Inc.,Health Care,97,-1,65.0,34.4,8.98,4.06,55.63,31.86,-7.61,6.31,44424473.13,0.92,4.69,-8.27,6.37,1.83,False,,False,True,True,False,Medical/Nursing Services
+SIBN,SI-BONE Inc.,Medical Devices,97,24,70.0,31.72,25.6,26.61,32.16,36.17,0.0,5.8,20965265.81,2.06,4.33,-1.23,4.62,1.81,False,,True,True,True,False,Medical/Dental Instruments
+BHC,Bausch Health Companies Inc.,Health Care,97,-1,60.0,30.08,8.4,4.74,39.07,34.62,-5.72,5.29,37122076.18,1.26,4.78,-7.08,6.33,2.33,False,,False,True,True,False,Biotechnology: Pharmaceutical Preparations
+BSY,Bentley Systems Incorporated,Water,97,1,65.0,22.65,45.4,7.08,29.83,25.52,-2.07,3.77,131717678.09,1.07,5.94,-5.75,5.73,1.43,False,,False,True,True,False,Computer Software: Prepackaged Software
+IDXX,IDEXX Laboratories Inc.,Health Care,97,-1,60.0,22.14,706.65,5.21,36.42,20.46,-7.83,3.37,442831264.61,1.19,5.95,-0.99,7.26,1.54,False,01 Feb,False,True,True,False,Biotechnology: In Vitro & In Vivo Diagnostic Substances
+TRUP,Trupanion Inc.,Health Care,97,3,75.0,21.56,35.5,15.45,36.22,16.36,-9.88,5.05,14185640.55,1.92,4.86,-8.67,5.76,1.26,False,,False,True,True,False,Medical Specialities
+LIVN,LivaNova PLC,Medical Devices,97,50,50.0,17.06,92.61,15.46,21.23,17.85,-1.68,3.48,64354563.7,0.91,3.62,-6.81,6.5,1.4,False,,True,True,False,True,Biotechnology: Electromedical & Electrotherapeutic Apparatus
+BBY,Best Buy Co. Inc.,Retail,96,21,60.0,22.2,106.28,10.55,22.15,28.96,0.0,3.73,280373804.96,1.16,3.63,-0.51,3.44,0.93,False,24 Nov,True,True,False,True,Consumer Electronics/Video Chains
+G,Genpact Limited,Health Services,96,8,55.0,20.42,42.55,5.01,23.69,25.97,-10.84,3.54,81341509.63,1.59,4.22,-1.41,3.19,1.14,False,04 Feb,False,True,True,True,Professional Services
+VTRS,Viatris Inc.,Health Care,96,21,60.0,18.91,20.49,9.75,16.16,26.8,0.0,2.91,173038302.85,1.42,4.68,-0.19,3.95,1.06,False,,True,True,True,True,Biotechnology: Pharmaceutical Preparations
+CON,Concentra Group Holdings Parent Inc.,Health Services,96,4,50.0,18.36,42.4,5.13,14.01,28.6,-2.66,3.06,55881100.22,0.94,4.04,-4.12,3.56,1.18,False,,True,True,True,True,Medical Specialities
+GEHC,GE HealthCare Technologies Inc.,Health Care,96,-1,65.0,16.78,84.03,5.63,27.89,15.57,-4.49,2.95,339204554.04,1.09,5.51,-4.03,7.02,1.46,False,,False,True,True,False,Medical Electronics
+TFX,Teleflex Incorporated,Medical Devices,96,17,55.0,16.25,154.73,10.0,23.67,16.16,0.0,3.26,116045631.6,1.25,4.6,-1.24,4.24,1.25,False,,True,True,True,True,Medical/Dental Instruments
+TTEK,Tetra Tech Inc.,Water,96,0,65.0,15.29,41.09,3.84,23.25,16.38,-2.96,2.76,83826775.23,1.27,4.78,-1.56,4.76,1.2,False,11 Nov,False,True,True,True,Military/Government/Technical
+ZBH,Zimmer Biomet Holdings Inc.,Health Care,96,26,55.0,13.47,108.33,11.28,21.53,11.71,-1.65,3.05,243356661.31,1.15,3.73,-3.75,5.5,1.37,False,,True,True,False,True,Industrial Specialties
+ENOV,Enovis Corporation,Medical Devices,95,63,80.0,33.62,28.54,38.41,61.33,16.02,-9.43,5.83,43039624.57,0.85,5.14,-4.52,6.04,1.3,False,,False,True,True,True,Industrial Specialties
+REAL,The RealReal Inc.,Retail,95,5,60.0,29.93,14.65,12.52,50.26,24.15,-13.31,6.96,56766452.44,2.4,5.4,-0.68,3.96,1.79,False,,False,True,True,True,Other Specialty Stores
+FCN,FTI Consulting Inc.,Health Services,95,-3,75.0,26.95,194.07,1.2,42.53,26.98,-2.14,3.73,87185651.88,1.05,5.98,-4.07,6.38,1.38,False,,False,True,True,True,Professional Services
+ACHC,Acadia Healthcare Company Inc.,Health Services,95,49,55.0,26.21,38.61,30.35,32.0,24.15,0.0,5.68,72237810.2,1.53,4.41,-2.75,4.93,1.72,False,,True,True,True,True,Medical Specialities
+HLF,Herbalife Ltd. Common Shares,Health Care,95,33,60.0,25.16,15.7,18.22,20.49,33.73,-21.34,4.64,24333901.4,0.95,4.07,-0.76,4.11,1.17,False,,False,False,True,False,Other Pharmaceuticals
+USPH,U.S. Physical Therapy Inc.,Health Services,95,34,45.0,18.78,99.84,17.6,17.92,22.97,0.0,3.58,17236062.58,1.82,4.46,-1.32,4.73,1.29,False,,False,True,True,True,Medical/Nursing Services
+LH,Labcorp Holdings Inc.,Health Care,95,-2,60.0,13.55,371.83,4.57,19.12,15.57,0.0,3.03,270629649.97,1.04,4.26,-0.52,4.21,1.2,False,,True,True,True,False,Medical Specialities
+BLCO,Bausch + Lomb Corporation Common Shares,Health Care,94,-2,70.0,18.63,20.96,4.75,21.16,24.24,0.0,3.7,19285563.44,1.12,4.56,-1.87,5.21,2.2,False,,False,True,True,False,Ophthalmic Goods
+FIZZ,National Beverage Corp.,Consumer Staples,94,2,60.0,17.5,37.47,2.49,22.77,21.54,-0.48,2.75,11515327.83,0.67,4.15,-2.55,4.42,0.8,False,10 Dec,True,True,True,False,Beverages (Production/Distribution)
+ULTA,Ulta Beauty Inc.,Retail,94,2,60.0,16.28,665.13,4.32,16.61,22.87,-5.9,2.89,308879980.09,1.0,4.5,-1.32,3.28,0.97,False,03 Dec,False,True,True,True,Other Specialty Stores
+EW,Edwards Lifesciences Corporation,Health Care,94,14,75.0,14.14,104.71,12.28,22.88,11.8,0.0,3.07,454588000.67,1.7,5.09,-0.63,5.43,1.58,False,,True,True,True,True,Industrial Specialties
+STE,STERIS plc (Ireland),Health Care,94,16,55.0,10.94,256.94,10.11,19.84,8.18,-3.54,2.67,199569224.72,1.56,5.3,-0.89,4.98,1.25,False,03 Feb,False,True,True,True,Industrial Specialties
+AGL,agilon health inc.,Health Services,93,50,65.0,32.56,114.02,31.62,38.39,31.98,-12.18,6.45,20691139.57,0.77,3.5,-10.22,6.09,1.19,False,,True,True,False,True,Misc Health and Biotechnology Services
+GKOS,Glaukos Corporation,Medical Devices,93,-6,55.0,29.41,238.74,0.05,44.09,31.18,-3.23,5.47,413117844.75,0.65,4.45,-6.44,6.16,2.25,False,,True,True,True,False,Medical/Dental Instruments
+VSXY,Victorias Secret & Co.,Retail,93,23,75.0,23.89,113.52,15.19,36.99,20.56,0.0,5.06,142933920.75,0.9,4.98,-2.41,4.35,0.83,False,04 Dec,True,True,True,True,Clothing/Shoe/Accessory Stores
+AEO,American Eagle Outfitters Inc.,Retail,93,12,55.0,19.89,21.75,10.13,19.7,26.17,-20.83,4.16,83807420.68,1.0,4.65,-0.55,3.44,0.78,False,01 Dec,False,False,True,True,Clothing/Shoe/Accessory Stores
+EL,Estee Lauder Companies Inc. (The),Consumer Staples,93,10,55.0,19.66,113.16,8.01,15.41,29.35,-4.41,4.18,416627569.48,1.31,2.68,-1.85,2.58,1.42,False,03 Feb,False,True,False,True,Package Goods/Cosmetics
+MTD,Mettler-Toledo International Inc.,Health Care,93,6,55.0,15.24,1762.28,5.01,13.7,22.62,0.0,2.88,351835556.65,0.86,4.49,-2.45,3.12,1.0,False,04 Feb,True,True,True,True,Biotechnology: Laboratory Analytical Instruments
+SDGR,Schrodinger Inc.,Health Care,92,17,65.0,49.87,33.39,27.49,22.4,79.03,0.0,8.56,46515111.57,1.19,3.11,-0.98,3.23,0.83,False,,True,True,False,True,Biotechnology: Pharmaceutical Preparations
+CYRX,CryoPort Inc.,Health Care,92,46,55.0,27.06,20.47,26.12,17.98,36.92,0.0,5.43,21093085.86,3.53,3.18,-0.49,4.55,1.94,False,,True,True,False,True,Biotechnology: Pharmaceutical Preparations
+AMPH,Amphastar Pharmaceuticals Inc.,Pharma,92,4,65.0,25.26,29.38,8.69,10.37,43.88,-0.07,3.89,12125653.5,1.31,3.44,-5.23,4.99,1.12,False,,False,True,False,False,Biotechnology: Pharmaceutical Preparations
+AHCO,AdaptHealth Corp.,Health Services,92,42,45.0,24.54,7.35,24.37,21.29,30.09,-45.07,5.66,17557572.39,0.7,3.63,-5.41,5.09,1.28,False,,False,False,False,True,Medical/Nursing Services
+LFST,LifeStance Health Group Inc.,Health Services,92,6,70.0,19.52,14.6,10.11,17.55,26.96,0.0,4.93,67180531.32,6.65,2.82,-6.77,3.78,1.38,False,,True,True,False,True,Medical/Nursing Services
+ROP,Roper Technologies Inc.,Water,92,-6,75.0,17.66,471.64,-1.65,29.54,18.35,-4.18,2.87,526300932.56,1.24,5.15,-7.02,5.7,1.47,False,26 Jan,True,True,True,False,Industrial Machinery/Components
+POOL,Pool Corporation,Medical Devices,92,-2,70.0,17.53,221.05,2.93,38.55,10.42,-16.94,3.9,172308034.58,0.95,5.42,-0.79,3.73,0.92,False,,False,False,True,False,Industrial Specialties
+MD,Pediatrix Medical Group Inc.,Health Services,92,-3,45.0,15.37,31.49,2.54,18.21,20.47,-3.99,3.68,22459999.71,0.55,3.55,-6.67,4.51,1.16,False,,True,True,False,True,Hospital/Nursing Management
+HWKN,Hawkins Inc.,Water,92,-3,65.0,15.09,154.76,1.74,19.05,19.55,-9.61,3.01,20771148.36,0.4,4.42,-2.3,2.16,0.97,False,27 Jan,False,True,True,False,Specialty Chemicals
+PRVA,Privia Health Group Inc.,Health Services,92,53,50.0,12.7,24.54,15.32,17.7,11.65,-12.67,3.11,31838337.74,1.3,4.61,-1.68,5.52,1.22,False,,False,True,True,True,Medical/Nursing Services
+ETON,Eton Pharmaceuticals Inc.,Pharma,91,35,45.0,34.69,64.35,26.65,16.55,53.03,-0.12,6.03,26280475.45,2.14,2.52,-0.14,4.49,1.06,False,,True,True,False,True,Biotechnology: Pharmaceutical Preparations
+BOBS,Bob's Discount Furniture Inc.,Retail,91,22,65.0,25.35,20.97,20.45,47.88,14.28,-6.92,6.07,18549476.14,2.44,5.2,0.0,4.45,1.61,False,,False,True,True,True,Other Specialty Stores
+GO,Grocery Outlet Holding Corp.,Retail,91,4,55.0,25.25,13.87,4.84,15.97,41.1,-0.22,4.47,28767845.67,1.25,2.8,-1.03,2.75,1.06,False,10 Nov,True,True,False,True,Food Chains
+MAZE,Maze Therapeutics Inc.,Pharma,91,24,55.0,24.61,34.91,14.95,28.77,27.83,-32.65,5.6,21035659.66,0.67,4.02,-1.91,2.99,0.63,False,09 Nov,False,False,True,True,Biotechnology: Biological Products (No Diagnostic Substances)
+HNGE,Hinge Health Inc.,Health Services,91,0,70.0,24.46,122.19,5.81,18.75,37.28,0.0,4.84,235474161.25,1.02,3.88,-2.2,2.36,1.12,True,,True,True,False,True,EDP Services
+SAM,Boston Beer Company Inc. (The),Consumer Staples,91,-7,55.0,17.83,216.82,-2.06,27.16,20.48,-16.62,3.93,47345226.17,1.07,4.19,-6.85,4.47,0.96,False,,False,False,True,False,Beverages (Production/Distribution)
+CART,Maplebear Inc.,Retail,91,0,60.0,15.64,58.46,1.51,22.4,18.36,-3.98,4.17,481745357.9,0.76,4.49,-5.71,1.9,1.67,False,,True,True,True,True,Business Services
+HCA,HCA Healthcare Inc.,Health Care,91,10,45.0,15.22,504.89,7.94,11.93,22.94,-6.89,3.23,691289120.61,0.67,3.52,-3.18,5.0,1.22,False,26 Jan,False,True,False,True,Hospital/Nursing Management

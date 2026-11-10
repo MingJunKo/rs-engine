@@ -82,3 +82,31 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-06,FTK,Weekly scan,24.45,27.0,Industrials,False,0000010,Defensive Rotation
 2026-11-06,DKS,Weekly scan,140.82,26.0,,False,0000010,Defensive Rotation
 2026-11-06,LYNX,Weekly scan,11.34,,Industrials,False,---0--0,Defensive Rotation
+2026-11-09,HNGE,RS setup,122.19,91.0,Health Services,True,1011110,Defensive Rotation
+2026-11-09,FCN,Weekly scan,194.07,95.0,Health Services,True,1010100,Defensive Rotation
+2026-11-09,TYL,Weekly scan,418.18,94.0,Software & Cloud,False,0010100,Defensive Rotation
+2026-11-09,FIGS,Weekly scan,21.58,92.0,Consumer Discretionary,False,1011110,Defensive Rotation
+2026-11-09,GLOB,Weekly scan,47.41,86.0,Software & Cloud,False,00011-0,Defensive Rotation
+2026-11-09,EVTC,Weekly scan,33.4,85.0,Software & Cloud,False,0010100,Defensive Rotation
+2026-11-09,DBI,Weekly scan,6.75,76.0,Retail,True,0000000,Defensive Rotation
+2026-11-09,APPF,Weekly scan,229.49,77.0,Software & Cloud,False,1010000,Defensive Rotation
+2026-11-09,HUM,Weekly scan,423.22,68.0,Health Care,True,0010010,Defensive Rotation
+2026-11-09,W,Weekly scan,116.87,75.0,Homebuilders,False,1010010,Defensive Rotation
+2026-11-09,NX,Weekly scan,21.87,70.0,Infrastructure,False,0010000,Defensive Rotation
+2026-11-09,CAL,Weekly scan,13.57,61.0,Retail,True,1010010,Defensive Rotation
+2026-11-09,EPC,Weekly scan,29.53,67.0,Consumer Discretionary,False,0010010,Defensive Rotation
+2026-11-09,VAC,Weekly scan,115.13,58.0,REITs,False,1010010,Defensive Rotation
+2026-11-09,TXN,Weekly scan,295.73,59.0,Infrastructure,False,1011010,Defensive Rotation
+2026-11-09,FWRD,Weekly scan,17.65,54.0,Transports,False,1000010,Defensive Rotation
+2026-11-09,INNV,Weekly scan,9.21,46.0,Health Care,True,1000010,Defensive Rotation
+2026-11-09,PRG,Weekly scan,38.45,54.0,Consumer Discretionary,False,0000010,Defensive Rotation
+2026-11-09,MITK,Weekly scan,18.5,51.0,Software & Cloud,False,1010000,Defensive Rotation
+2026-11-09,FTAI,Weekly scan,198.83,48.0,Aerospace & Defense,False,10000-0,Defensive Rotation
+2026-11-09,WGS,Weekly scan,65.72,37.0,Health Services,True,0000000,Defensive Rotation
+2026-11-09,GH,Weekly scan,158.79,36.0,Health Services,True,0000010,Defensive Rotation
+2026-11-09,TEX,Weekly scan,58.05,42.0,Infrastructure,False,0000010,Defensive Rotation
+2026-11-09,MBX,Weekly scan,54.06,32.0,Pharma,True,0000010,Defensive Rotation
+2026-11-09,APO,Weekly scan,122.2,34.0,Financials,False,0000010,Defensive Rotation
+2026-11-09,EVLV,Weekly scan,4.76,32.0,Technology,False,0000000,Defensive Rotation
+2026-11-09,LGIH,Weekly scan,46.6,28.0,Homebuilders,False,0000010,Defensive Rotation
+2026-11-09,VRT,Weekly scan,200.47,10.0,Industrials,False,1100010,Defensive Rotation
