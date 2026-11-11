@@ -128,3 +128,8 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-10,MAN,Weekly scan,46.02,22.0,Health Services,True,0000010,Defensive Rotation
 2026-11-10,APH,Weekly scan,79.95,27.0,Aerospace & Defense,False,1110010,Defensive Rotation
 2026-11-10,CSIQ,Weekly scan,10.14,22.0,Solar,False,0000010,Defensive Rotation
+2026-11-10,RKT,Weekly scan,14.45,80.0,Banks,False,1000100,Defensive Rotation
+2026-11-10,CVNA,Weekly scan,73.02,70.0,Retail,True,1000010,Defensive Rotation
+2026-11-10,OSCR,Weekly scan,33.47,62.0,Insurance,True,1011010,Defensive Rotation
+2026-11-10,NXT,Weekly scan,99.82,69.0,Solar,False,0100010,Defensive Rotation
+2026-11-10,RUN,Weekly scan,8.71,57.0,Solar,False,0000000,Defensive Rotation

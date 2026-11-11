@@ -1,13 +1,15 @@
 {
  "date": "2026-11-10",
  "regime": "Defensive Rotation",
- "setups": [],
+ "setups": [
+  "HNGE"
+ ],
  "turners": [
   "JETS",
   "XLC",
   "SIL",
   "XTN",
-  "KWEB"
+  "MOO"
  ],
  "prev": {
   "date": "2026-11-09",
