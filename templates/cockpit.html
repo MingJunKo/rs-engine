@@ -311,7 +311,8 @@ function lattice(S) {
   $("#latn").textContent = `${tr.length} closed · ${op.length} open`;
   $("#latL").innerHTML = [["Trades", tr.length], ["Win rate", R.length ? Math.round(wins.length / R.length * 100) + "%" : "—"], ["Avg win", sg(avg(wins), 2, "R")], ["Avg loss", sg(avg(losses), 2, "R")],
     ["Net", sg(tot, 1, "R")], ["Trades ≥ 5R", big]].map(([l, v]) => `<div class="kv"><span>${l}</span><b>${v}</b></div>`).join("")
-    + (topShare != null ? `<div class="note">The best <b>${k}</b> trades (top 10%) made <b>${Math.round(topShare)}%</b> of the net R. Losers cluster just under −1R; the edge is in not cutting the right tail.</div>` : "");
+    + (topShare != null ? (() => { const tk = sorted.slice(0, k).reduce((a, b) => a + b, 0), rest = tot - tk;
+        return `<div class="note">The best <b>${k}</b> trades (top 10%) made <b>${sg(tk, 1, "R")}</b>; the other ${R.length - k} ${rest < 0 ? "lost" : "made"} <b>${sg(rest, 1, "R")}</b> combined. Losers cluster just under −1R, so the edge is in not cutting the right tail.</div>`; })() : "");
   const best = [...tr].sort((a, b) => b.R - a.R).slice(0, 10), bm = best.length ? best[0].R : 1;
   $("#win").innerHTML = best.map(t => `<a href="${tv(t.s)}" target="_blank" rel="noopener"><b>${esc(t.s)}</b><span class="bar" style="width:${Math.max(4, t.R / bm * 100)}%"></span><span class="up">${sg(t.R, 1, "R")}</span></a>`).join("") || `<div class="empty">—</div>`;
 }
