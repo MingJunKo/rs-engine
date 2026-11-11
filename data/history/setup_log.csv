@@ -110,3 +110,21 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-09,EVLV,Weekly scan,4.76,32.0,Technology,False,0000000,Defensive Rotation
 2026-11-09,LGIH,Weekly scan,46.6,28.0,Homebuilders,False,0000010,Defensive Rotation
 2026-11-09,VRT,Weekly scan,200.47,10.0,Industrials,False,1100010,Defensive Rotation
+2026-11-10,PCTY,Weekly scan,177.81,91.0,Software & Cloud,False,0110110,Defensive Rotation
+2026-11-10,BLKB,Weekly scan,54.92,86.0,Software & Cloud,False,0011100,Defensive Rotation
+2026-11-10,MHK,Weekly scan,151.73,85.0,Consumer Discretionary,False,0010110,Defensive Rotation
+2026-11-10,CVLT,Weekly scan,168.3,78.0,Software & Cloud,False,1011010,Defensive Rotation
+2026-11-10,AMC,Weekly scan,3.4,77.0,Leisure & Travel,False,1011010,Defensive Rotation
+2026-11-10,MTW,Weekly scan,24.27,73.0,Infrastructure,False,1010000,Defensive Rotation
+2026-11-10,QNST,Weekly scan,18.65,73.0,Consumer Discretionary,False,1000000,Defensive Rotation
+2026-11-10,VVX,Weekly scan,81.77,70.0,Aerospace & Defense,False,0011010,Defensive Rotation
+2026-11-10,LNG,Weekly scan,293.49,68.0,Utilities,False,1010000,Defensive Rotation
+2026-11-10,CRBG,Weekly scan,35.89,64.0,Banks,False,1010010,Defensive Rotation
+2026-11-10,HRI,Weekly scan,164.59,61.0,Infrastructure,False,1010010,Defensive Rotation
+2026-11-10,SHLS,Weekly scan,8.72,61.0,Solar,False,0001010,Defensive Rotation
+2026-11-10,SNPS,Weekly scan,459.95,55.0,Software & Cloud,False,0010010,Defensive Rotation
+2026-11-10,JKS,Weekly scan,10.07,35.0,Solar,False,0000010,Defensive Rotation
+2026-11-10,FSLR,Weekly scan,180.98,34.0,Solar,False,1001010,Defensive Rotation
+2026-11-10,MAN,Weekly scan,46.02,22.0,Health Services,True,0000010,Defensive Rotation
+2026-11-10,APH,Weekly scan,79.95,27.0,Aerospace & Defense,False,1110010,Defensive Rotation
+2026-11-10,CSIQ,Weekly scan,10.14,22.0,Solar,False,0000010,Defensive Rotation
