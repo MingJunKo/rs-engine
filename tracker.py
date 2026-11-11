@@ -202,7 +202,8 @@ def portfolio(trades, idx, C, start_cash=100_000.0, risk=0.005, max_pos=8, max_w
                 still.append(p)
             else:
                 closed.append({"sym": p["sym"], "date": idx[p["j"]].strftime("%Y-%m-%d"), "pnl": round(p["pnl"]),
-                               "R": round(p["pnl"] / (p["sh"] * (p["entry"] - p["stop"])), 2)})
+                               "R": round(p["pnl"] / (p["sh"] * (p["entry"] - p["stop"])), 2),
+                               "exit": idx[d].strftime("%Y-%m-%d")})
         open_ = still
         mv = sum(p["left"] * (C[d, p["jx"]] if np.isfinite(C[d, p["jx"]]) else p["entry"]) for p in open_)
         eq = cash + mv
@@ -222,6 +223,11 @@ def portfolio(trades, idx, C, start_cash=100_000.0, risk=0.005, max_pos=8, max_w
             "avg_R": round(float(R.mean()), 2) if len(R) else None,
             "exposure": round(float(np.mean([x[2] for x in curve])), 0) if curve else None,
             "best": sorted(closed, key=lambda x: -x["pnl"])[:8], "years": round(yrs, 1),
+            "closed": [[t["date"], t["exit"], t["sym"], t["R"]] for t in closed],
+            "open_pos": [[idx[p["j"]].strftime("%Y-%m-%d"), p["sym"], round(
+                (p["pnl"] + p["left"] * ((C[len(idx) - 1, p["jx"]] if np.isfinite(C[len(idx) - 1, p["jx"]]) else p["entry"])
+                                         - p.get("cost", p["entry"]))) / (p["sh"] * (p["entry"] - p["stop"])), 2)]
+                         for p in open_],
             "from": idx[first].strftime("%d %b %Y")}
 
 
@@ -538,6 +544,8 @@ def _clean(r):
 def write_page(payload, docs: Path, clean):
     tpl = (ROOT / "templates" / "tracker.html").read_text()
     css = (ROOT / "templates" / "dashboard.html").read_text().split("<style>", 1)[1].split("</style>", 1)[0]
-    data = json.dumps(clean(payload), separators=(",", ":"), allow_nan=False).replace("</", "<\\/")
+    slim = {**payload, "portfolio": {**payload["portfolio"], **{k: {kk: vv for kk, vv in payload["portfolio"][k].items()
+                                                                   if kk not in ("closed", "open_pos")} for k in ("top", "all")}}}
+    data = json.dumps(clean(slim), separators=(",", ":"), allow_nan=False).replace("</", "<\\/")
     (docs / "tracker").mkdir(parents=True, exist_ok=True)
     (docs / "tracker" / "index.html").write_text(tpl.replace("/*__SHARED_CSS__*/", css).replace("/*__DATA__*/null", data))

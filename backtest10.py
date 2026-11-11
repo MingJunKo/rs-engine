@@ -118,6 +118,7 @@ def main(years="10y"):
 
     top = T.portfolio([b for b in book if b["top"]], idx, C)
     allp = T.portfolio(book, idx, C)
+    allp.pop("closed", None); allp.pop("open_pos", None)
     f0 = idx.get_loc(pd.Timestamp(top["from"]))
     bser = b_close.iloc[f0:]
     spy = close["SPY"].iloc[f0:] if "SPY" in close else None

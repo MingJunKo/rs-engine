@@ -1060,6 +1060,11 @@ def run(demo: bool, notify: bool):
         SC.write_page(scans_payload, DOCS, _clean_json)
     if tracker_payload:
         TR.write_page(tracker_payload, DOCS, _clean_json)
+    try:
+        import cockpit as CK
+        CK.write_page(CK.build(payload, tracker_payload, scans_payload), DOCS, _clean_json)
+    except Exception as e:
+        log(f"  cockpit page failed: {e}")
     (DOCS / "data").mkdir(parents=True, exist_ok=True)
     (DOCS / "data" / "fund.json").write_text(json.dumps(_clean_json(cs_detail), separators=(",", ":"), allow_nan=False))
 
