@@ -1,28 +1,28 @@
 {
- "date": "2026-11-10",
+ "date": "2026-11-11",
  "regime": "Defensive Rotation",
  "setups": [
-  "HNGE"
+  "AMLX"
  ],
  "turners": [
+  "UFO",
   "JETS",
-  "XLC",
-  "SIL",
-  "XTN",
-  "MOO"
+  "ITA",
+  "MOO",
+  "XLU"
  ],
  "prev": {
-  "date": "2026-11-09",
+  "date": "2026-11-10",
   "regime": "Defensive Rotation",
   "setups": [
    "HNGE"
   ],
   "turners": [
-   "XLC",
-   "GDX",
    "JETS",
-   "TAN",
-   "SCHH"
+   "XLC",
+   "SIL",
+   "XTN",
+   "MOO"
   ]
  }
 }

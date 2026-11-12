@@ -133,3 +133,21 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-10,OSCR,Weekly scan,33.47,62.0,Insurance,True,1011010,Defensive Rotation
 2026-11-10,NXT,Weekly scan,99.82,69.0,Solar,False,0100010,Defensive Rotation
 2026-11-10,RUN,Weekly scan,8.71,57.0,Solar,False,0000000,Defensive Rotation
+2026-11-11,AMLX,RS setup,31.8,92.0,Pharma,True,0000110,Defensive Rotation
+2026-11-11,HELE,Weekly scan,37.99,93.0,Consumer Discretionary,False,10111-0,Defensive Rotation
+2026-11-11,SIBN,Weekly scan,24.94,93.0,Medical Devices,False,0010100,Defensive Rotation
+2026-11-11,SAIC,Weekly scan,152.57,92.0,Cybersecurity,False,0011110,Defensive Rotation
+2026-11-11,TREE,Weekly scan,36.84,90.0,Financials,False,0001110,Defensive Rotation
+2026-11-11,FDS,Weekly scan,334.88,81.0,Financials,False,0011110,Defensive Rotation
+2026-11-11,STAA,Weekly scan,26.69,80.0,Medical Devices,False,1000110,Defensive Rotation
+2026-11-11,VCTR,Weekly scan,125.74,79.0,Capital Markets,False,1010010,Defensive Rotation
+2026-11-11,RYZ,Weekly scan,30.46,70.0,Infrastructure,True,1010010,Defensive Rotation
+2026-11-11,PLSE,Weekly scan,56.98,77.0,Medical Devices,False,0010010,Defensive Rotation
+2026-11-11,IAG,Weekly scan,18.07,54.0,Gold & Silver,False,1000010,Defensive Rotation
+2026-11-11,STNG,Weekly scan,82.07,52.0,Consumer Discretionary,False,10100-0,Defensive Rotation
+2026-11-11,EQX,Weekly scan,10.8,46.0,Gold & Silver,False,1000010,Defensive Rotation
+2026-11-11,PI,Weekly scan,174.56,42.0,Semiconductors,False,0001010,Defensive Rotation
+2026-11-11,ATI,Weekly scan,187.53,25.0,Infrastructure,True,1000010,Defensive Rotation
+2026-11-11,HWM,Weekly scan,224.0,25.0,Infrastructure,True,1100010,Defensive Rotation
+2026-11-11,PWR,Weekly scan,607.94,32.0,Infrastructure,True,1100010,Defensive Rotation
+2026-11-11,DASH,Weekly scan,178.26,12.0,Consumer Discretionary,False,1000010,Defensive Rotation
