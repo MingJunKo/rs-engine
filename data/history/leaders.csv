@@ -539,3 +539,63 @@ WMK,Retail,89,8.77,80.86,2026-11-11,2.64,-3.55,4.01,3.15,False,False,False,True,
 HMN,Insurance,89,6.86,53.37,2026-11-11,3.43,-1.48,6.01,3.31,False,False,False,False,True,Defensive Rotation,222.65
 AMRX,Pharma,88,16.35,21.71,2026-11-11,2.59,-1.34,3.55,3.88,False,False,False,True,True,Defensive Rotation,222.65
 BMI,Water,88,16.24,158.71,2026-11-11,3.14,-4.88,2.64,5.62,False,False,False,False,False,Defensive Rotation,222.65
+XERS,Pharma,99,74.13,16.65,2026-11-12,8.24,-1.36,7.51,5.44,False,True,False,True,False,Defensive Rotation,220.72
+DCTH,Medical Devices,99,35.45,21.38,2026-11-12,4.95,-5.02,7.57,5.32,False,True,False,True,True,Defensive Rotation,220.72
+GKOS,Medical Devices,99,33.31,246.03,2026-11-12,5.07,-3.59,2.67,5.53,False,True,False,True,False,Defensive Rotation,220.72
+FOSL,Consumer Discretionary,98,38.25,8.74,2026-11-12,3.35,-17.16,6.69,6.88,False,False,False,True,True,Defensive Rotation,220.72
+AXGN,Medical Devices,98,27.65,55.4,2026-11-12,4.11,-7.23,3.86,5.68,False,True,False,True,True,Defensive Rotation,220.72
+IDXX,Water,98,23.72,698.02,2026-11-12,5.49,-2.2,7.22,3.44,False,True,False,False,False,Defensive Rotation,220.72
+G,Consumer Discretionary,98,21.09,43.13,2026-11-12,4.4,-2.62,3.34,3.5,False,True,False,False,False,Defensive Rotation,220.72
+VTRS,Health Care,98,20.57,20.67,2026-11-12,4.61,-2.5,4.32,2.87,False,True,False,True,False,Defensive Rotation,220.72
+COLM,Consumer Discretionary,98,20.28,71.64,2026-11-12,4.94,-1.98,3.78,3.28,False,True,False,False,True,Defensive Rotation,220.72
+REGN,Health Care,98,16.42,951.19,2026-11-12,4.18,-4.09,4.42,3.63,False,True,False,False,True,Defensive Rotation,220.72
+KIDS,Medical Devices,97,30.69,32.58,2026-11-12,4.95,-5.65,2.38,5.74,False,True,False,True,False,Defensive Rotation,220.72
+FCN,Consumer Discretionary,97,28.81,198.62,2026-11-12,6.54,-1.82,2.85,3.73,False,True,False,False,False,Defensive Rotation,220.72
+BHC,Health Care,97,26.52,8.25,2026-11-12,4.56,-8.74,2.84,5.03,False,True,False,True,False,Defensive Rotation,220.72
+HAS,Consumer Discretionary,97,21.65,121.48,2026-11-12,6.22,-2.52,2.07,2.98,False,True,False,False,True,Defensive Rotation,220.72
+EW,Health Care,97,14.91,105.8,2026-11-12,5.36,-0.94,5.85,3.06,False,True,False,True,False,Defensive Rotation,220.72
+MAZE,Pharma,96,29.77,36.09,2026-11-12,4.37,-3.53,3.86,5.5,False,True,False,False,True,Defensive Rotation,220.72
+CYRX,Health Care,96,25.55,20.1,2026-11-12,2.44,-7.71,5.34,5.84,False,False,False,True,True,Defensive Rotation,220.72
+EXPO,Infrastructure,96,20.63,86.22,2026-11-12,5.32,-4.74,3.94,3.09,False,True,False,False,True,Defensive Rotation,220.72
+CROX,Consumer Discretionary,96,20.24,156.88,2026-11-12,5.07,-3.09,2.18,3.77,False,True,False,True,True,Defensive Rotation,220.72
+LLY,Health Care,96,16.07,1427.28,2026-11-12,4.22,-2.24,2.85,3.12,False,True,False,True,True,Defensive Rotation,220.72
+LH,Health Care,96,13.66,372.32,2026-11-12,4.44,-0.74,2.18,3.02,False,True,False,True,False,Defensive Rotation,220.72
+FTV,Infrastructure,96,10.75,67.85,2026-11-12,5.23,-1.58,2.49,2.66,False,True,False,False,True,Defensive Rotation,220.72
+STGW,Consumer Discretionary,95,19.6,11.15,2026-11-12,3.93,-9.05,4.22,5.25,False,False,False,True,True,Defensive Rotation,220.72
+ACM,Water,95,12.24,70.11,2026-11-12,3.64,-4.22,4.97,3.07,False,False,True,False,True,Defensive Rotation,220.72
+WST,Health Care,95,11.65,411.3,2026-11-12,3.04,-6.09,3.3,2.59,False,False,False,True,True,Defensive Rotation,220.72
+PAC,Infrastructure,94,18.39,238.02,2026-11-12,4.17,-2.85,3.96,3.55,False,True,False,False,True,Defensive Rotation,220.72
+ELAN,Pharma,94,12.48,26.5,2026-11-12,3.36,-2.89,4.46,3.69,False,False,False,False,True,Defensive Rotation,220.72
+CLX,Consumer Staples,94,12.0,108.2,2026-11-12,5.58,-1.48,5.71,3.62,False,True,False,False,True,Defensive Rotation,220.72
+SHO,Consumer Discretionary,94,11.14,12.7,2026-11-12,3.23,-2.91,2.69,2.6,False,False,False,True,True,Defensive Rotation,220.72
+SIGI,Insurance,94,10.79,103.36,2026-11-12,4.75,-2.17,2.7,2.61,False,True,False,True,True,Defensive Rotation,220.72
+AMPH,Pharma,93,22.02,28.87,2026-11-12,2.89,-6.87,3.96,3.77,False,False,False,False,True,Defensive Rotation,220.72
+BSY,Water,93,18.51,44.19,2026-11-12,5.3,-8.26,5.38,3.67,False,True,False,False,False,Defensive Rotation,220.72
+ROP,Water,93,18.04,477.87,2026-11-12,5.71,-5.79,3.32,2.91,False,True,False,True,False,Defensive Rotation,220.72
+PLMR,Insurance,93,16.31,158.31,2026-11-12,3.94,-2.33,4.1,3.6,False,False,False,True,False,Defensive Rotation,220.72
+BBY,Consumer Discretionary,93,15.27,103.41,2026-11-12,2.67,-3.2,3.55,3.72,False,False,False,True,True,Defensive Rotation,220.72
+HCSG,Health Care,93,13.13,25.02,2026-11-12,2.71,-7.5,2.64,4.28,False,False,False,True,True,Defensive Rotation,220.72
+TFX,Medical Devices,93,12.98,153.15,2026-11-12,4.37,-2.3,4.06,3.18,False,True,False,True,False,Defensive Rotation,220.72
+CPRI,Consumer Discretionary,92,26.97,20.38,2026-11-12,4.73,-6.34,4.43,4.61,False,True,False,False,True,Defensive Rotation,220.72
+SIBN,Medical Devices,92,20.66,24.14,2026-11-12,3.15,-6.87,4.78,5.94,False,False,False,True,False,Defensive Rotation,220.72
+KMPR,Insurance,92,19.77,34.3,2026-11-12,3.74,-6.23,3.06,4.49,False,False,False,False,False,Defensive Rotation,220.72
+POOL,Consumer Discretionary,92,16.51,214.24,2026-11-12,4.7,-3.28,2.4,3.64,False,True,False,False,False,Defensive Rotation,220.72
+SAM,Consumer Staples,92,15.49,219.62,2026-11-12,4.54,-5.65,3.88,3.86,False,True,False,False,False,Defensive Rotation,220.72
+AMRX,Pharma,92,15.28,21.7,2026-11-12,2.49,-1.65,3.69,3.81,False,False,False,True,True,Defensive Rotation,220.72
+FERG,Water,92,7.05,254.89,2026-11-12,3.08,-4.6,4.29,3.22,False,False,False,False,True,Defensive Rotation,220.72
+EXLS,Consumer Discretionary,91,15.68,43.1,2026-11-12,3.93,-2.84,2.54,2.91,False,False,False,False,True,Defensive Rotation,220.72
+CRL,Health Care,91,15.26,340.81,2026-11-12,1.8,-10.23,3.49,5.29,False,False,False,True,True,Defensive Rotation,220.72
+KR,Consumer Staples,91,13.97,69.81,2026-11-12,3.89,-2.55,3.02,2.61,False,False,False,False,False,Defensive Rotation,220.72
+WWW,Consumer Discretionary,91,11.57,22.87,2026-11-12,2.75,-4.07,3.06,4.66,False,False,True,True,True,Defensive Rotation,220.72
+TNL,Consumer Discretionary,91,10.25,78.24,2026-11-12,4.77,-3.37,3.93,3.32,False,True,False,False,True,Defensive Rotation,220.72
+MGRC,Consumer Discretionary,91,8.07,129.98,2026-11-12,3.34,-3.44,4.22,3.28,False,False,False,True,True,Defensive Rotation,220.72
+ULTA,Consumer Discretionary,90,15.8,650.97,2026-11-12,3.63,-3.42,2.77,2.8,False,False,False,False,True,Defensive Rotation,220.72
+GILD,Health Care,90,12.94,167.95,2026-11-12,2.81,-4.89,2.79,2.69,False,False,False,False,False,Defensive Rotation,220.72
+MTD,Health Care,90,12.68,1730.93,2026-11-12,3.83,-4.19,3.11,2.72,False,False,False,True,False,Defensive Rotation,220.72
+CSL,Infrastructure,90,9.44,392.59,2026-11-12,3.63,-4.15,2.98,3.56,False,False,False,False,True,Defensive Rotation,220.72
+ZTS,Health Care,90,9.16,82.96,2026-11-12,2.75,-7.09,4.47,2.88,False,False,False,False,False,Defensive Rotation,220.72
+STE,Health Care,90,8.86,253.44,2026-11-12,4.72,-2.24,4.95,2.68,False,True,False,False,False,Defensive Rotation,220.72
+J,Water,90,8.81,158.69,2026-11-12,2.91,-2.04,3.46,3.18,False,False,False,True,True,Defensive Rotation,220.72
+CALY,Consumer Discretionary,90,7.37,16.58,2026-11-12,2.66,-6.75,4.75,3.44,False,False,False,False,True,Defensive Rotation,220.72
+PRCT,Medical Devices,89,17.27,23.51,2026-11-12,2.95,-3.27,3.4,6.76,False,False,False,False,True,Defensive Rotation,220.72
+HOG,Consumer Discretionary,89,14.42,32.44,2026-11-12,3.4,-6.89,3.83,3.95,False,False,False,True,True,Defensive Rotation,220.72
