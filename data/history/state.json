@@ -1,20 +1,23 @@
 {
- "date": "2026-11-13",
+ "date": "2026-11-16",
  "regime": "Defensive Rotation",
- "setups": [],
+ "setups": [
+  "BMI",
+  "PAC"
+ ],
  "turners": [
-  "XLU",
   "IYT",
-  "MOO"
+  "XLF",
+  "XLU"
  ],
  "prev": {
-  "date": "2026-11-12",
+  "date": "2026-11-13",
   "regime": "Defensive Rotation",
   "setups": [],
   "turners": [
-   "XLF",
-   "JETS",
-   "XLB"
+   "XLU",
+   "IYT",
+   "MOO"
   ]
  }
 }

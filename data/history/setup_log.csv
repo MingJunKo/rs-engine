@@ -166,3 +166,22 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-13,CLOV,Weekly scan,4.96,72.0,Health Services,False,1010010,Defensive Rotation
 2026-11-13,BB,Weekly scan,8.9,58.0,Cybersecurity,False,1001010,Defensive Rotation
 2026-11-13,KRMN,Weekly scan,40.66,33.0,Aerospace & Defense,False,1000010,Defensive Rotation
+2026-11-16,BMI,RS setup,159.23,95.0,Water,True,0110110,Defensive Rotation
+2026-11-16,PAC,RS setup,234.35,91.0,Infrastructure,True,0000110,Defensive Rotation
+2026-11-16,DCTH,Weekly scan,19.87,92.0,Medical Devices,True,1010110,Defensive Rotation
+2026-11-16,CLX,Weekly scan,110.17,92.0,Consumer Staples,True,1011100,Defensive Rotation
+2026-11-16,CMCO,Weekly scan,20.52,90.0,Infrastructure,True,0010100,Defensive Rotation
+2026-11-16,FOSL,Weekly scan,8.23,96.0,Consumer Discretionary,False,1001110,Defensive Rotation
+2026-11-16,RGR,Weekly scan,50.76,96.0,Aerospace & Defense,False,1010100,Defensive Rotation
+2026-11-16,DLX,Weekly scan,27.15,95.0,Consumer Discretionary,False,0010100,Defensive Rotation
+2026-11-16,GTN,Weekly scan,5.83,93.0,Industrials,False,1011100,Defensive Rotation
+2026-11-16,ALGT,Weekly scan,94.41,84.0,Transports,False,0001110,Defensive Rotation
+2026-11-16,ETON,Weekly scan,63.88,76.0,Pharma,True,1011010,Defensive Rotation
+2026-11-16,EVC,Weekly scan,9.41,91.0,Industrials,False,0000110,Defensive Rotation
+2026-11-16,FIP,Weekly scan,3.76,81.0,Transports,False,0000100,Defensive Rotation
+2026-11-16,FROG,Weekly scan,109.94,82.0,Cybersecurity,False,10101-0,Defensive Rotation
+2026-11-16,VIRT,Weekly scan,58.3,61.0,Capital Markets,False,1010010,Defensive Rotation
+2026-11-16,TNDM,Weekly scan,18.48,52.0,Medical Devices,True,0000010,Defensive Rotation
+2026-11-16,ANET,Weekly scan,187.02,57.0,Cybersecurity,False,1110010,Defensive Rotation
+2026-11-16,RKLB,Weekly scan,57.37,43.0,Space,False,0000010,Defensive Rotation
+2026-11-16,LUNR,Weekly scan,11.73,35.0,Space,False,0000010,Defensive Rotation
