@@ -185,3 +185,10 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-16,ANET,Weekly scan,187.02,57.0,Cybersecurity,False,1110010,Defensive Rotation
 2026-11-16,RKLB,Weekly scan,57.37,43.0,Space,False,0000010,Defensive Rotation
 2026-11-16,LUNR,Weekly scan,11.73,35.0,Space,False,0000010,Defensive Rotation
+2026-11-16,ONT,Weekly scan,23.46,95.0,Health Services,True,--01100,Defensive Rotation
+2026-11-16,SGHT,Weekly scan,10.59,86.0,Health Care,True,--11110,Defensive Rotation
+2026-11-16,EVER,Weekly scan,28.93,92.0,Technology,False,--10110,Defensive Rotation
+2026-11-16,CARS,Weekly scan,13.06,84.0,Software & Cloud,False,--10100,Defensive Rotation
+2026-11-16,GMRS,Weekly scan,11.72,64.0,Consumer Discretionary,False,--000-0,Defensive Rotation
+2026-11-16,BKSY,Weekly scan,23.15,60.0,AI Infrastructure,False,--00010,Defensive Rotation
+2026-11-16,RAIL,Weekly scan,4.64,13.0,Infrastructure,True,--000-0,Defensive Rotation

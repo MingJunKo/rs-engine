@@ -1,14 +1,14 @@
 symbol,category,theme,name,rs_rating,rs_chg_1w,rank,rank_chg,rs_win_1m,rs_1m,chg_1d,chg_1w,chg_1m,chg_3m,off_high,breadth_50,quadrant,style
-RSPS,EW Sector,Consumer Staples,Equal Weight Staples,98,4,1.0,1.0,45.0,3.46,0.51,1.5,5.8,6.17,0.0,,Leading,defensive
+RSPS,EW Sector,Consumer Staples,Equal Weight Staples,98,4,1.0,1.0,45.0,3.47,0.52,1.52,5.81,6.19,0.0,,Leading,defensive
 RSPH,EW Sector,Health Care,Equal Weight Health Care,94,-5,2.0,-1.0,50.0,2.98,-0.44,-1.33,5.31,13.63,-1.71,,Weakening,defensive
-RSPF,EW Sector,Financials,Equal Weight Financials,90,1,3.0,1.0,60.0,3.4,-0.66,0.1,5.74,0.53,-1.44,,Leading,cyclical
+RSPF,EW Sector,Financials,Equal Weight Financials,90,1,3.0,1.0,60.0,3.39,-0.67,0.09,5.73,0.52,-1.44,,Leading,cyclical
 RSPU,EW Sector,Utilities,Equal Weight Utilities,89,13,4.0,2.0,60.0,2.2,0.15,0.99,4.51,1.04,-5.25,,Leading,defensive
 RSPD,EW Sector,Consumer Discretionary,Equal Weight Discretionary,85,-7,5.0,-2.0,55.0,3.2,-0.58,-2.81,5.54,0.46,-4.37,,Leading,growth
 RSPR,EW Sector,Real Estate,Equal Weight Real Estate,83,3,6.0,-1.0,65.0,2.8,-0.24,-0.98,5.13,-0.48,-4.66,,Leading,defensive
-RSPC,EW Sector,Communication Services,Equal Weight Communication,71,-4,7.0,0.0,40.0,0.76,-1.24,-0.8,3.04,-2.01,-9.0,,Improving,growth
+RSPC,EW Sector,Communication Services,Equal Weight Communication,71,-4,7.0,0.0,40.0,0.77,-1.23,-0.8,3.05,-2.0,-8.99,,Improving,growth
 RSPM,EW Sector,Materials,Equal Weight Materials,67,-5,8.0,0.0,45.0,-0.82,-1.61,-2.8,1.42,-0.97,-4.66,,Improving,cyclical
 RSPN,EW Sector,Industrials,Equal Weight Industrials,60,15,9.0,0.0,55.0,0.99,-1.06,-1.14,3.27,-4.08,-6.18,,Leading,cyclical
-RSPG,EW Sector,Energy,Equal Weight Energy,47,7,10.0,0.0,40.0,-9.76,-2.39,2.82,-7.72,-3.03,-9.19,,Lagging,cyclical
+RSPG,EW Sector,Energy,Equal Weight Energy,47,7,10.0,0.0,40.0,-9.75,-2.38,2.83,-7.71,-3.03,-9.19,,Lagging,cyclical
 RSPT,EW Sector,Technology,Equal Weight Technology,36,20,11.0,0.0,50.0,-9.56,-2.98,-2.25,-7.52,-9.42,-15.82,,Lagging,growth
 XHS,Group,Health Services,Healthcare Facilities & Services,97,1,1.0,2.0,45.0,4.16,0.79,-0.14,6.52,9.33,-1.98,67.0,Leading,defensive
 KIE,Group,Insurance,Insurance,96,10,2.0,8.0,55.0,3.21,0.61,1.87,5.54,4.47,-0.29,83.0,Leading,cyclical
@@ -25,12 +25,12 @@ SCHH,Group,REITs,U.S. REITs,80,-2,12.0,2.0,65.0,2.79,-0.17,-0.88,5.11,-0.04,-4.1
 WCLD,Group,Software & Cloud,Cloud Computing (WisdomTree),79,22,13.0,21.0,50.0,-2.73,-0.65,-0.43,-0.53,2.66,-11.7,44.0,Lagging,growth
 PEJ,Group,Leisure & Travel,Leisure & Travel,78,-9,14.0,-5.0,45.0,1.53,0.09,-1.32,3.83,-0.62,-3.07,80.0,Leading,cyclical
 XHE,Group,Medical Devices,Health Equipment (Equal),76,-15,15.0,-9.0,50.0,2.29,-1.37,-3.21,4.61,-1.42,-5.97,58.0,Leading,defensive
-PBJ,Group,Food & Beverage,Food & Beverage,76,-9,16.0,-5.0,40.0,-1.58,-0.49,-0.63,0.64,0.16,-4.95,60.0,Leading,defensive
+PBJ,Group,Food & Beverage,Food & Beverage,76,-9,16.0,-5.0,40.0,-1.57,-0.48,-0.62,0.65,0.17,-4.94,60.0,Leading,defensive
 IYT,Group,Transports,Transportation,75,20,17.0,18.0,50.0,2.62,0.32,0.32,4.94,-2.33,-6.49,57.0,Leading,cyclical
 IYR,Group,REITs,Real Estate (iShares),74,-3,18.0,-1.0,60.0,2.39,-0.24,-1.17,4.7,-1.0,-4.23,72.0,Leading,defensive
 IBB,Group,Biotech,Biotech Megacap,73,-15,19.0,-11.0,50.0,0.69,-2.13,-5.28,2.97,2.18,-5.95,56.0,Lagging,defensive
 ITB,Group,Homebuilders,Homebuilders,72,-8,20.0,-5.0,60.0,5.73,-0.63,-6.06,8.12,-2.15,-16.75,80.0,Leading,cyclical
-JETS,Group,Airlines,Airlines,70,9,21.0,8.0,55.0,9.78,0.62,-3.91,12.26,-4.29,-13.45,65.0,Leading,cyclical
+JETS,Group,Airlines,Airlines,70,9,21.0,8.0,55.0,9.78,0.62,-3.91,12.26,-4.29,-13.45,67.0,Leading,cyclical
 HACK,Group,Cybersecurity,Cybersecurity (ETFMG),69,26,22.0,21.0,40.0,-4.45,-1.22,-1.26,-2.29,-0.75,-14.31,41.0,Lagging,growth
 CGW,Group,Water,Water (Invesco),68,3,23.0,1.0,45.0,-1.01,-0.44,-1.67,1.23,0.53,-5.77,65.0,Lagging,defensive
 XTN,Group,Transports,Trucking,67,18,24.0,16.0,50.0,2.75,0.29,-0.54,5.07,-4.98,-12.57,57.0,Improving,cyclical
@@ -74,7 +74,7 @@ SMH,Group,Semiconductors,Semiconductors (VanEck),18,9,61.0,11.0,45.0,-16.32,-5.1
 PPA,Group,Aerospace & Defense,Aerospace & Defense (Invesco),17,-3,62.0,0.0,55.0,-3.29,-2.53,-2.89,-1.11,-15.01,-16.31,57.0,Improving,cyclical
 NCLD,Group,AI Infrastructure,Neocloud / GPU-as-a-Service,16,1,63.0,3.0,35.0,-25.08,-6.83,-11.2,-23.38,-48.2,,0.0,,growth
 XAR,Group,Aerospace & Defense,Aerospace & Defense (Equal),16,-9,64.0,-6.0,55.0,-3.09,-3.54,-5.87,-0.9,-23.34,-24.97,38.0,Improving,cyclical
-BETZ,Group,Leisure & Travel,Sports Betting,15,5,65.0,6.0,50.0,-4.68,-2.11,-3.37,-2.52,-16.4,-24.47,0.0,Improving,cyclical
+BETZ,Group,Leisure & Travel,Sports Betting,15,5,65.0,6.0,50.0,-4.67,-2.11,-3.36,-2.52,-16.4,-24.46,0.0,Improving,cyclical
 CHAT,Group,AI & Robotics,Generative AI,14,9,66.0,11.0,45.0,-16.09,-4.87,-4.92,-14.2,-23.81,-34.84,5.0,Lagging,growth
 GRID,Group,Infrastructure,Smart Grid Infrastructure,13,7,67.0,9.0,45.0,-10.1,-2.59,-2.98,-8.07,-14.86,-21.38,29.0,Lagging,cyclical
 QTUM,Group,Quantum,Quantum Computing,12,4,68.0,5.0,45.0,-11.25,-4.33,-4.78,-9.24,-17.95,-25.9,20.0,Lagging,growth
