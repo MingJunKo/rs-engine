@@ -1,4 +1,4 @@
-###Pre-market 16 Nov: earnings or RS 70+
-CLRO,CGON
-###Pre-market 16 Nov: other gappers
-TU
+###Pre-market 17 Nov: earnings or RS 70+
+USDE,HG
+###Pre-market 17 Nov: other gappers
+SLS,KURA
