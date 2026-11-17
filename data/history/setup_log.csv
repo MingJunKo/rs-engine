@@ -192,3 +192,18 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-16,GMRS,Weekly scan,11.72,64.0,Consumer Discretionary,False,--000-0,Defensive Rotation
 2026-11-16,BKSY,Weekly scan,23.15,60.0,AI Infrastructure,False,--00010,Defensive Rotation
 2026-11-16,RAIL,Weekly scan,4.64,13.0,Infrastructure,True,--000-0,Defensive Rotation
+2026-11-17,HCA,RS setup,501.19,93.0,Health Care,True,0010100,Defensive Rotation
+2026-11-17,AJG,RS setup,282.88,93.0,Insurance,True,1010110,Defensive Rotation
+2026-11-17,RYAN,RS setup,47.19,91.0,Insurance,True,0001110,Defensive Rotation
+2026-11-17,GRDN,Weekly scan,50.33,97.0,Health Services,True,1010110,Defensive Rotation
+2026-11-17,SWBI,Weekly scan,16.11,88.0,Aerospace & Defense,False,1011110,Defensive Rotation
+2026-11-17,PAR,Weekly scan,22.36,95.0,Software & Cloud,False,1001110,Defensive Rotation
+2026-11-17,GFF,Weekly scan,104.75,84.0,Industrials,False,0011110,Defensive Rotation
+2026-11-17,ZETA,Weekly scan,33.54,76.0,Software & Cloud,False,1010010,Defensive Rotation
+2026-11-17,PTRN,Weekly scan,19.94,74.0,Retail,False,1001010,Defensive Rotation
+2026-11-17,CXW,Weekly scan,32.46,73.0,Real Estate,False,1010010,Defensive Rotation
+2026-11-17,GRNT,Weekly scan,5.88,73.0,Oil & Gas E&P,False,1010010,Defensive Rotation
+2026-11-17,LBTYA,Weekly scan,10.27,73.0,Communication Services,False,10000-0,Defensive Rotation
+2026-11-17,LBTYK,Weekly scan,10.01,71.0,Communication Services,False,00000-0,Defensive Rotation
+2026-11-17,AAON,Weekly scan,78.71,62.0,Industrials,False,1000010,Defensive Rotation
+2026-11-17,SCZM,Weekly scan,7.41,37.0,Materials,False,--00010,Defensive Rotation
