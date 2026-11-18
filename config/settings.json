@@ -11,5 +11,12 @@
   "dashboard_url": "https://mingjunko.github.io/rs-engine",
   "pivot_near_pct": 1.0,
   "pivot_chase_pct": 3.0,
-  "telegram_topics": {}
+  "telegram_topics": {
+    "brief": 2,
+    "alist": 3,
+    "premarket": 4,
+    "alerts": 5,
+    "journal": 6,
+    "parabolic": 14
+  }
 }
