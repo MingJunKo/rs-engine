@@ -20,6 +20,13 @@ def tg_send(method: str, data: dict, settings: dict | None = None, topic: str | 
     if tid:
         data["message_thread_id"] = tid
     r = requests.post(f"https://api.telegram.org/bot{token}/{method}", timeout=60, data=data, files=files)
+    if r.status_code == 400 and tid and "thread" in r.text.lower():
+        # topic not found (e.g. TELEGRAM_CHAT_ID still points at the old private chat): send without the topic
+        data.pop("message_thread_id", None)
+        if files:
+            for v in files.values():
+                v[1].seek(0)
+        r = requests.post(f"https://api.telegram.org/bot{token}/{method}", timeout=60, data=data, files=files)
     print(f"Telegram {method} [{topic or 'main'}]:", r.status_code, "ok" if r.status_code == 200 else r.text[:200])
     return r
 
@@ -44,6 +51,18 @@ def build_alist_message(p: dict) -> str:
         tag = "" if a["go"] else f"  <i>({e(a['mkt'])} red: watch only)</i>"
         piv = f" · pivot {a['pivot']:.2f}" if a.get("pivot") else ""
         lines.append(f"<code>{e(a['t']):<6}</code> RS {a['rs']}{piv} · from {e(a['src'])}{tag}")
+    return "\n".join(lines)
+
+
+def build_parabolic_message(p: dict) -> str | None:
+    sc = p.get("scans") or {}
+    xs = sc.get("parabolic") or []
+    if not xs:
+        return None
+    lines = [f"<b>Parabolic short watch — {html.escape(str(p['asof']))}</b>",
+             "<i>Short only after the first red day / failed opening range; stop above the high.</i>", ""]
+    lines += [f"<code>{x['symbol']:<6}</code> +{x['run_5d']}% in 5d · {x['ext_ema10']:+.0f}% vs 10-EMA{' · FIRST RED' if x['first_red'] else ''}"
+              for x in xs[:10]]
     return "\n".join(lines)
 
 
@@ -138,7 +157,7 @@ def build_message(p: dict, settings: dict) -> str:
             for x in sc["ep"][:8]:
                 cat = "earnings" if x["earnings_gap"] else (e(x["news"]["title"][:70]) if x.get("news") else "check news")
                 lines.append(f"<code>{x['symbol']:<6}</code> gap +{x['gap']}% · {x['rvol']}× vol{' · neglected' if x['neglected'] else ''} — {cat}")
-        if sc.get("parabolic"):
+        if sc.get("parabolic") and not _uses_topic(settings, "parabolic"):
             lines += ["", "<b>Parabolic short watch</b>"] + [
                 f"<code>{x['symbol']:<6}</code> +{x['run_5d']}% in 5d · {x['ext_ema10']:+.0f}% vs 10-EMA{' · FIRST RED' if x['first_red'] else ''}"
                 for x in sc["parabolic"][:6]]
@@ -178,6 +197,10 @@ def send_summary(payload: dict, tv_file: Path, settings: dict) -> None:
             tg_send("sendDocument", {"caption": "TradingView watchlist — Import list…"}, settings,
                     "files" if _uses_topic(settings, "files") else "brief",
                     files={"document": (f"RS_leaders_{stamp}.txt", f)})
+    if _uses_topic(settings, "parabolic"):
+        pm = build_parabolic_message(payload)
+        if pm:
+            tg_send("sendMessage", {"text": pm, "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings, "parabolic")
     if _uses_topic(settings, "alist"):
         tg_send("sendMessage", {"text": build_alist_message(payload), "parse_mode": "HTML",
                                 "disable_web_page_preview": "true"}, settings, "alist")
