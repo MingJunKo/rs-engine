@@ -1,0 +1,24 @@
+{
+ "date": "2026-11-17",
+ "rows": [
+  {
+   "t": "AJG",
+   "src": "RS setups",
+   "mkt": "SPY",
+   "go": false,
+   "rs": 93,
+   "price": 282.88,
+   "pivot": 294.53,
+   "adr": 2.8
+  }
+ ],
+ "mkt_wmacd": {
+  "QQQ": false,
+  "SPY": false
+ },
+ "exposure": {
+  "pct": 0,
+  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 41%",
+  "note": "cash \u2014 no new longs"
+ }
+}
