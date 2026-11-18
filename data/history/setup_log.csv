@@ -207,3 +207,17 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-17,LBTYK,Weekly scan,10.01,71.0,Communication Services,False,00000-0,Defensive Rotation
 2026-11-17,AAON,Weekly scan,78.71,62.0,Industrials,False,1000010,Defensive Rotation
 2026-11-17,SCZM,Weekly scan,7.41,37.0,Materials,False,--00010,Defensive Rotation
+2026-11-17,ARDT,Weekly scan,17.75,98.0,Health Care,True,0011110,Defensive Rotation
+2026-11-17,GFR,Weekly scan,7.71,92.0,Energy,False,0011110,Defensive Rotation
+2026-11-17,SEZL,Weekly scan,154.25,92.0,Financials,False,1001110,Defensive Rotation
+2026-11-17,TLN,Weekly scan,354.71,73.0,Infrastructure,True,1000010,Defensive Rotation
+2026-11-17,FLYW,Weekly scan,21.33,88.0,Consumer Discretionary,False,1010110,Defensive Rotation
+2026-11-17,HGV,Weekly scan,45.42,85.0,Consumer Discretionary,False,1001110,Defensive Rotation
+2026-11-17,CHYM,Weekly scan,32.97,79.0,Financials,False,1010010,Defensive Rotation
+2026-11-17,JAN,Weekly scan,31.87,76.0,Real Estate,False,1-11010,Defensive Rotation
+2026-11-17,NRGV,Weekly scan,3.57,73.0,,False,0000010,Defensive Rotation
+2026-11-17,COCO,Weekly scan,63.99,64.0,Consumer Staples,True,1100010,Defensive Rotation
+2026-11-17,EVH,Weekly scan,4.62,69.0,Consumer Discretionary,False,0000010,Defensive Rotation
+2026-11-17,MWH,Weekly scan,27.26,68.0,Industrials,False,-000010,Defensive Rotation
+2026-11-17,ECVT,Weekly scan,10.33,63.0,Industrials,False,0000010,Defensive Rotation
+2026-11-17,COMP,Weekly scan,9.81,47.0,Financials,False,1000010,Defensive Rotation
