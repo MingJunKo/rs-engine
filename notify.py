@@ -23,6 +23,15 @@ def build_message(p: dict, settings: dict) -> str:
     lines.append(f"Style 1M vs {e(p['benchmark'])}: Growth {sc['growth']:+.1f}% · "
                  f"Cyclical {sc['cyclical']:+.1f}% · Defensive {sc['defensive']:+.1f}%")
     lines.append(f"Breadth: {r['breadth']:.0f}% of universe above 50-DMA ({round(r['breadth_chg']) + 0:+d} pts 1M)")
+    mw = p.get("mkt_wmacd") or {}
+    if mw:
+        lines.append("Index weekly MACD: " + " · ".join(f"{k} {'🟢 green' if v else '🔴 red'}" for k, v in mw.items()))
+    al = p.get("alist") or []
+    if al:
+        lines += ["", "<b>A-list — open these first</b>"]
+        for a in al:
+            tag = "" if a["go"] else f"  <i>({e(a['mkt'])} red: watch only)</i>"
+            lines.append(f"<code>{e(a['t']):<6}</code> RS {a['rs']} · from {e(a['src'])}{tag}")
 
     idx = {x["symbol"]: x for x in p["etfs"] if x["category"] == "Index"}
     bm = [f"{s} {idx[s]['chg_1m']:+.1f}%" for s in ("RSP", "SPY", "QQQ", "IWM") if s in idx]

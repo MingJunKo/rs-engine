@@ -501,6 +501,20 @@ def broad_universe(known: set, names: pd.DataFrame, demo: bool) -> list[str]:
     return sorted(keep)
 
 
+def weekly_macd_green(c: pd.Series, fast=12, slow=26, sig=9) -> bool | None:
+    """Index regime gate: weekly MACD histogram >= 0 on the last COMPLETED week (matches the Pine MTF Kit)."""
+    w = c.dropna().resample("W-FRI").last()
+    if len(w) and w.index[-1] > c.dropna().index[-1]:      # current week still forming → drop it
+        w = w.iloc[:-1]
+    if len(w) < slow + sig:
+        return None
+    m = w.ewm(span=fast, adjust=False).mean() - w.ewm(span=slow, adjust=False).mean()
+    return bool((m - m.ewm(span=sig, adjust=False).mean()).iloc[-1] >= 0)
+
+
+TECH_SECTORS = {"Electronic Technology", "Technology Services"}
+
+
 def run(demo: bool, notify: bool):
     etfs = pd.read_csv(CFG_DIR / "etfs.csv")
     uni = pd.read_csv(CFG_DIR / "universe.csv")
@@ -729,6 +743,18 @@ def run(demo: bool, notify: bool):
         leaders["er_days"] = rng_.integers(1, 80, len(leaders))
         leaders["earnings"] = [(asof + pd.Timedelta(days=int(d))).strftime("%d %b") for d in leaders.er_days]
     leaders["er_soon"] = leaders.er_days <= 7
+
+    # ── Actionable filter: index weekly-MACD gate (QQQ for tech, SPY otherwise) + multi-timeframe alignment ──
+    mk = {m: weekly_macd_green(close[m]) if m in close else None for m in ("QQQ", "SPY")}
+    leaders["mkt"] = ["QQQ" if stk.at[t, "sector"] in TECH_SECTORS else "SPY" for t in leaders.index]
+    leaders["mkt_green"] = [bool(mk.get(m)) for m in leaders.mkt]
+    def _mtf(t):
+        c = close[t].dropna()
+        mo, wk = c.resample("ME").last(), c.resample("W-FRI").last()
+        return bool(len(mo) >= 10 and mo.iloc[-1] > mo.tail(10).mean()
+                    and len(wk) >= 40 and wk.iloc[-1] > wk.tail(10).mean() > wk.tail(40).mean())
+    leaders["mtf_ok"] = [_mtf(t) for t in leaders.index]
+    log(f"  index W-MACD: QQQ {'green' if mk['QQQ'] else 'red'}, SPY {'green' if mk['SPY'] else 'red'}")
 
     funnel_now["setups"] = int(leaders.setup.sum())            # same count as the table's "Setups only" filter
     setups_er = int((leaders.setup & leaders.er_soon).sum())
@@ -1110,6 +1136,22 @@ def run(demo: bool, notify: bool):
         if keep_:
             out_ += [head, ",".join(keep_)]
     (DATA_OUT / "tradingview_leaders.txt").write_text("\n".join(out_) + "\n")
+
+    # A-list: the names to open first. The main watchlist above is untouched; the A-list is a separate
+    # short file + a Telegram block that says where each name came from (the section it sits in above).
+    src = {x.split(":")[-1]: out_[i].lstrip("#") for i in range(0, len(out_) - 1, 2) for x in out_[i + 1].split(",")}
+    a_ok = (leaders.setup & leaders.trend_template & leaders.mtf_ok & ~(leaders.er_days <= 10)
+            & leaders.cs.astype(str).str[:1].eq("1"))
+    alist = [{"t": t, "src": src.get(t, "RS leaders"), "mkt": r.mkt, "go": bool(r.mkt_green), "rs": int(r.rs_rating)}
+             for t, r in leaders[a_ok].sort_values("rs_rating", ascending=False).iterrows()]
+    payload["alist"], payload["mkt_wmacd"] = alist, mk
+    sym = lambda t: f"{leaders.at[t, 'exchange']}:{t}" if leaders.at[t, "exchange"] else t
+    a_txt = []
+    for head, go in (("###A-list (actionable)", True), ("###A-list (index W-MACD red: watch only)", False)):
+        xs = [sym(a["t"]) for a in alist if a["go"] == go]
+        if xs:
+            a_txt += [head, ",".join(xs)]
+    (DATA_OUT / "tradingview_alist.txt").write_text("\n".join(a_txt) + "\n")
 
     # history snapshots (one row-set per day)
     d = asof.strftime("%Y-%m-%d")
