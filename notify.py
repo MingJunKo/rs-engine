@@ -8,6 +8,45 @@ from pathlib import Path
 import requests
 
 
+def tg_send(method: str, data: dict, settings: dict | None = None, topic: str | None = None, files=None):
+    """POST to the Telegram bot API. If settings["telegram_topics"] maps `topic` to a forum-topic id,
+    the message goes into that topic of the group (TELEGRAM_CHAT_ID = the group's id)."""
+    token, chat = os.environ.get("TELEGRAM_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat:
+        print(f"Telegram not configured — preview [{topic or 'main'}]:\n{data.get('text') or data.get('caption') or ''}\n")
+        return None
+    data = {"chat_id": chat, **data}
+    tid = ((settings or {}).get("telegram_topics") or {}).get(topic or "")
+    if tid:
+        data["message_thread_id"] = tid
+    r = requests.post(f"https://api.telegram.org/bot{token}/{method}", timeout=60, data=data, files=files)
+    print(f"Telegram {method} [{topic or 'main'}]:", r.status_code, "ok" if r.status_code == 200 else r.text[:200])
+    return r
+
+
+def _uses_topic(settings: dict, topic: str) -> bool:
+    return bool((settings.get("telegram_topics") or {}).get(topic))
+
+
+def build_alist_message(p: dict) -> str:
+    e = lambda s: html.escape(str(s))
+    lines = [f"<b>A-list — {e(p['asof'])}</b>"]
+    ex = p.get("exposure")
+    if ex:
+        lines.append(f"Exposure guide: <b>{ex['pct']}%</b> — {e(ex['note'])}")
+    mw = p.get("mkt_wmacd") or {}
+    if mw:
+        lines.append("Index weekly MACD: " + " · ".join(f"{k} {'🟢 green' if v else '🔴 red'}" for k, v in mw.items()))
+    al = p.get("alist") or []
+    if not al:
+        lines.append("<i>No name passes every A-list rule today.</i>")
+    for a in al:
+        tag = "" if a["go"] else f"  <i>({e(a['mkt'])} red: watch only)</i>"
+        piv = f" · pivot {a['pivot']:.2f}" if a.get("pivot") else ""
+        lines.append(f"<code>{e(a['t']):<6}</code> RS {a['rs']}{piv} · from {e(a['src'])}{tag}")
+    return "\n".join(lines)
+
+
 def _arrow(v):
     if v is None:
         return ""
@@ -23,15 +62,19 @@ def build_message(p: dict, settings: dict) -> str:
     lines.append(f"Style 1M vs {e(p['benchmark'])}: Growth {sc['growth']:+.1f}% · "
                  f"Cyclical {sc['cyclical']:+.1f}% · Defensive {sc['defensive']:+.1f}%")
     lines.append(f"Breadth: {r['breadth']:.0f}% of universe above 50-DMA ({round(r['breadth_chg']) + 0:+d} pts 1M)")
+    ex = p.get("exposure")
+    if ex:
+        lines.append(f"<b>Exposure guide: {ex['pct']}%</b> — {e(ex['note'])}  <i>({e(ex['why'])})</i>")
     mw = p.get("mkt_wmacd") or {}
     if mw:
         lines.append("Index weekly MACD: " + " · ".join(f"{k} {'🟢 green' if v else '🔴 red'}" for k, v in mw.items()))
     al = p.get("alist") or []
-    if al:
+    if al and not _uses_topic(settings, "alist"):
         lines += ["", "<b>A-list — open these first</b>"]
         for a in al:
             tag = "" if a["go"] else f"  <i>({e(a['mkt'])} red: watch only)</i>"
-            lines.append(f"<code>{e(a['t']):<6}</code> RS {a['rs']} · from {e(a['src'])}{tag}")
+            piv = f" · pivot {a['pivot']:.2f}" if a.get("pivot") else ""
+            lines.append(f"<code>{e(a['t']):<6}</code> RS {a['rs']}{piv} · from {e(a['src'])}{tag}")
 
     idx = {x["symbol"]: x for x in p["etfs"] if x["category"] == "Index"}
     bm = [f"{s} {idx[s]['chg_1m']:+.1f}%" for s in ("RSP", "SPY", "QQQ", "IWM") if s in idx]
@@ -126,23 +169,23 @@ def _chunks(msg: str, limit: int = 3900) -> list[str]:
 
 
 def send_summary(payload: dict, tv_file: Path, settings: dict) -> None:
-    token, chat = os.environ.get("TELEGRAM_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
     msg = build_message(payload, settings)
-    if not token or not chat:
-        print("Telegram not configured (TELEGRAM_TOKEN / TELEGRAM_CHAT_ID missing). Message preview:\n")
-        print(msg)
-        return
-    api = f"https://api.telegram.org/bot{token}"
     for part in _chunks(msg):
-        r = requests.post(f"{api}/sendMessage", timeout=30, data={
-            "chat_id": chat, "text": part, "parse_mode": "HTML", "disable_web_page_preview": "true"})
-        print("Telegram message:", r.status_code, r.text[:200] if r.status_code != 200 else "ok")
+        tg_send("sendMessage", {"text": part, "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings, "brief")
+    stamp = payload["asof"][4:].replace(" ", "")
     if tv_file.exists() and tv_file.stat().st_size > 5:
         with open(tv_file, "rb") as f:
-            r = requests.post(f"{api}/sendDocument", timeout=60,
-                              data={"chat_id": chat, "caption": "TradingView watchlist — Import list…"},
-                              files={"document": (f"RS_leaders_{payload['asof'][4:].replace(' ', '')}.txt", f)})
-        print("Telegram file:", r.status_code, "ok" if r.status_code == 200 else r.text[:200])
+            tg_send("sendDocument", {"caption": "TradingView watchlist — Import list…"}, settings,
+                    "files" if _uses_topic(settings, "files") else "brief",
+                    files={"document": (f"RS_leaders_{stamp}.txt", f)})
+    if _uses_topic(settings, "alist"):
+        tg_send("sendMessage", {"text": build_alist_message(payload), "parse_mode": "HTML",
+                                "disable_web_page_preview": "true"}, settings, "alist")
+        af = tv_file.parent / "tradingview_alist.txt"
+        if af.exists() and af.stat().st_size > 5:
+            with open(af, "rb") as f:
+                tg_send("sendDocument", {"caption": "A-list — Import list…"}, settings, "alist",
+                        files={"document": (f"A_list_{stamp}.txt", f)})
 
 
 def send_alert(payload: dict, alert: list, settings: dict) -> None:
@@ -152,11 +195,5 @@ def send_alert(payload: dict, alert: list, settings: dict) -> None:
     url = settings.get("dashboard_url")
     if url:
         lines += ["", f'<a href="{e(url)}">Open dashboard</a>']
-    msg = "\n".join(lines)
-    token, chat = os.environ.get("TELEGRAM_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
-    if not token or not chat:
-        print("Telegram not configured. Alert preview:\n" + msg)
-        return
-    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", timeout=30, data={
-        "chat_id": chat, "text": msg, "parse_mode": "HTML", "disable_web_page_preview": "true"})
-    print("Telegram alert:", r.status_code, "ok" if r.status_code == 200 else r.text[:200])
+    tg_send("sendMessage", {"text": "\n".join(lines), "parse_mode": "HTML", "disable_web_page_preview": "true"},
+            settings, "alerts")

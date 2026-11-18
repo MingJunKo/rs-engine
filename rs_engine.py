@@ -1142,9 +1142,29 @@ def run(demo: bool, notify: bool):
     src = {x.split(":")[-1]: out_[i].lstrip("#") for i in range(0, len(out_) - 1, 2) for x in out_[i + 1].split(",")}
     a_ok = (leaders.setup & leaders.trend_template & leaders.mtf_ok & ~(leaders.er_days <= 10)
             & leaders.cs.astype(str).str[:1].eq("1"))
-    alist = [{"t": t, "src": src.get(t, "RS leaders"), "mkt": r.mkt, "go": bool(r.mkt_green), "rs": int(r.rs_rating)}
+    alist = [{"t": t, "src": src.get(t, "RS leaders"), "mkt": r.mkt, "go": bool(r.mkt_green), "rs": int(r.rs_rating),
+              "price": round(float(r.price), 2), "pivot": round(float(r.price) / (1 + float(r.pivot_dist) / 100), 2),
+              "adr": round(float(r.adr), 1)}
              for t, r in leaders[a_ok].sort_values("rs_rating", ascending=False).iterrows()]
     payload["alist"], payload["mkt_wmacd"] = alist, mk
+
+    # Exposure guide: index weekly MACD (QQQ, SPY) + risk-appetite gauges + universe breadth → 0 / 25 / 50 / 100 %
+    n_green = int(bool(mk.get("QQQ"))) + int(bool(mk.get("SPY")))
+    half_on, broad = risk_on_n >= len(gauges) / 2, breadth_now >= 50
+    if n_green == 0:
+        expo = 25 if (half_on and broad) else 0
+    elif n_green == 1:
+        expo = 50 if (half_on and broad) else 25
+    else:
+        expo = 100 if (regime == "Risk-On" and broad) else 50
+    payload["exposure"] = {
+        "pct": expo,
+        "why": (f"{n_green}/2 index W-MACD green, {risk_on_n}/{len(gauges)} gauges risk-on, "
+                f"breadth {breadth_now:.0f}%"),
+        "note": {0: "cash — no new longs", 25: "pilot positions only, A+ setups",
+                 50: "half size, best setups", 100: "full size, press winners"}[expo]}
+    (DATA_OUT / "alist.json").write_text(json.dumps({"date": asof.strftime("%Y-%m-%d"), "rows": alist,
+                                                     "mkt_wmacd": mk, "exposure": payload["exposure"]}, indent=1))
     sym = lambda t: f"{leaders.at[t, 'exchange']}:{t}" if leaders.at[t, "exchange"] else t
     a_txt = []
     for head, go in (("###A-list (actionable)", True), ("###A-list (index W-MACD red: watch only)", False)):

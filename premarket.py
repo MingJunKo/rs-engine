@@ -35,9 +35,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--dry", action="store_true", help="diagnostics only: no file, no Telegram")
+    ap.add_argument("--open", action="store_true", help="A-list pivot check after the open (9:35–11:00 New York)")
     a = ap.parse_args()
     now = dt.datetime.now(NY)
     today = now.date().isoformat()
+    if a.open:
+        return open_check(now, a)
     if not a.force:
         if now.weekday() >= 5 or not (dt.time(8, 0) <= now.time() < dt.time(9, 29)):
             log(f"Outside the pre-market window ({now:%a %H:%M} New York) — nothing to do."); return
@@ -49,6 +52,11 @@ def main():
     prev = st.set_index("ticker").price.to_dict()
     dvol = st.set_index("ticker").dollar_vol.to_dict() if "dollar_vol" in st else {}
     tickers = list(prev)
+    alist = load_alist(today)
+    for r in alist:                                        # make sure every A-list name is scanned
+        if r["t"] not in prev:
+            tickers.append(r["t"]); prev[r["t"]] = r["price"]
+    a_px = {}
     log(f"{len(tickers)} stocks · scanning pre-market")
 
     import yfinance as yf
@@ -77,6 +85,7 @@ def main():
                 continue
             seen_pm += 1
             last, vol = float(pm.Close.iloc[-1]), float(pm.Volume.fillna(0).sum())
+            a_px[t] = last
             gap = (last / prev[t] - 1) * 100
             all_gaps.append((gap, t, vol))
             # Yahoo often reports 0 volume on extended-hours bars: then fall back to the stock's normal liquidity
@@ -108,8 +117,11 @@ def main():
                 v = meta.at[r["symbol"], k]
                 r[k] = None if pd.isna(v) else (int(v) if k == "rs_rating" else v)
 
+    piv = pivot_lines(alist, {t: (p_, None) for t, p_ in a_px.items()})
     if a.dry:
-        log("dry run: " + ", ".join(f"{r['symbol']} +{r['gap']}%" for r in rows)); return
+        log("dry run: " + ", ".join(f"{r['symbol']} +{r['gap']}%" for r in rows))
+        log("pivot watch: " + " | ".join(piv)); return
+    send_pivots(piv, f"Pivot watch — pre-market {now:%a %d %b}")
     OUT.write_text(json.dumps({"date": today, "asof": now.strftime("%a %d %b %H:%M New York"), "rows": rows},
                               separators=(",", ":"), default=str))
     # TradingView import file for the open: the alert-worthy gappers first, then the rest
@@ -122,7 +134,6 @@ def main():
 
 
 def send(rows, now):
-    token, chat = os.environ.get("TELEGRAM_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
     if not rows:
         log("No gappers — no Telegram message."); return
     e = lambda s: html.escape(str(s))
@@ -147,13 +158,89 @@ def send(rows, now):
             lines += ["", f'<a href="{e(url.rstrip("/"))}/scans/#ep">Open scans</a>']
     except Exception:
         pass
-    msg = "\n".join(lines)
-    if not token or not chat:
-        log("Telegram not configured. Preview:\n" + msg); return
-    import requests
-    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", timeout=30, data={
-        "chat_id": chat, "text": msg, "parse_mode": "HTML", "disable_web_page_preview": "true"})
-    log("Telegram:", r.status_code)
+    from notify import tg_send
+    tg_send("sendMessage", {"text": "\n".join(lines), "parse_mode": "HTML", "disable_web_page_preview": "true"},
+            settings(), "premarket")
+
+
+# ───────── A-list pivot watch ─────────
+def settings():
+    try:
+        return json.loads((ROOT / "config" / "settings.json").read_text())
+    except Exception:
+        return {}
+
+
+def load_alist(today):
+    """A-list from this morning's RS Engine run (docs/data/alist.json). Stale (> 4 days) → ignored."""
+    p = ROOT / "docs" / "data" / "alist.json"
+    if not p.exists():
+        return []
+    d = json.loads(p.read_text())
+    if (pd.Timestamp(today) - pd.Timestamp(d.get("date", "2000-01-01"))).days > 4:
+        return []
+    return [r for r in d.get("rows", []) if r.get("pivot")]
+
+
+def pivot_lines(alist, px):
+    """px: ticker -> (last, high today or None). One line per A-list name within 1% of its pivot or through it."""
+    near = settings().get("pivot_near_pct", 1.0)
+    chase = settings().get("pivot_chase_pct", 3.0)
+    out = []
+    for r in alist:
+        if r["t"] not in px:
+            continue
+        last, hi = px[r["t"]]
+        d = (last / r["pivot"] - 1) * 100
+        watch = "" if r["go"] else f" <i>({html.escape(r['mkt'])} red: watch only)</i>"
+        head = f"<code>{r['t']:<6}</code> {last:.2f} vs pivot {r['pivot']:.2f} ({d:+.1f}%)"
+        if d > chase:
+            out.append(f"{head} — gapping through, don't chase: wait for an opening-range high{watch}")
+        elif d >= 0:
+            out.append(f"{head} — above pivot, breakout candidate{watch}")
+        elif d >= -near:
+            out.append(f"{head} — within {near:g}% of pivot, set the alert{watch}")
+        elif hi is not None and hi >= r["pivot"]:
+            out.append(f"{head} — broke the pivot (high {hi:.2f}) and fell back below: failed breakout so far{watch}")
+    return out
+
+
+def send_pivots(lines, title):
+    if not lines:
+        log("Pivot watch: no A-list name near its pivot."); return
+    from notify import tg_send
+    msg = "\n".join([f"<b>{title}</b>", "<i>Size from the stop on your chart; exposure guide in this morning's A-list.</i>", ""] + lines)
+    tg_send("sendMessage", {"text": msg, "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings(), "alist")
+
+
+def open_check(now, a):
+    """Run once ~15 minutes after the open: where is each A-list name vs its pivot?"""
+    today = now.date().isoformat()
+    state = ROOT / "docs" / "data" / "pivot_open.json"
+    if not a.force:
+        if now.weekday() >= 5 or not (dt.time(9, 35) <= now.time() < dt.time(11, 0)):
+            log(f"Outside the open window ({now:%a %H:%M} New York) — nothing to do."); return
+        if state.exists() and json.loads(state.read_text()).get("date") == today:
+            log("Open check already ran today."); return
+    alist = load_alist(today)
+    if not alist:
+        log("No fresh A-list — nothing to check."); return
+    import yfinance as yf
+    df = yf.download([r["t"].replace(".", "-") for r in alist], period="1d", interval="5m", group_by="ticker",
+                     threads=True, progress=False, auto_adjust=False)
+    px = {}
+    for r in alist:
+        try:
+            sub = (df[r["t"].replace(".", "-")] if isinstance(df.columns, pd.MultiIndex) else df).dropna(subset=["Close"])
+        except KeyError:
+            continue
+        if not sub.empty:
+            px[r["t"]] = (float(sub.Close.iloc[-1]), float(sub.High.max()))
+    lines = pivot_lines(alist, px)
+    if a.dry:
+        log("pivot watch (open): " + " | ".join(lines)); return
+    state.write_text(json.dumps({"date": today, "lines": lines}))
+    send_pivots(lines, f"Pivot watch — after the open {now:%a %d %b %H:%M} NY")
 
 
 if __name__ == "__main__":
