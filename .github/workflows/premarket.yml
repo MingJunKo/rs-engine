@@ -9,6 +9,9 @@ on:
     - cron: "5,25,45 12 * * 1-5"
     - cron: "5,25,45 13 * * 1-5"
     - cron: "5 14 * * 1-5"
+    # A-list pivot check ~15 min after the open (9:45 New York in winter, 10:45 in summer; script acts 9:35–11:00)
+    - cron: "45 14 * * 1-5"
+    - cron: "50 13 * * 1-5"
   workflow_dispatch:
     inputs:
       force:
@@ -42,11 +45,11 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python premarket.py ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }} ${{ (github.event_name == 'workflow_dispatch' && inputs.dry) && '--dry' || '' }}
+        run: python premarket.py ${{ (github.event.schedule == '45 14 * * 1-5' || github.event.schedule == '50 13 * * 1-5') && '--open' || '' }} ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }} ${{ (github.event_name == 'workflow_dispatch' && inputs.dry) && '--dry' || '' }}
       - name: Commit
         run: |
           git config user.name "rs-engine-bot"
           git config user.email "rs-engine-bot@users.noreply.github.com"
-          git add docs/data/premarket.json docs/data/tradingview_premarket.txt 2>/dev/null || true
+          git add docs/data/premarket.json docs/data/tradingview_premarket.txt docs/data/pivot_open.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "Pre-market EP $(date -u +%Y-%m-%d)"
           for i in 1 2 3; do git pull --rebase --autostash -X theirs && git push && break; sleep 5; done
