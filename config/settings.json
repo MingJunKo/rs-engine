@@ -17,6 +17,7 @@
     "premarket": 4,
     "alerts": 5,
     "journal": 6,
-    "parabolic": 14
+    "parabolic": 14,
+    "vpa": 23
   }
 }
