@@ -1,15 +1,15 @@
 {
- "date": "2026-11-17",
+ "date": "2026-11-18",
  "rows": [
   {
-   "t": "AJG",
+   "t": "XMTR",
    "src": "RS setups",
    "mkt": "SPY",
    "go": false,
    "rs": 93,
-   "price": 282.88,
-   "pivot": 294.53,
-   "adr": 2.8
+   "price": 120.48,
+   "pivot": 127.49,
+   "adr": 8.3
   }
  ],
  "mkt_wmacd": {

@@ -221,3 +221,19 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-17,MWH,Weekly scan,27.26,68.0,Industrials,False,-000010,Defensive Rotation
 2026-11-17,ECVT,Weekly scan,10.33,63.0,Industrials,False,0000010,Defensive Rotation
 2026-11-17,COMP,Weekly scan,9.81,47.0,Financials,False,1000010,Defensive Rotation
+2026-11-18,LIVN,RS setup,94.54,98.0,Medical Devices,True,00101-0,Defensive Rotation
+2026-11-18,HWKN,RS setup,153.2,97.0,Water,True,0011110,Defensive Rotation
+2026-11-18,HOG,RS setup,33.34,95.0,Consumer Discretionary,True,0011110,Defensive Rotation
+2026-11-18,GATX,RS setup,190.21,94.0,Consumer Discretionary,True,1111110,Defensive Rotation
+2026-11-18,XMTR,RS setup,120.48,93.0,Consumer Discretionary,True,1011110,Defensive Rotation
+2026-11-18,CNNE,Weekly scan,17.5,95.0,Consumer Discretionary,True,0011110,Defensive Rotation
+2026-11-18,BOBS,Weekly scan,20.85,90.0,Retail,True,-111110,Defensive Rotation
+2026-11-18,ANGX,Weekly scan,4.22,77.0,Consumer Discretionary,True,0000010,Defensive Rotation
+2026-11-18,FNKO,Weekly scan,6.86,70.0,Consumer Discretionary,True,1011010,Defensive Rotation
+2026-11-18,AS,Weekly scan,30.95,68.0,Consumer Discretionary,True,10010-0,Defensive Rotation
+2026-11-18,AMG,Weekly scan,392.63,72.0,Capital Markets,False,1011010,Defensive Rotation
+2026-11-18,AVGO,Weekly scan,354.05,62.0,Cybersecurity,True,1000010,Defensive Rotation
+2026-11-18,GRND,Weekly scan,14.62,63.0,Technology,False,0000010,Defensive Rotation
+2026-11-18,QXO,Weekly scan,11.25,47.0,Consumer Discretionary,True,0000010,Defensive Rotation
+2026-11-18,LSCC,Weekly scan,111.61,51.0,Semiconductors,False,1001010,Defensive Rotation
+2026-11-18,HLIT,Weekly scan,10.74,47.0,AI Infrastructure,False,1001010,Defensive Rotation

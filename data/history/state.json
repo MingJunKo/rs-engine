@@ -1,26 +1,29 @@
 {
- "date": "2026-11-17",
+ "date": "2026-11-18",
  "regime": "Defensive Rotation",
  "setups": [
-  "AJG",
-  "HCA",
-  "RYAN"
+  "GATX",
+  "HOG",
+  "HWKN",
+  "LIVN",
+  "XMTR"
  ],
  "turners": [
-  "XLU",
+  "XTN",
+  "PEJ",
   "JETS"
  ],
  "prev": {
-  "date": "2026-11-16",
+  "date": "2026-11-17",
   "regime": "Defensive Rotation",
   "setups": [
-   "BMI",
-   "PAC"
+   "AJG",
+   "HCA",
+   "RYAN"
   ],
   "turners": [
-   "IYT",
-   "XLF",
-   "XLU"
+   "XLU",
+   "JETS"
   ]
  }
 }
