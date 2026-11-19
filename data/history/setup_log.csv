@@ -237,3 +237,17 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-18,QXO,Weekly scan,11.25,47.0,Consumer Discretionary,True,0000010,Defensive Rotation
 2026-11-18,LSCC,Weekly scan,111.61,51.0,Semiconductors,False,1001010,Defensive Rotation
 2026-11-18,HLIT,Weekly scan,10.74,47.0,AI Infrastructure,False,1001010,Defensive Rotation
+2026-11-19,ALGT,RS setup,97.07,95.0,Airlines,True,0001110,Defensive Rotation
+2026-11-19,PLMR,RS setup,156.68,95.0,Insurance,True,1111110,Defensive Rotation
+2026-11-19,LUV,RS setup,45.61,93.0,Airlines,True,1001110,Defensive Rotation
+2026-11-19,MAS,RS setup,82.79,93.0,Homebuilders,True,0010110,Defensive Rotation
+2026-11-19,FIZZ,RS setup,36.99,93.0,Consumer Staples,True,0010110,Defensive Rotation
+2026-11-19,GEN,RS setup,30.15,92.0,Cybersecurity,True,0010110,Defensive Rotation
+2026-11-19,CSL,RS setup,387.91,91.0,Homebuilders,True,0010110,Defensive Rotation
+2026-11-19,HMN,RS setup,52.52,91.0,Insurance,True,1110110,Defensive Rotation
+2026-11-19,BF.B,RS setup,30.12,91.0,Consumer Staples,True,0011110,Defensive Rotation
+2026-11-19,RSKD,Weekly scan,9.63,95.0,Consumer Discretionary,False,10111-0,Defensive Rotation
+2026-11-19,CHA,Weekly scan,13.63,93.0,Consumer Discretionary,False,0011110,Defensive Rotation
+2026-11-19,NET,Weekly scan,303.68,68.0,Cybersecurity,True,1000010,Defensive Rotation
+2026-11-19,AMD,Weekly scan,489.19,50.0,Semiconductors,False,1001010,Defensive Rotation
+2026-11-19,FIGR,Weekly scan,25.84,49.0,Financials,False,0000000,Defensive Rotation
