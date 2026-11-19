@@ -50,6 +50,6 @@ jobs:
         run: |
           git config user.name "rs-engine-bot"
           git config user.email "rs-engine-bot@users.noreply.github.com"
-          git add docs/data/premarket.json docs/data/tradingview_premarket.txt docs/data/pivot_open.json 2>/dev/null || true
+          for f in docs/data/premarket.json docs/data/tradingview_premarket.txt docs/data/pivot_open.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "Pre-market EP $(date -u +%Y-%m-%d)"
           for i in 1 2 3; do git pull --rebase --autostash -X theirs && git push && break; sleep 5; done
