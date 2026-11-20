@@ -1,4 +1,2 @@
-###Pre-market 17 Nov: earnings or RS 70+
-USDE,HG
-###Pre-market 17 Nov: other gappers
-SLS,KURA
+###Pre-market 20 Nov: earnings or RS 70+
+CAPR
