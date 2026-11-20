@@ -87,6 +87,11 @@ def build_message(p: dict, settings: dict) -> str:
     mw = p.get("mkt_wmacd") or {}
     if mw:
         lines.append("Index weekly MACD: " + " · ".join(f"{k} {'🟢 green' if v else '🔴 red'}" for k, v in mw.items()))
+    X = p.get("extras") or {}
+    ev = X.get("econ") or []
+    if ev:
+        soon = [x for x in ev][:5]
+        lines.append("📅 <b>US data ahead (SGT):</b> " + " · ".join(f"{e(x['title'])} {e(x['when'])}" for x in soon))
     al = p.get("alist") or []
     if al and not _uses_topic(settings, "alist"):
         lines += ["", "<b>A-list — open these first</b>"]
@@ -111,11 +116,20 @@ def build_message(p: dict, settings: dict) -> str:
     for i, t in enumerate([t for t in p["themes"] if t["top"]], 1):
         lines.append(f"{i}. {e(t['theme'])} ({t['symbol']}) {t['rs_rating']} {_arrow(t['rs_chg_1w'])}")
 
+    tm = X.get("theme_mco") or []
+    ups = [t for t in tm if t["cross_up"]]
+    dns = [t for t in tm if t["cross_down"] and t["top"]]
+    if ups or dns:
+        lines += ["", "<b>Theme breadth (McClellan inside the group)</b>"]
+        if ups:
+            lines.append("↗ crossed above zero: " + ", ".join(f"{e(t['theme'])} ({t['etf']}) {t['mco']:+d}" for t in ups[:8]))
+        if dns:
+            lines.append("↘ top themes losing participation: " + ", ".join(f"{e(t['theme'])} {t['mco']:+d}" for t in dns[:6]))
     n = settings.get("telegram_top_n", 15)
     lines += ["", f"<b>Leading stocks</b> (top {min(n, len(p['leaders']))} of {len(p['leaders'])})"]
     for x in p["leaders"][:n]:
         flags = "".join([" 🆕" if x["new"] else "", " ✓TT" if x["trend_template"] else "",
-                         " ⚠ext" if x["extended"] else ""])
+                         " ⚡33" if (x.get("code33") or {}).get("code33") else "", " ⚠ext" if x["extended"] else ""])
         lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {e(x['theme'])}{flags}")
 
     setups = [x for x in p["leaders"] if x.get("setup") and not x.get("er_soon")]
@@ -124,6 +138,23 @@ def build_message(p: dict, settings: dict) -> str:
         for x in setups[:10]:
             er = f" · ER {e(x['earnings'])}" if x.get("earnings") else ""
             lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {x['pivot_dist']:+.1f}% from pivot{er}")
+    cl = X.get("clusters") or []
+    if cl:
+        lines += ["", "<b>Clusters — 3+ names from one industry today</b>"]
+        for c in cl[:5]:
+            lines.append(f"<b>{e(c['industry'])}</b> ({c['n']}): " + ", ".join(f"{x['t']} {x['why']}" for x in c["names"][:6]))
+    ins = X.get("insiders") or []
+    if ins:
+        lines += ["", "<b>Insider buying — last 7 days</b> (open-market, SEC Form 4)"]
+        for x in ins[:6]:
+            tag = " ◆leader" if x.get("leader") else ""
+            lines.append(f"<code>{x['ticker']:<6}</code> {x['insiders']} insider{'s' if x['insiders'] > 1 else ''} · ${x['usd'] / 1e6:.1f}M"
+                         f"{' @ ' + str(x['avg_price']) if x.get('avg_price') else ''} · RS {x.get('rs') or '–'}{tag}"
+                         + (f" · {e(', '.join(x['titles'][:2]))}" if x.get("titles") else ""))
+    c3 = X.get("code33") or []
+    if c3:
+        lines += ["", "<b>⚡ Code 33 — EPS and sales accelerating 3 quarters (RS 70+)</b>",
+                  ", ".join(f"{x['t']} (EPS {'/'.join(str(g) for g in x['eps'])}%)" for x in c3[:8])]
     tg = p.get("turners") or []
     if tg:
         lines += ["", f"<b>Early turners — watchlist, not buys</b> ({len(tg)})",
@@ -131,7 +162,9 @@ def build_message(p: dict, settings: dict) -> str:
         for g in tg:
             br = (f" · breadth {g['breadth']}% ({g['breadth_chg']:+d})" if g.get("breadth") is not None
                   and g.get("breadth_chg") is not None else "")
-            lines += ["", f"<b>{e(g['theme'])}</b> ({e(g['etf'])}) RS {g['rs']} ({(g['rs_chg_1w'] or 0):+d} 1W){br} · {e(g['quadrant'] or '')}"]
+            mc = next((t for t in tm if t["theme"] == g["theme"]), None)
+            mtag = f" · McClellan {mc['mco']:+d}{' ↗ crossed up' if mc['cross_up'] else ''}" if mc else ""
+            lines += ["", f"<b>{e(g['theme'])}</b> ({e(g['etf'])}) RS {g['rs']} ({(g['rs_chg_1w'] or 0):+d} 1W){br} · {e(g['quadrant'] or '')}{mtag}"]
             if not g["stocks"]:
                 lines.append("  <i>no stock passes the filters yet</i>")
             for x in g["stocks"]:

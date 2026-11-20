@@ -1158,6 +1158,37 @@ def run(demo: bool, notify: bool):
              for t, r in leaders[a_ok].sort_values("rs_rating", ascending=False).iterrows()]
     payload["alist"], payload["mkt_wmacd"] = alist, mk
 
+    # ── extras: theme McClellan, industry clusters, code 33, insider buying, economic calendar ──
+    try:
+        import extras as X
+        ex_ = {}
+        ex_["theme_mco"] = X.theme_mcclellan(close[S], stk, payload["themes"])
+        ep_today = [e["symbol"] for e in (scans_payload or {}).get("ep", []) if e["days_ago"] == 0]
+        setups_ = [t for t in leaders.index if leaders.at[t, "setup"]]
+        ex_["clusters"] = X.clusters(stk, close[S], ep_today, setups_)
+        fp_ = ROOT / "data" / "fundamentals.json"
+        c33 = X.code33(json.loads(fp_.read_text()) if fp_.exists() else {}, _yoy_series)
+        for rec in payload["leaders"]:
+            if rec["symbol"] in c33:
+                rec["code33"] = c33[rec["symbol"]]
+        ex_["code33"] = [{"t": t, **v} for t, v in c33.items() if v["code33"] and t in stk.index
+                         and (stk.at[t, "rs_rating"] if pd.notna(stk.at[t, "rs_rating"]) else 0) >= 70]
+        ex_["code33"].sort(key=lambda x: -stk.at[x["t"], "rs_rating"])
+        ins = X.insider_clusters(set(stk.index))
+        for x in ins:
+            x["rs"] = None if pd.isna(stk.at[x["ticker"], "rs_rating"]) else int(stk.at[x["ticker"], "rs_rating"])
+            x["theme"] = stk.at[x["ticker"], "theme"] or ""
+            x["leader"] = x["ticker"] in leaders.index
+        ex_["insiders"] = ins
+        ex_["econ"] = [] if demo else X.econ_calendar()
+        payload["extras"] = _clean_json(ex_)
+        log(f"  extras: {sum(t['cross_up'] for t in ex_['theme_mco'])} theme McClellan up-crosses · "
+            f"{len(ex_['clusters'])} clusters · {len(ex_['code33'])} code-33 names · {len(ins)} insider clusters · "
+            f"{len(ex_['econ'])} high-impact US events")
+    except Exception as e:
+        import traceback
+        log(f"  extras failed: {e}\n{traceback.format_exc()[-500:]}")
+
     # Exposure guide: index weekly MACD (QQQ, SPY) + risk-appetite gauges + universe breadth → 0 / 25 / 50 / 100 %
     n_green = int(bool(mk.get("QQQ"))) + int(bool(mk.get("SPY")))
     half_on, broad = risk_on_n >= len(gauges) / 2, breadth_now >= 50
