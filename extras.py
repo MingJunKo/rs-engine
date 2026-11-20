@@ -120,6 +120,7 @@ def econ_calendar(days: int = 7) -> list:
                              headers={"User-Agent": "Mozilla/5.0"})
             if r.ok:
                 rows += r.json()
+            print(f"  econ calendar ({wk}): HTTP {r.status_code}, {len(r.json()) if r.ok else 0} events")
         except Exception as e:
             print(f"  econ calendar ({wk}): {e}")
     now = dt.datetime.now(SGT)
