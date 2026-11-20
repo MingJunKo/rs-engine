@@ -1,2 +1,2 @@
 ###A-list (index W-MACD red: watch only)
-NASDAQ:PLMR,NYSE:AJG
+NASDAQ:ULCC,NASDAQ:PLMR

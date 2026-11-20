@@ -251,3 +251,7 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-19,NET,Weekly scan,303.68,68.0,Cybersecurity,True,1000010,Defensive Rotation
 2026-11-19,AMD,Weekly scan,489.19,50.0,Semiconductors,False,1001010,Defensive Rotation
 2026-11-19,FIGR,Weekly scan,25.84,49.0,Financials,False,0000000,Defensive Rotation
+2026-11-19,ULCC,RS setup,8.16,96.0,Airlines,True,1011110,Defensive Rotation
+2026-11-19,OLLI,RS setup,97.62,91.0,Retail,True,1101100,Defensive Rotation
+2026-11-19,GRAB,Weekly scan,3.14,67.0,Consumer Discretionary,False,00000-0,Defensive Rotation
+2026-11-19,AUGO,Weekly scan,64.3,18.0,Gold & Silver,False,10000-0,Defensive Rotation
