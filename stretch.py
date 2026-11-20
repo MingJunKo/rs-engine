@@ -310,17 +310,23 @@ def composite(feats: dict, price: pd.Series, today_i: int, years: float, side: i
 
 # ───────────────────────── data
 def download(tickers, period="max"):
+    """One ticker at a time with retries — parallel yfinance downloads can trip its cache lock."""
+    import time
     import yfinance as yf
-    df = yf.download(tickers, period=period, interval="1d", auto_adjust=True, progress=False, group_by="ticker", threads=True)
     out = {}
     for t in tickers:
-        try:
-            sub = df[t] if isinstance(df.columns, pd.MultiIndex) else df
-            sub = sub.dropna(subset=["Close"])
-            if len(sub):
-                out[t] = sub
-        except KeyError:
-            pass
+        for attempt in range(3):
+            try:
+                df = yf.download(t, period=period, interval="1d", auto_adjust=True, progress=False, threads=False)
+                if isinstance(df.columns, pd.MultiIndex):
+                    df.columns = df.columns.get_level_values(0)
+                df = df.dropna(subset=["Close"])
+                if len(df):
+                    out[t] = df
+                    break
+            except Exception as e:
+                print(f"  {t}: {e}")
+            time.sleep(2 + attempt * 3)
     return out
 
 
@@ -621,5 +627,7 @@ if __name__ == "__main__":
         res["generated"] = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).strftime("%d %b %Y %H:%M SGT")
         write_page(res, ROOT / "docs")
         print(build_message(res, set(), True))
+        for sym, ent in res["index"].items():
+            print(sym, "FTD:", ent["ftd"]["label"], "| FTDs in history:", ent["ftd"]["episodes"], "| failed %:", ent["ftd"].get("fail_rate"))
         if a.weekly and not a.no_telegram and not a.demo:
             notify(res, settings, force_weekly=True)
