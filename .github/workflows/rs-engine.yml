@@ -1,10 +1,8 @@
 name: RS Engine
 
 on:
-  schedule:
-    # 22:30 UTC Mon–Fri = 6:30am SGT Tue–Sat, after the US close.
-    # The Saturday-morning run (Friday close) also sends the Telegram summary.
-    - cron: "30 22 * * 1-5"
+  # Started by a Claude scheduled task at 7:45am SGT Tue–Sat (GitHub's own schedule ran hours late and
+  # sent a second Telegram brief). Run it by hand from the Actions tab if a morning is missed.
   workflow_dispatch:
     inputs:
       notify:
