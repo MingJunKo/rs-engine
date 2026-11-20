@@ -153,8 +153,9 @@ def build_message(p: dict, settings: dict) -> str:
                          + (f" · {e(', '.join(x['titles'][:2]))}" if x.get("titles") else ""))
     c3 = X.get("code33") or []
     if c3:
-        lines += ["", "<b>⚡ Code 33 — EPS and sales accelerating 3 quarters (RS 70+)</b>",
-                  ", ".join(f"{x['t']} (EPS {'/'.join(str(g) for g in x['eps'])}%)" for x in c3[:8])]
+        lines += ["", "<b>⚡ Code 33 — EPS accelerating 3 qtrs (≥20%), sales ≥10% and accelerating (RS 70+)</b>",
+                  ", ".join(f"{x['t']} (EPS {'/'.join('turn' if g >= 999 else str(g) for g in x['eps'])}% · sales +{x['sales'][-1] if x.get('sales') else '–'}%)"
+                            for x in c3[:10])]
     tg = p.get("turners") or []
     if tg:
         lines += ["", f"<b>Early turners — watchlist, not buys</b> ({len(tg)})",

@@ -90,16 +90,22 @@ def clusters(stk: pd.DataFrame, close: pd.DataFrame, ep_today: list, setups: lis
 
 # ───────────────────────── code 33
 def code33(F: dict, yoy) -> dict:
-    """ticker → {'eps': [g…], 'sales': [g…], 'eps_acc', 'sales_acc', 'code33'} from the last three quarters' YoY growth."""
+    """O'Neil's code 33, adapted to the data we have.
+    EPS: YoY growth accelerating three quarters in a row (latest > 0).
+    Sales: the feed keeps only ~5 quarters (one YoY reading), so sales must be up YoY AND quarter-on-quarter
+    growth must be accelerating over the last two quarters (or YoY accelerating 3 in a row where history allows)."""
     out = {}
+    acc3 = lambda g: len(g) == 3 and g[0] < g[1] < g[2] and g[2] > 0
     for t, f in F.items():
         e = [x[2] for x in yoy(f.get("eps_q") or []) if x[2] is not None][-3:]
-        s = [x[2] for x in yoy(f.get("sales_q") or []) if x[2] is not None][-3:]
-        acc = lambda g: len(g) == 3 and g[0] < g[1] < g[2] and g[2] > 0
-        ea, sa = acc(e), acc(s)
+        sy = [x[2] for x in yoy(f.get("sales_q") or []) if x[2] is not None]
+        sq = [r[1] for r in (f.get("sales_q") or []) if r[1]][-3:]
+        qoq = [(b / a - 1) * 100 for a, b in zip(sq, sq[1:]) if a and a > 0]
+        ea = acc3(e) and e[-1] >= 20                                   # CANSLIM floor: latest EPS ≥ +20% YoY
+        sa = (acc3(sy[-3:]) or (len(qoq) == 2 and 0 < qoq[0] < qoq[1])) and bool(sy) and sy[-1] >= 10
         if ea or sa:
-            out[t] = {"eps": [round(x) for x in e], "sales": [round(x) for x in s], "eps_acc": ea, "sales_acc": sa,
-                      "code33": ea and sa}
+            out[t] = {"eps": [round(x) for x in e], "sales": [round(x) for x in sy[-3:]],
+                      "sales_qoq": [round(x, 1) for x in qoq], "eps_acc": ea, "sales_acc": bool(sa), "code33": bool(ea and sa)}
     return out
 
 
