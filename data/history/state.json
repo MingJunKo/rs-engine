@@ -2,17 +2,16 @@
  "date": "2026-11-19",
  "regime": "Defensive Rotation",
  "setups": [
-  "ALGT",
+  "AJG",
+  "BF.B",
+  "CSL",
   "FIZZ",
   "GEN",
   "HMN",
   "HWKN",
-  "LIVN",
-  "LUV",
-  "OLLI",
+  "MAS",
   "PLMR",
-  "RYAN",
-  "ULCC"
+  "RYAN"
  ],
  "turners": [],
  "prev": {
