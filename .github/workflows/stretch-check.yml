@@ -1,0 +1,29 @@
+name: Stretch check
+
+# How unusual is a stock's move? Type tickers, run, and the report arrives in Telegram in about a minute.
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Ticker(s), e.g. NVDA or NVDA, TSLA. Leave empty for the SPY/QQQ market read."
+        required: false
+        default: ""
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Check
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TICKERS: ${{ inputs.tickers }}
+        run: |
+          if [ -n "$TICKERS" ]; then python stretch.py --ticker "$TICKERS"; else python stretch.py --weekly; fi

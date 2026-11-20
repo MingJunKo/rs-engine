@@ -1091,6 +1091,15 @@ def run(demo: bool, notify: bool):
         CK.write_page(CK.build(payload, tracker_payload, scans_payload), DOCS, _clean_json)
     except Exception as e:
         log(f"  cockpit page failed: {e}")
+    # ── Stretch monitor: σ moves, VIX, breadth extremes on SPY/QQQ (docs/stretch, Telegram when a cluster fires) ──
+    try:
+        import stretch as ST
+        st_ = ST.run_daily(close[S], SETTINGS, DOCS, demo=demo, notify_on=not demo)
+        for sym, e_ in st_["index"].items():
+            log(f"  stretch {sym}: {len(e_.get('oversold', []))} oversold / {len(e_.get('overbought', []))} overbought signals")
+    except Exception as e:
+        import traceback
+        log(f"  stretch failed: {e}\n{traceback.format_exc()[-600:]}")
     (DOCS / "data").mkdir(parents=True, exist_ok=True)
     (DOCS / "data" / "fund.json").write_text(json.dumps(_clean_json(cs_detail), separators=(",", ":"), allow_nan=False))
 
