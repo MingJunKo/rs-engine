@@ -255,3 +255,9 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-19,OLLI,RS setup,97.62,91.0,Retail,True,1101100,Defensive Rotation
 2026-11-19,GRAB,Weekly scan,3.14,67.0,Consumer Discretionary,False,00000-0,Defensive Rotation
 2026-11-19,AUGO,Weekly scan,64.3,18.0,Gold & Silver,False,10000-0,Defensive Rotation
+2026-11-20,AEO,RS setup,21.39,97.0,Retail,True,1001100,Defensive Rotation
+2026-11-20,POOL,RS setup,208.23,92.0,Medical Devices,True,0000110,Defensive Rotation
+2026-11-20,EW,RS setup,101.85,91.0,Medical Devices,True,0011110,Defensive Rotation
+2026-11-20,CBLL,RS setup,27.39,88.0,Medical Devices,True,0011110,Defensive Rotation
+2026-11-20,HG,RS setup,38.38,88.0,Insurance,True,10101-0,Defensive Rotation
+2026-11-20,UVE,RS setup,48.49,88.0,Insurance,True,1010110,Defensive Rotation

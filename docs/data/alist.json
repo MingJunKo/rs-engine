@@ -1,25 +1,25 @@
 {
- "date": "2026-11-19",
+ "date": "2026-11-20",
  "rows": [
   {
-   "t": "PLMR",
+   "t": "HG",
    "src": "RS setups",
    "mkt": "SPY",
    "go": false,
-   "rs": 95,
-   "price": 156.68,
-   "pivot": 161.92,
-   "adr": 3.5
+   "rs": 88,
+   "price": 38.38,
+   "pivot": 39.5,
+   "adr": 3.1
   },
   {
-   "t": "AJG",
+   "t": "UVE",
    "src": "RS setups",
    "mkt": "SPY",
    "go": false,
-   "rs": 90,
-   "price": 277.62,
-   "pivot": 294.53,
-   "adr": 2.7
+   "rs": 88,
+   "price": 48.49,
+   "pivot": 50.75,
+   "adr": 3.0
   }
  ],
  "mkt_wmacd": {
@@ -28,7 +28,7 @@
  },
  "exposure": {
   "pct": 0,
-  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 35%",
+  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 29%",
   "note": "cash \u2014 no new longs"
  }
 }
