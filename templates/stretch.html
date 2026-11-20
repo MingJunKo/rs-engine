@@ -46,7 +46,7 @@
 <body>
 <nav><div class="wrap">
   <span class="brand">MJ — <em>Stretch</em></span>
-  <a href="#index">SPY / QQQ</a><a href="#breadth">Breadth</a><a href="#stock">Check a stock</a><a href="#how">How it works</a>
+  <a href="#index">SPY / QQQ</a><a href="#breadth">Breadth</a><a href="#movers">Unusual moves</a><a href="#stock">Check a stock</a><a href="#how">How it works</a>
   <a href="../" style="color:var(--gold)">← RS dashboard</a><a href="../scans/" style="color:var(--gold)">Scans</a><a href="../cockpit/" style="color:var(--gold)">Cockpit</a>
   <span class="asof" id="asof"></span>
 </div></nav>
@@ -66,6 +66,11 @@
   <section id="breadth">
     <div class="sec-head"><h2>Breadth</h2><div class="line"></div><p>RS Engine universe · ~2 years of history</p></div>
     <div class="bx" id="bx"></div>
+  </section>
+
+  <section id="movers">
+    <div class="sec-head"><h2>Unusual stock moves today</h2><div class="line"></div><p>≥ 4σ vs the stock's own last 20 days · $20M+/day</p></div>
+    <div class="tbl-wrap"><table class="t" id="mv"></table></div>
   </section>
 
   <section id="stock">
@@ -89,6 +94,11 @@
         This is a proxy for NYMO/NAMO, which need exchange-wide advance/decline data that isn't on Yahoo.</p>
       <p><b>Statistics</b>: episodes are the first day a signal fires, ignoring repeats within 10 sessions. Forward returns are SPY or QQQ from that day's close.
         Compare them with the "any day" line — the edge is the difference. History: SPY since 1993, QQQ since 1999, VIX3M since 2007, breadth ~2 years.</p>
+      <p><b>Confirmation</b> — stretch tells you the odds, not the turn. <b>Follow-through day</b> (O'Neil): in a correction (below the 50-day MA or 8%+ off the
+        3-month high), day 1 is the first up close after a new low; a follow-through day is day 4–25 of that rally, up ≥ 1.25% on higher volume than the day before.
+        It fails if the rally low is undercut. <b>Zweig breadth thrust</b>: the 10-day average of advancers/(advancers+decliners) jumps from ≤ 0.40 to ≥ 0.615 within
+        10 days — rare and historically strong. <b>4% thrust day</b>: ≥ 5% of the universe up 4%+ in a day (Stockbee).</p>
+      <p><b>Unusual stock moves</b>: every universe stock's move today divided by its own volatility; ≥ 4σ and $20M+ a day are listed, with the last time it moved that much.</p>
       <p><b>Alerts</b> (Telegram): when oversold signals come from at least two families, or when a big one fires for the first time (σ day, VIX ≥ 30, inverted curve,
         T2108 ≤ 20, 4% panic). A weekly read every Saturday morning.</p>
     </div>
@@ -143,11 +153,23 @@ $("#ix").innerHTML = Object.entries(D.index || {}).map(([sym, e]) => {
   const ob = (e.overbought || []).map(s => sigRow(s, e.base, "var(--dn)")).join("");
   const cb = e.oversold_combo || {};
   const combo = cb.k >= 2 && cb.fwd ? `<div class="combo"><b>${cb.k} price/VIX signals at once</b> — ${esc(cb.freq)} (${cb.episodes} episodes${cb.dates?.length ? ", e.g. " + cb.dates.slice(-4).join(", ") : ""})${fwdTable(cb.fwd, e.base)}</div>` : "";
+  const f = e.ftd || {};
+  const ftdCol = f.state === "confirmed" ? "#7c9cff" : f.state === "attempt" ? "var(--gold)" : "var(--t4)";
+  const ftdStats = f.fwd && f.fwd[20] ? `<div class="f">${f.episodes} follow-through days since ${e.since} (${esc(f.freq)})${f.fail_rate != null ? ` · ${f.fail_rate}% failed within 25 days` : ""}${f.last ? ` · last ${esc(f.last.date)}, then ${sg(f.last.fwd20)}% over 20 days` : ""}</div>${fwdTable(f.fwd, e.base)}` : "";
+  const conf = `<div class="sig"><div class="s"><span class="dot" style="background:${ftdCol}"></span><b>${esc(f.label || "")}</b>
+      <span style="color:var(--t4)">· O'Neil follow-through day</span>${f.state === "confirmed" ? ftdStats : ""}</div>
+    ${(e.confirm || []).map(x => sigRow(x, e.base, "#7c9cff")).join("")}</div>`;
   return `<div class="ixc"><h3>${sym}<b>${e.close}</b><span class="d" style="color:${n.ret1 >= 0 ? "var(--up)" : "var(--dn)"}">${sg(n.ret1)}% · ${sg(n.z1)}σ</span></h3>
     ${e.rank ? `<div class="rk">${esc(e.rank)}</div>` : ""}${meters}
-    ${os || ob ? `<div class="sig">${os}${ob}</div>` : `<div class="calm">No stretch signals today — nothing unusual. Data since ${e.since}.</div>`}${combo}</div>`;
+    ${os || ob ? `<div class="sig">${os}${ob}</div>` : `<div class="calm">No stretch signals today — nothing unusual. Data since ${e.since}.</div>`}${combo}${conf}</div>`;
 }).join("") || `<div class="empty">No index data yet.</div>`;
 
+const mv = D.movers || [];
+$("#mv").innerHTML = mv.length ? `<thead><tr><th>Ticker</th><th>Price</th><th>Today</th><th>σ</th><th style="text-align:left">How rare</th></tr></thead><tbody>` +
+  mv.map(m => `<tr><td><a href="https://www.tradingview.com/chart/?symbol=${encodeURIComponent(m.symbol)}" target="_blank" rel="noopener" style="text-decoration:none"><b>${esc(m.symbol)}</b></a></td>
+    <td>${m.price}</td><td class="${m.ret >= 0 ? "up" : "dn"}">${sg(m.ret)}%</td><td class="${m.z >= 0 ? "up" : "dn"}">${sg(m.z)}σ</td>
+    <td style="text-align:left;font-family:Barlow,sans-serif;color:var(--t2)">${esc(m.rank || "")}</td></tr>`).join("") + "</tbody>"
+  : `<tbody><tr><td style="color:var(--t3)">No stock in the universe moved 4σ or more today.</td></tr></tbody>`;
 const b = D.breadth_now;
 const spark = (arr, lo, hi, min, max) => {
   if (!arr || !arr.length) return "";

@@ -172,6 +172,7 @@ def breadth_features(close: pd.DataFrame) -> pd.DataFrame:
     adv, dec = (r > 0).sum(axis=1), (r < 0).sum(axis=1)
     rana = (adv - dec) / (adv + dec).replace(0, np.nan) * 1000
     f["mco"] = rana.ewm(span=19, adjust=False).mean() - rana.ewm(span=39, adjust=False).mean()
+    f["zbt"] = (adv / (adv + dec).replace(0, np.nan)).ewm(span=10, adjust=False).mean()   # Zweig: 10-day EMA of adv/(adv+dec)
     f.loc[valid < 200] = np.nan                   # too few stocks that day to trust
     return f
 
@@ -182,6 +183,76 @@ BREADTH_SIGNALS = [
     ("ratio5", "breadth", lambda f: f.ratio5 <= 0.5, lambda f: f.ratio5 >= 2.5, lambda f: f"5-day 4% up/down ratio {f.ratio5:.2f}"),
     ("mco", "breadth", lambda f: f.mco <= -60, lambda f: f.mco >= 60, lambda f: f"McClellan-style oscillator {f.mco:+.0f}"),
 ]
+
+
+# confirmation (the bounce is real): breadth thrusts — bullish side only
+THRUST_SIGNALS = [
+    ("zbt", "breadth", None, lambda f: (f.zbt >= 0.615) & (f.zbt.rolling(10).min() <= 0.40),
+     lambda f: f"Zweig breadth thrust: 10-day adv ratio {f.zbt:.2f} (from ≤ 0.40 within 10 days)"),
+    ("up4", "breadth", None, lambda f: f.up4 >= 5, lambda f: f"{f.up4:.1f}% of stocks rose ≥4% today (breadth thrust day)"),
+]
+NAMES.update({"zbt": "Zweig breadth thrust", "up4": "4% breadth thrust", "ftd": "Follow-through day"})
+
+
+def ftd_track(d: pd.DataFrame) -> tuple[dict, list, list]:
+    """O'Neil rally attempt / follow-through day. Returns today's state, FTD day indices, and for each FTD whether it
+    failed (closed below the rally low within 25 sessions).
+      correction  close below the 50-day MA or ≥ 8% under the 63-day high
+      day 1       first up close right after a new 20-day low; the rally low is the low of that dip
+      FTD         day 4–25 of the attempt, up ≥ 1.25% on higher volume than the day before
+      reset       an undercut of the rally low kills the attempt (or the FTD)"""
+    c, h, l = d.Close.values, d.High.values, d.Low.values
+    v = d.Volume.values if "Volume" in d else np.ones(len(c))
+    sma50 = pd.Series(c).rolling(50).mean().values
+    hi63 = pd.Series(h).rolling(63, min_periods=1).max().values
+    lo20 = pd.Series(l).rolling(20, min_periods=1).min().values
+    state, day, rl, fi = "none", 0, None, None
+    ftds, fails = [], []
+    for i in range(1, len(c)):
+        corr = (not np.isnan(sma50[i]) and c[i] < sma50[i]) or c[i] <= hi63[i] * 0.92
+        if state == "attempt":
+            day += 1
+            if l[i] < rl:
+                state = "none"
+            elif 4 <= day <= 25 and c[i] >= c[i - 1] * 1.0125 and v[i] > v[i - 1]:
+                state, fi = "confirmed", i
+                ftds.append(i)
+            elif day > 25:
+                state = "none"
+        elif state == "confirmed":
+            if c[i] < rl:
+                state = "none"
+                if fi is not None and i - fi <= 25:
+                    fails.append(fi)
+            elif i - fi > 40:
+                state = "none"
+        if state == "none" and corr and c[i] > c[i - 1] and min(l[i - 1], l[i]) <= lo20[i]:
+            state, day, rl = "attempt", 1, min(l[i - 1], l[i])
+    n = len(c) - 1
+    cur = {"state": state, "day": day if state == "attempt" else None, "rally_low": None if rl is None else round(float(rl), 2),
+           "ftd_date": d.index[fi].strftime("%d %b %Y") if state == "confirmed" and fi is not None else None,
+           "ftd_today": bool(ftds and ftds[-1] == n),
+           "in_correction": bool((not np.isnan(sma50[n]) and c[n] < sma50[n]) or c[n] <= hi63[n] * 0.92)}
+    return cur, ftds, fails
+
+
+def ftd_entry(d: pd.DataFrame, years: float) -> dict:
+    cur, ftds, fails = ftd_track(d)
+    c, i = d.Close, len(d) - 1
+    past = [k for k in ftds if k < i - 25]
+    fail_rate = round(len([k for k in fails if k in past]) / len(past) * 100) if past else None
+    cur.update({"episodes": len(ftds), "freq": freq_text(len(ftds), years), "fwd": fwd_stats(c, ftds, i),
+                "fail_rate": fail_rate,
+                "last": None if not past else {"date": d.index[past[-1]].strftime("%d %b %Y"),
+                                               "fwd20": round((c.iloc[past[-1] + 20] / c.iloc[past[-1]] - 1) * 100, 1)}})
+    if cur["state"] == "attempt":
+        cur["label"] = f"Rally attempt day {cur['day']} (rally low {cur['rally_low']}) — a follow-through day can come from day 4"
+    elif cur["state"] == "confirmed":
+        cur["label"] = ("FOLLOW-THROUGH DAY today" if cur["ftd_today"] else f"Follow-through day on {cur['ftd_date']}") + \
+                       f" — holds while above the rally low {cur['rally_low']}"
+    else:
+        cur["label"] = "In a correction — waiting for day 1 of a rally attempt" if cur["in_correction"] else "Uptrend — no correction to confirm"
+    return cur
 
 
 def evaluate(feat: pd.DataFrame, lib: list, price: pd.Series, today_i: int, years: float, side: int) -> list:
@@ -261,7 +332,8 @@ def demo_data():
         r[-1] = -4.5 * sd                              # make "today" a big down day
         c = start * np.exp(np.cumsum(r))
         return pd.DataFrame({"Close": c, "High": c * (1 + abs(rng.normal(0, sd / 2, len(idx)))),
-                             "Low": c * (1 - abs(rng.normal(0, sd / 2, len(idx))))}, index=idx)
+                             "Low": c * (1 - abs(rng.normal(0, sd / 2, len(idx)))),
+                             "Volume": rng.integers(5e7, 1e8, len(idx))}, index=idx)
     spy, qqq = walk(0.0003, 0.011, 100), walk(0.0004, 0.014, 50)
     vix = pd.DataFrame({"Close": np.clip(18 + np.cumsum(rng.normal(0, 0.8, len(idx))) * 0.1 + rng.normal(0, 2, len(idx)), 9, 80)}, index=idx)
     vix.iloc[-1, 0] = 33
@@ -270,7 +342,26 @@ def demo_data():
 
 
 # ───────────────────────── the daily market read
-def market_read(data: dict, universe_close: pd.DataFrame | None = None) -> dict:
+def movers(close: pd.DataFrame, vol: pd.DataFrame | None, min_z: float = 4.0, min_dvol: float = 20e6, top: int = 12) -> list:
+    """Universe stocks whose move today was ≥ min_z σ of their own recent volatility, liquid ones only."""
+    r = close.pct_change()
+    z = r / r.rolling(20).std().shift(1)
+    zt, rt = z.iloc[-1], r.iloc[-1] * 100
+    if vol is not None:
+        dv = (close * vol).rolling(20).mean().iloc[-2]
+        zt = zt[dv.reindex(zt.index).fillna(0) >= min_dvol]
+    zt = zt.dropna()
+    zt = zt[zt.abs() >= min_z]
+    zt = zt.reindex(zt.abs().sort_values(ascending=False).index)[:top]
+    out = []
+    for t, zv in zt.items():
+        rk = rank_text(z[t].dropna(), len(z[t].dropna()) - 1)
+        out.append({"symbol": t, "ret": round(float(rt[t]), 1), "z": round(float(zv), 1),
+                    "price": round(float(close[t].iloc[-1]), 2), "rank": rk})
+    return out
+
+
+def market_read(data: dict, universe_close: pd.DataFrame | None = None, universe_vol: pd.DataFrame | None = None) -> dict:
     vix = data.get("^VIX", pd.DataFrame()).get("Close")
     v3 = data.get("^VIX3M", pd.DataFrame()).get("Close")
     bf = breadth_features(universe_close) if universe_close is not None and universe_close.shape[1] >= 200 else None
@@ -304,12 +395,25 @@ def market_read(data: dict, universe_close: pd.DataFrame | None = None) -> dict:
             entry[tag] = sig
             entry[tag + "_combo"] = composite({"p": (pf, PRICE_SIGNALS), **({"v": (vf, VIX_SIGNALS)} if vf is not None else {})},
                                               c, i, years, side)
+        entry["ftd"] = ftd_entry(d, years)
+        conf = []
+        if bf is not None:
+            b2 = bf.reindex(c.index)
+            if b2.dropna(how="all").size and b2.index.get_loc(b2.dropna(how="all").index[-1]) == i:
+                by = (b2.dropna(how="all").index[-1] - b2.dropna(how="all").index[0]).days / 365.25
+                conf = evaluate(b2, THRUST_SIGNALS, c, i, by, 1)
+        entry["confirm"] = conf
         res["index"][sym] = entry
         res["asof"] = c.index[-1].strftime("%a %d %b %Y")
     if bf is not None and bf.dropna(how="all").size:
         last = bf.dropna(how="all").iloc[-1]
         res["breadth_now"] = {k: (None if pd.isna(v) else round(float(v), 1)) for k, v in last.items()}
         res["breadth_hist"] = {k: [None if pd.isna(x) else round(float(x), 1) for x in bf[k].tail(120)] for k in ("t2108", "mco")}
+    if universe_close is not None and universe_close.shape[1] >= 50:
+        try:
+            res["movers"] = movers(universe_close, universe_vol)
+        except Exception as e:
+            print("movers failed:", e)
     return res
 
 
@@ -337,7 +441,8 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
     for sym, ent in res["index"].items():
         n, fams = score(ent)
         nu, famu = score(ent, "overbought")
-        if not (n or nu) and not weekly:
+        conf_on = bool(ent.get("confirm")) or (ent.get("ftd") or {}).get("ftd_today")
+        if not (n or nu or conf_on) and not weekly:
             continue
         head = f"<b>{sym}</b> {ent['close']}  ·  {ent['now']['ret1']:+.1f}% today ({ent['now']['z1']:+.1f}σ)"
         lines.append(head)
@@ -357,6 +462,17 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
         if cb.get("k", 0) >= 2 and cb.get("fwd"):
             lines.append(f"   ➜ <b>{cb['k']} price/VIX signals at once</b>: {e(cb['freq'])}; {e(_fwd_line(cb['fwd']))}"
                          + (f" (e.g. {', '.join(cb['dates'][-3:])})" if cb.get("dates") else ""))
+        f_ = ent.get("ftd") or {}
+        if f_.get("state") in ("attempt", "confirmed"):
+            extra = ""
+            if f_.get("state") == "confirmed" and f_.get("fwd", {}).get(20):
+                x = f_["fwd"][20]
+                extra = f"; past FTDs: next 20d avg {x['avg']:+.1f}%, up {x['up']}%" + \
+                        (f", {f_['fail_rate']}% failed" if f_.get("fail_rate") is not None else "")
+            lines.append(f"   🟦 {e(f_['label'])}{e(extra)}")
+        for s in ent.get("confirm", []):
+            fl = _fwd_line(s['fwd'])
+            lines.append(f"   🟦 {e(s['label'])} — {e(s['freq'])}" + (f"; {e(fl)}" if fl else ""))
         if weekly and not (n or nu):
             nw = ent["now"]
             lines.append(f"   calm: {nw['band']:+.1f}σ from 20d avg · {nw['ext50']:+.1f} ATR from 50d · RSI(2) {nw['rsi2']:.0f}"
@@ -368,6 +484,9 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
     if b:
         lines.append(f"Breadth (RS universe): {b['t2108']:.0f}% above 40d MA · {b['down4']:.1f}% down ≥4% today · "
                      f"5d ratio {b['ratio5'] if b['ratio5'] is not None else '—'} · McClellan {b['mco']:+.0f}")
+    mv = res.get("movers") or []
+    if mv:
+        lines.append("Unusual stock moves (≥4σ, $20M+/day): " + ", ".join(f"{m['symbol']} {m['ret']:+.0f}% ({m['z']:+.1f}σ)" for m in mv[:6]))
     title = "Weekly stretch check" if weekly and not any(score(x)[0] for x in res["index"].values()) else "Mean-reversion watch"
     hdr = [f"<b>{title} — {e(res['asof'])}</b>",
            "<i>🟢 stretched down (snap-back odds) · 🔴 stretched up. Stats = SPY/QQQ after past episodes.</i>", ""]
@@ -382,7 +501,8 @@ def notify(res: dict, settings: dict, force_weekly: bool = False):
     strongest = max((score(ent) for ent in res["index"].values()), default=(0, 0))
     weekly = force_weekly or dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).weekday() == 5
     cluster = strongest[1] >= 2                        # oversold signals from at least two families
-    fire = (cluster and (bool(new_keys) or not prev.get("cluster"))) or \
+    confirm_now = any((ent.get("ftd") or {}).get("ftd_today") or ent.get("confirm") for ent in res["index"].values())
+    fire = (cluster and (bool(new_keys) or not prev.get("cluster"))) or confirm_now or \
            any(k in new_keys for k in ("z1", "vix30", "vixinv", "t2108", "down4"))
     STATE.parent.mkdir(parents=True, exist_ok=True)
     STATE.write_text(json.dumps({"date": res["asof"], "keys": keys_now, "cluster": cluster}))
@@ -467,9 +587,10 @@ def write_page(res: dict, docs: Path):
     (docs / "stretch" / "index.html").write_text(tpl.replace("/*__DATA__*/null", json.dumps(res, default=str).replace("</", "<\\/")))
 
 
-def run_daily(universe_close: pd.DataFrame | None, settings: dict, docs: Path, demo: bool = False, notify_on: bool = True):
+def run_daily(universe_close: pd.DataFrame | None, settings: dict, docs: Path, demo: bool = False, notify_on: bool = True,
+              universe_vol: pd.DataFrame | None = None):
     data = demo_data() if demo else download(["SPY", "QQQ", "^VIX", "^VIX3M"])
-    res = market_read(data, universe_close)
+    res = market_read(data, universe_close, universe_vol)
     res["generated"] = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).strftime("%d %b %Y %H:%M SGT")
     write_page(res, docs)
     if notify_on and not demo:

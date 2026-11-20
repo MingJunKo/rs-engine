@@ -1094,7 +1094,7 @@ def run(demo: bool, notify: bool):
     # ── Stretch monitor: σ moves, VIX, breadth extremes on SPY/QQQ (docs/stretch, Telegram when a cluster fires) ──
     try:
         import stretch as ST
-        st_ = ST.run_daily(close[S], SETTINGS, DOCS, demo=demo, notify_on=not demo)
+        st_ = ST.run_daily(close[S], SETTINGS, DOCS, demo=demo, notify_on=not demo, universe_vol=vol[S])
         for sym, e_ in st_["index"].items():
             log(f"  stretch {sym}: {len(e_.get('oversold', []))} oversold / {len(e_.get('overbought', []))} overbought signals")
     except Exception as e:
