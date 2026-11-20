@@ -33,6 +33,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent
 OUT_JSON = ROOT / "docs" / "data" / "stretch.json"
 STATE = ROOT / "data" / "history" / "stretch_state.json"
+LONG_BREADTH = ROOT / "data" / "history" / "breadth_long.csv"     # written by backtest10.py (10 years of the universe)
 HORIZONS = (5, 10, 20, 60)
 GAP = 10                                     # sessions between separate episodes
 
@@ -141,7 +142,7 @@ NAMES = {"z1": "σ day", "z5": "5-day σ move", "band": "Stretch from 20-day avg
          "rsi2": "RSI(2)", "streak": "Streak", "vix30": "VIX ≥ 30", "vixspike": "VIX spike",
          "vixinv": "VIX curve inverted", "vixlow": "VIX complacency",
          "t2108": "% above 40-day MA", "down4": "Stocks down ≥4% today", "ratio5": "5-day 4% ratio",
-         "mco": "McClellan (universe)"}
+         "mco": "McClellan (universe)", "nymo": "NYMO proxy", "namo": "NAMO proxy"}
 
 
 def vix_features(vix: pd.Series, vix3m: pd.Series | None) -> pd.DataFrame:
@@ -177,11 +178,46 @@ def breadth_features(close: pd.DataFrame) -> pd.DataFrame:
     return f
 
 
+def mcclellan(close: pd.DataFrame) -> pd.Series:
+    r = close.pct_change()
+    adv, dec = (r > 0).sum(axis=1), (r < 0).sum(axis=1)
+    rana = (adv - dec) / (adv + dec).replace(0, np.nan) * 1000
+    out = rana.ewm(span=19, adjust=False).mean() - rana.ewm(span=39, adjust=False).mean()
+    out[r.notna().sum(axis=1) < 100] = np.nan
+    return out
+
+
+def breadth_all(close: pd.DataFrame, exchange: dict | None) -> pd.DataFrame:
+    """Universe breadth plus NYSE-only and Nasdaq-only McClellan oscillators (proxies for $NYMO / $NAMO)."""
+    f = breadth_features(close)
+    if exchange:
+        ny = [t for t in close.columns if str(exchange.get(t, "")).upper().startswith("NYSE")]
+        nq = [t for t in close.columns if str(exchange.get(t, "")).upper().startswith("NASDAQ")]
+        f["nymo"] = mcclellan(close[ny]) if len(ny) >= 100 else np.nan
+        f["namo"] = mcclellan(close[nq]) if len(nq) >= 100 else np.nan
+    return f
+
+
+def with_long_history(recent: pd.DataFrame) -> pd.DataFrame:
+    """Prepend the 10-year breadth history saved by backtest10.py, so breadth signals get real sample sizes."""
+    if not LONG_BREADTH.exists() or recent is None or len(recent) < 80:
+        return recent
+    try:
+        lg = pd.read_csv(LONG_BREADTH, index_col=0, parse_dates=True)
+        cut = recent.index[60]                                  # let the recent EMAs warm up first
+        return pd.concat([lg[lg.index < cut], recent[recent.index >= cut]]).sort_index()
+    except Exception as e:
+        print("long breadth history unreadable:", e)
+        return recent
+
+
 BREADTH_SIGNALS = [
     ("t2108", "breadth", lambda f: f.t2108 <= 20, lambda f: f.t2108 >= 80, lambda f: f"{f.t2108:.0f}% of stocks above their 40-day MA"),
     ("down4", "breadth", lambda f: f.down4 >= 5, None, lambda f: f"{f.down4:.1f}% of stocks fell ≥4% today"),
     ("ratio5", "breadth", lambda f: f.ratio5 <= 0.5, lambda f: f.ratio5 >= 2.5, lambda f: f"5-day 4% up/down ratio {f.ratio5:.2f}"),
     ("mco", "breadth", lambda f: f.mco <= -60, lambda f: f.mco >= 60, lambda f: f"McClellan-style oscillator {f.mco:+.0f}"),
+    ("nymo", "breadth", lambda f: f.nymo <= -60, lambda f: f.nymo >= 60, lambda f: f"NYMO (NYSE stocks) {f.nymo:+.0f}"),
+    ("namo", "breadth", lambda f: f.namo <= -60, lambda f: f.namo >= 60, lambda f: f"NAMO (Nasdaq stocks) {f.namo:+.0f}"),
 ]
 
 
@@ -261,7 +297,7 @@ def evaluate(feat: pd.DataFrame, lib: list, price: pd.Series, today_i: int, year
     row = feat.iloc[today_i]
     for key, fam, lo, hi, label in lib:
         test = lo if side < 0 else hi
-        if test is None:
+        if test is None or (key in ("nymo", "namo", "zbt", "up4") and key not in feat):
             continue
         mask = test(feat).fillna(False)
         if not bool(mask.iloc[today_i]):
@@ -275,6 +311,39 @@ def evaluate(feat: pd.DataFrame, lib: list, price: pd.Series, today_i: int, year
                     "last": None if last is None else {
                         "date": feat.index[last].strftime("%d %b %Y"),
                         "fwd20": None if last + 20 >= len(price) else round((price.iloc[last + 20] / price.iloc[last] - 1) * 100, 1)}})
+    return out
+
+
+def magnitude(c: pd.Series, i: int, years: float, day_gap: int = 5) -> list:
+    """Plain-% questions: 'a −6.7% day — how often, and then what?' and '−15% from the high in 18 sessions — then what?'"""
+    out = []
+    r = c.pct_change() * 100
+    rt = r.iloc[i]
+    if not pd.isna(rt) and (rt <= -2.5 or rt >= 3):
+        mask = r <= rt if rt < 0 else r >= rt
+        eps = episodes(mask, gap=day_gap)
+        prev = [k for k in eps if k < i - day_gap]
+        out.append({"key": "bigday", "label": f"{rt:+.1f}% day", "what": f"days {'down' if rt < 0 else 'up'} {abs(rt):.1f}% or more",
+                    "episodes": len(eps), "freq": freq_text(len(eps), years), "fwd": fwd_stats(c, eps, i),
+                    "dates": list(dict.fromkeys(c.index[k].strftime("%b %Y") for k in prev))[-6:],
+                    "last": None if not prev else {"date": c.index[prev[-1]].strftime("%d %b %Y"),
+                                                   "move": round(float(r.iloc[prev[-1]]), 1),
+                                                   "fwd20": None if prev[-1] + 20 > i else round((c.iloc[prev[-1] + 20] / c.iloc[prev[-1]] - 1) * 100, 1)}})
+    hi = c.rolling(63, min_periods=1).max()
+    dd = (c / hi - 1) * 100
+    since = c.rolling(63, min_periods=1).apply(lambda x: len(x) - 1 - int(np.argmax(x)), raw=True)
+    ddn, sn = dd.iloc[i], int(since.iloc[i])
+    if ddn <= -7:
+        window = max(int(sn * 1.5), sn + 5)
+        mask = (dd <= ddn) & (since <= window)
+        eps = episodes(mask, gap=20)
+        prev = [k for k in eps if k < i - 20]
+        out.append({"key": "drawdown", "label": f"{ddn:.1f}% from the high {sn} sessions ago",
+                    "what": f"declines of {abs(ddn):.0f}%+ within ~{window} sessions of a 3-month high",
+                    "episodes": len(eps), "freq": freq_text(len(eps), years), "fwd": fwd_stats(c, eps, i),
+                    "dates": list(dict.fromkeys(c.index[k].strftime("%b %Y") for k in prev))[-6:],
+                    "last": None if not prev else {"date": c.index[prev[-1]].strftime("%d %b %Y"),
+                                                   "fwd20": None if prev[-1] + 20 > i else round((c.iloc[prev[-1] + 20] / c.iloc[prev[-1]] - 1) * 100, 1)}})
     return out
 
 
@@ -367,10 +436,12 @@ def movers(close: pd.DataFrame, vol: pd.DataFrame | None, min_z: float = 4.0, mi
     return out
 
 
-def market_read(data: dict, universe_close: pd.DataFrame | None = None, universe_vol: pd.DataFrame | None = None) -> dict:
+def market_read(data: dict, universe_close: pd.DataFrame | None = None, universe_vol: pd.DataFrame | None = None,
+                exchange: dict | None = None) -> dict:
     vix = data.get("^VIX", pd.DataFrame()).get("Close")
     v3 = data.get("^VIX3M", pd.DataFrame()).get("Close")
-    bf = breadth_features(universe_close) if universe_close is not None and universe_close.shape[1] >= 200 else None
+    bf = breadth_all(universe_close, exchange) if universe_close is not None and universe_close.shape[1] >= 200 else None
+    bf = with_long_history(bf)
     res = {"asof": None, "index": {}, "breadth_now": None}
     for sym in ("SPY", "QQQ"):
         d = data.get(sym)
@@ -402,6 +473,7 @@ def market_read(data: dict, universe_close: pd.DataFrame | None = None, universe
             entry[tag + "_combo"] = composite({"p": (pf, PRICE_SIGNALS), **({"v": (vf, VIX_SIGNALS)} if vf is not None else {})},
                                               c, i, years, side)
         entry["ftd"] = ftd_entry(d, years)
+        entry["magnitude"] = magnitude(c, i, years)
         conf = []
         if bf is not None:
             b2 = bf.reindex(c.index)
@@ -414,7 +486,9 @@ def market_read(data: dict, universe_close: pd.DataFrame | None = None, universe
     if bf is not None and bf.dropna(how="all").size:
         last = bf.dropna(how="all").iloc[-1]
         res["breadth_now"] = {k: (None if pd.isna(v) else round(float(v), 1)) for k, v in last.items()}
-        res["breadth_hist"] = {k: [None if pd.isna(x) else round(float(x), 1) for x in bf[k].tail(120)] for k in ("t2108", "mco")}
+        res["breadth_hist"] = {k: [None if pd.isna(x) else round(float(x), 1) for x in bf[k].tail(120)]
+                               for k in ("t2108", "mco", "nymo", "namo") if k in bf}
+        res["breadth_since"] = bf.dropna(how="all").index[0].strftime("%b %Y")
     if universe_close is not None and universe_close.shape[1] >= 50:
         try:
             res["movers"] = movers(universe_close, universe_vol)
@@ -447,7 +521,7 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
     for sym, ent in res["index"].items():
         n, fams = score(ent)
         nu, famu = score(ent, "overbought")
-        conf_on = bool(ent.get("confirm")) or (ent.get("ftd") or {}).get("ftd_today")
+        conf_on = bool(ent.get("confirm")) or (ent.get("ftd") or {}).get("ftd_today") or bool(ent.get("magnitude"))
         if not (n or nu or conf_on) and not weekly:
             continue
         head = f"<b>{sym}</b> {ent['close']}  ·  {ent['now']['ret1']:+.1f}% today ({ent['now']['z1']:+.1f}σ)"
@@ -468,6 +542,10 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
         if cb.get("k", 0) >= 2 and cb.get("fwd"):
             lines.append(f"   ➜ <b>{cb['k']} price/VIX signals at once</b>: {e(cb['freq'])}; {e(_fwd_line(cb['fwd']))}"
                          + (f" (e.g. {', '.join(cb['dates'][-3:])})" if cb.get("dates") else ""))
+        for m in ent.get("magnitude", []):
+            fl = _fwd_line(m["fwd"])
+            lines.append(f"   📏 <b>{e(m['label'])}</b> — {e(m['what'])}: {m['episodes']} since {ent['since']} ({e(m['freq'])})"
+                         + (f"; {e(fl)}" if fl else "") + (f" (e.g. {', '.join(m['dates'][-3:])})" if m.get("dates") else ""))
         f_ = ent.get("ftd") or {}
         if f_.get("state") in ("attempt", "confirmed"):
             extra = ""
@@ -488,8 +566,9 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
         return None
     b = res.get("breadth_now")
     if b:
+        mo = " · ".join(f"{k.upper()} {b[k]:+.0f}" for k in ("nymo", "namo") if b.get(k) is not None)
         lines.append(f"Breadth (RS universe): {b['t2108']:.0f}% above 40d MA · {b['down4']:.1f}% down ≥4% today · "
-                     f"5d ratio {b['ratio5'] if b['ratio5'] is not None else '—'} · McClellan {b['mco']:+.0f}")
+                     f"5d ratio {b['ratio5'] if b['ratio5'] is not None else '—'} · McClellan {b['mco']:+.0f}" + (f" · {mo}" if mo else ""))
     mv = res.get("movers") or []
     if mv:
         lines.append("Unusual stock moves (≥4σ, $20M+/day): " + ", ".join(f"{m['symbol']} {m['ret']:+.0f}% ({m['z']:+.1f}σ)" for m in mv[:6]))
@@ -502,14 +581,15 @@ def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
 def notify(res: dict, settings: dict, force_weekly: bool = False):
     """Alert when the oversold side has signals from ≥ 2 families, or a new signal fires; weekly summary on Saturdays."""
     prev = json.loads(STATE.read_text()) if STATE.exists() else {}
-    keys_now = sorted({f"{sym}:{s['key']}" for sym, ent in res["index"].items() for s in ent.get("oversold", [])})
+    keys_now = sorted({f"{sym}:{s['key']}" for sym, ent in res["index"].items()
+                       for s in ent.get("oversold", []) + ent.get("magnitude", [])})
     new_keys = {k.split(":")[1] for k in keys_now if k not in set(prev.get("keys", []))}
     strongest = max((score(ent) for ent in res["index"].values()), default=(0, 0))
     weekly = force_weekly or dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).weekday() == 5
     cluster = strongest[1] >= 2                        # oversold signals from at least two families
     confirm_now = any((ent.get("ftd") or {}).get("ftd_today") or ent.get("confirm") for ent in res["index"].values())
     fire = (cluster and (bool(new_keys) or not prev.get("cluster"))) or confirm_now or \
-           any(k in new_keys for k in ("z1", "vix30", "vixinv", "t2108", "down4"))
+           any(k in new_keys for k in ("z1", "vix30", "vixinv", "t2108", "down4", "nymo", "namo", "bigday", "drawdown"))
     STATE.parent.mkdir(parents=True, exist_ok=True)
     STATE.write_text(json.dumps({"date": res["asof"], "keys": keys_now, "cluster": cluster}))
     if not (fire or weekly):
@@ -528,19 +608,26 @@ def notify(res: dict, settings: dict, force_weekly: bool = False):
 
 # ───────────────────────── single stock
 def stock_check(ticker: str, data: dict | None = None) -> str:
-    t = ticker.upper().strip()
+    """ticker, or ticker@YYYY-MM-DD to look at a past day (and see what actually happened after it)."""
+    t, _, on = ticker.upper().strip().partition("@")
     if data is None:
         data = download([t, "SPY"])
-    d = data.get(t)
-    if d is None or len(d) < 120:
+    full = data.get(t)
+    if full is None or len(full) < 120:
         return f"<b>{html.escape(t)}</b>: not enough price history on Yahoo."
+    d = full
+    if on:
+        d = full.loc[:pd.Timestamp(on)]
+        data = {**data, "SPY": data["SPY"].loc[:pd.Timestamp(on)]} if data.get("SPY") is not None else data
+        if len(d) < 120:
+            return f"<b>{html.escape(t)}</b>: no history before {html.escape(on)}."
     c, h, l = d.Close, d.High, d.Low
     pf = price_features(c, h, l)
     i, years = len(c) - 1, (c.index[-1] - c.index[0]).days / 365.25
     nw = pf.iloc[i]
     e = lambda s: html.escape(str(s))
     lines = [f"<b>{e(t)} — how unusual is this move?</b>  ({c.index[-1].strftime('%a %d %b %Y')}, {years:.0f} yrs of data)",
-             f"Close {c.iloc[-1]:.2f}  ·  {nw.ret1:+.1f}% today = <b>{nw.z1:+.1f}σ</b> vs its last 20 days",
+             f"Close {c.iloc[-1]:.2f}  ·  {nw.ret1:+.1f}% on the day = <b>{nw.z1:+.1f}σ</b> vs its prior 20 days",
              f"5 days {nw.ret5:+.1f}% ({nw.z5:+.1f}σ)  ·  {nw.band:+.1f}σ from 20d avg  ·  {nw.ext50:+.1f} ATR from 50d MA  ·  "
              f"RSI(2) {nw.rsi2:.0f}  ·  {nw.off_high:+.0f}% from 52w high"]
     rk = rank_text(pf.z1, i)
@@ -564,6 +651,16 @@ def stock_check(ticker: str, data: dict | None = None) -> str:
             p = prev[-1]
             after = (c.iloc[min(p + 20, i)] / c.iloc[p] - 1) * 100
             lines.append(f"   last time: {c.index[p]:%d %b %Y} ({pf.ret1.iloc[p]:+.1f}%) → {after:+.1f}% over the next 20 days")
+    for m in magnitude(c, i, years):
+        fw = m["fwd"]
+        lines.append(f"\n📏 {e(m['label'])}: {e(m['what'])} — {m['episodes']} since {c.index[0]:%Y}, {e(m['freq'])}")
+        for hz in (5, 20, 60):
+            if fw.get(hz):
+                x = fw[hz]
+                lines.append(f"   next {hz}d: avg {x['avg']:+.1f}% · median {x['med']:+.1f}% · up {x['up']}% of {x['n']} "
+                             f"(worst {x['worst']:+.0f}%, best {x['best']:+.0f}%)")
+        if m.get("dates"):
+            lines.append(f"   e.g. {', '.join(m['dates'])}")
     for side, tag in ((-1, "Stretched down"), (1, "Stretched up")):
         sig = evaluate(pf, PRICE_SIGNALS, c, i, years, side)
         if sig:
@@ -576,9 +673,15 @@ def stock_check(ticker: str, data: dict | None = None) -> str:
         rs = spy.Close.pct_change().reindex(c.index)
         beta = c.pct_change().tail(250).cov(rs.tail(250)) / rs.tail(250).var()
         exp = beta * rs.iloc[-1] * 100
-        lines.append(f"\nVs market: SPY {rs.iloc[-1] * 100:+.1f}% today, β {beta:.1f} → expected {exp:+.1f}%, "
+        lines.append(f"\nVs market: SPY {rs.iloc[-1] * 100:+.1f}% that day, β {beta:.1f} → expected {exp:+.1f}%, "
                      f"so {nw.ret1 - exp:+.1f}% was stock-specific")
-    lines.append("<i>σ = today's move divided by the stock's own daily volatility over the last 20 sessions.</i>")
+    if on and len(full) > len(d):
+        after = full.Close.iloc[len(d) - 1:]
+        n_ = len(after) - 1
+        pts = [(k, (after.iloc[k] / after.iloc[0] - 1) * 100) for k in (5, 20, 60) if k <= n_]
+        lines.append("\n<b>What actually happened next:</b> " + " · ".join(f"{k}d {v:+.1f}%" for k, v in pts)
+                     + f" · today ({n_} sessions later) {(after.iloc[-1] / after.iloc[0] - 1) * 100:+.1f}%")
+    lines.append("<i>σ = the day's move divided by the stock's own daily volatility over the prior 20 sessions.</i>")
     return "\n".join(lines)
 
 
@@ -594,9 +697,9 @@ def write_page(res: dict, docs: Path):
 
 
 def run_daily(universe_close: pd.DataFrame | None, settings: dict, docs: Path, demo: bool = False, notify_on: bool = True,
-              universe_vol: pd.DataFrame | None = None):
+              universe_vol: pd.DataFrame | None = None, exchange: dict | None = None):
     data = demo_data() if demo else download(["SPY", "QQQ", "^VIX", "^VIX3M"])
-    res = market_read(data, universe_close, universe_vol)
+    res = market_read(data, universe_close, universe_vol, exchange)
     res["generated"] = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).strftime("%d %b %Y %H:%M SGT")
     write_page(res, docs)
     if notify_on and not demo:
@@ -625,7 +728,8 @@ if __name__ == "__main__":
         data = demo_data() if a.demo else download(["SPY", "QQQ", "^VIX", "^VIX3M"])
         res = market_read(data, None)
         res["generated"] = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).strftime("%d %b %Y %H:%M SGT")
-        write_page(res, ROOT / "docs")
+        if not a.demo:                                   # never publish synthetic data
+            write_page(res, ROOT / "docs")
         print(build_message(res, set(), True))
         for sym, ent in res["index"].items():
             print(sym, "FTD:", ent["ftd"]["label"], "| FTDs in history:", ent["ftd"]["episodes"], "| failed %:", ent["ftd"].get("fail_rate"))

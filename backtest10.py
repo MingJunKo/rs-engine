@@ -51,6 +51,17 @@ def main(years="10y"):
         px = E.download_yahoo(S + grp + GAUGE + [E.BENCH], period=years, want=("Open", "Close", "High", "Low", "Volume"))
     close = px["Close"].ffill(limit=3)
     close = close.loc[close[E.BENCH].notna()]
+    # long breadth history for the stretch monitor (NYMO/NAMO proxies, T2108, 4% counts) — today's universe, so some survivorship bias
+    try:
+        import stretch as ST
+        nm = E.fetch_names() if years != "demo" else pd.DataFrame(columns=["ticker", "exchange"])
+        ex = dict(zip(nm.ticker, nm.exchange)) if len(nm) else {}
+        S_ = [t for t in S if t in px["Close"].columns]
+        bl = ST.breadth_all(px["Close"][S_].loc[close.index], ex).round(2)
+        bl.to_csv(ROOT / "data" / "history" / "breadth_long.csv")
+        log(f"  breadth history: {bl.dropna(how='all').index[0].date()} → {bl.index[-1].date()}, NYSE/Nasdaq split {'on' if ex else 'off'}")
+    except Exception as e_:
+        log(f"  breadth history failed: {e_}")
     o, h, l, v = (px[k].reindex(close.index) for k in ("Open", "High", "Low", "Volume"))
     h, l, v = h.ffill(limit=3), l.ffill(limit=3), v.fillna(0)
     idx = close.index
