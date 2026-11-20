@@ -137,7 +137,7 @@ def econ_calendar(days: int = 7) -> list:
 
 
 # ───────────────────────── insider buying
-def insider_clusters(universe: set, days: int = 7, min_insiders: int = 2, big_usd: float = 1e6) -> list:
+def insider_clusters(universe: set, days: int = 7, min_insiders: int = 2, big_usd: float = 1e6, min_usd: float = 1e5) -> list:
     p = ROOT / "data" / "history" / "insider_buys.csv"
     if not p.exists():
         return []
@@ -146,8 +146,9 @@ def insider_clusters(universe: set, days: int = 7, min_insiders: int = 2, big_us
     out = []
     for t, g in df.groupby("ticker"):
         n, usd = g.owner.nunique(), float(g.value.sum())
-        if n >= min_insiders or usd >= big_usd:
-            titles = sorted({str(x) for x in g.title.dropna() if str(x) and str(x) != "nan"})[:3]
+        if (n >= min_insiders and usd >= min_usd) or usd >= big_usd:     # token buys don't count
+            import html as _h
+            titles = sorted({_h.unescape(str(x)).title() for x in g.title.dropna() if str(x) and str(x) != "nan"})[:3]
             out.append({"ticker": t, "insiders": int(n), "usd": round(usd), "titles": titles,
                         "last": g.filed.max().strftime("%d %b"), "avg_price": round(float((g.value.sum() / g.shares.sum())), 2) if g.shares.sum() else None})
     return sorted(out, key=lambda x: (-x["insiders"], -x["usd"]))

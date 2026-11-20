@@ -93,7 +93,8 @@ def TAG(x: str, t: str):
     if not m:
         return None
     v = m.group(1) if m.group(1) is not None else m.group(2)
-    return v.strip() if v is not None else None
+    import html
+    return html.unescape(v.strip()) if v is not None else None
 
 
 def parse(txt: str) -> list:
