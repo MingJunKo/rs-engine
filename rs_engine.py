@@ -1204,6 +1204,13 @@ def run(demo: bool, notify: bool):
                 f"breadth {breadth_now:.0f}%"),
         "note": {0: "cash — no new longs", 25: "pilot positions only, A+ setups",
                  50: "half size, best setups", 100: "full size, press winners"}[expo]}
+    # re-write the dashboard now that the extras (signals) and exposure exist
+    try:
+        payload = _clean_json(payload)
+        (DOCS / "index.html").write_text(tpl.replace("/*__DATA__*/null", json.dumps(payload, separators=(",", ":"), allow_nan=False)
+                                                     .replace("</", "<\\/")))
+    except Exception as e:
+        log(f"  dashboard re-write with signals failed: {e}")
     (DATA_OUT / "alist.json").write_text(json.dumps({"date": asof.strftime("%Y-%m-%d"), "rows": alist,
                                                      "mkt_wmacd": mk, "exposure": payload["exposure"]}, indent=1))
     sym = lambda t: f"{leaders.at[t, 'exchange']}:{t}" if leaders.at[t, "exchange"] else t

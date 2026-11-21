@@ -108,6 +108,18 @@ table.t tr.bench td{color:var(--gold)}
 .rating{display:inline-block;min-width:30px;text-align:center;padding:2px 6px;border-radius:3px;font-weight:500;color:#0b0b0a}
 .chip{display:inline-block;font-family:Barlow,sans-serif;font-size:10.5px;padding:1px 7px;border-radius:9px;border:.5px solid var(--border-2);color:var(--t2);white-space:nowrap}
 .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:900px){.sig-grid{grid-template-columns:1fr}}
+.sig-card{border:.5px solid var(--border);border-radius:6px;padding:12px 12px 6px;min-width:0}
+.sig-card .tbl-wrap{max-height:380px;overflow:auto}
+.sig-h{font-size:12.5px;color:var(--t1,#ede6d8);margin-bottom:10px;font-weight:500}
+.sig-h span{display:block;font-size:11px;color:var(--t3);font-weight:400;margin-top:3px}
+.sig-empty{font-size:12px;color:var(--t3);padding:10px 2px 14px}
+.clu{padding:8px 0;border-top:.5px solid var(--border)}.clu:first-child{border-top:0}
+.clu .ci{font-size:12px;margin-bottom:5px}.clu .ci b{color:var(--gold)}
+.clu .cn{display:flex;flex-wrap:wrap;gap:6px}
+.clu .cn span.c{font-family:"DM Mono",monospace;font-size:11px;padding:2px 6px;border:.5px solid var(--border);border-radius:3px}
+.flag.c33{color:#0b0b0a;background:#e0b25a}.flag.xu{color:var(--up);background:var(--up-bg)}.flag.xd{color:var(--dn);background:var(--dn-bg)}
 .flag{font-size:9px;padding:1px 5px;border-radius:2px;margin-left:3px;letter-spacing:.06em}
 .flag.tt{color:var(--up);background:var(--up-bg)}.flag.ext{color:var(--dn);background:var(--dn-bg)}
 .flag.new{color:var(--gold-bright);background:var(--gold-bg)}.flag.nh{color:var(--growth);background:rgba(124,156,255,.12)}
@@ -238,7 +250,7 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
 <nav><div class="wrap">
   <div class="brand">MJ — <em>RS Engine</em></div>
   <a href="#regime">Regime</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
-  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#turners">Turning</a><a href="#history">History</a><a href="cockpit/" style="color:var(--gold)">Cockpit →</a><a href="stretch/" style="color:var(--gold)">Stretch →</a><a href="scans/" style="color:var(--gold)">Scans →</a><a href="tracker/" style="color:var(--gold)">Tracker →</a><a href="backtest/" style="color:var(--gold)">Backtests →</a><a href="modelbook/" style="color:var(--gold)">Model book →</a><a href="#method">Method</a>
+  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#turners">Turning</a><a href="#signals">Signals</a><a href="#history">History</a><a href="cockpit/" style="color:var(--gold)">Cockpit →</a><a href="stretch/" style="color:var(--gold)">Stretch →</a><a href="scans/" style="color:var(--gold)">Scans →</a><a href="tracker/" style="color:var(--gold)">Tracker →</a><a href="backtest/" style="color:var(--gold)">Backtests →</a><a href="modelbook/" style="color:var(--gold)">Model book →</a><a href="#method">Method</a>
   <div class="asof" id="nav-asof"></div>
 </div></nav>
 
@@ -356,6 +368,20 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
       <div><b>RS FIRST</b> — the RS line is at a 3-month high while price is still more than 5% below its high: the stock is outperforming before it breaks out. Often the earliest tell.</div>
       <div><b>How to use</b> — put them on alert and wait for a proper setup. Many turns fail after a week; the ones that persist usually show up in Leaders within a few weeks.</div>
     </div></details>
+  </section>
+
+  <section id="signals">
+    <div class="sec-head"><h2>Signals</h2><div class="line"></div><p>Theme breadth · industry clusters · insider buying · Code 33 · updated each morning</p></div>
+    <div class="sig-grid">
+      <div class="sig-card"><div class="sig-h">Theme breadth <span>McClellan oscillator of each theme's member stocks · a cross above 0 = participation turning up inside the group</span></div>
+        <div class="tbl-wrap"><table class="t" id="sig-mco"></table></div></div>
+      <div class="sig-card"><div class="sig-h">Industry clusters <span>3+ names from one industry flagged the same day (EP, setup or new 52-week high)</span></div>
+        <div id="sig-clusters"></div></div>
+      <div class="sig-card"><div class="sig-h">Insider buying <span>Open-market purchases (SEC Form 4) in the last 7 days · 2+ insiders and $100k+, or $1M+</span></div>
+        <div class="tbl-wrap"><table class="t" id="sig-ins"></table></div></div>
+      <div class="sig-card"><div class="sig-h">Code 33 <span>EPS growth accelerating 3 quarters (latest ≥ 20%), sales up ≥ 10% and accelerating · RS 70+</span></div>
+        <div class="tbl-wrap"><table class="t" id="sig-c33"></table></div></div>
+    </div>
   </section>
 
   <section id="history">
@@ -712,6 +738,54 @@ function drawTurners(){
   el.querySelectorAll(".th .open").forEach((o,i) => { o.closest(".th")._rows = [{symbol:T[i].etf, name:T[i].name, theme:T[i].theme, rs_rating:T[i].rs}]; });
 }
 
+
+/* signals (theme breadth, clusters, insiders, code 33) */
+function drawSignals(){
+  const X = D.extras || {}, ST = D.stocks || {};
+  const exOf = t => (ST[t]||[])[1] || "";
+  const none = (el, msg) => { el.outerHTML = `<div class="sig-empty">${msg}</div>`; };
+  // theme breadth
+  const M = X.theme_mco || [];
+  if (!M.length) none($("#sig-mco"), "No theme data yet.");
+  else table($("#sig-mco"), [
+    {h:"Theme", k:"theme", l:1, f:x=>`<td class="l">${esc(x.theme)}${x.top?'<span class="flag new">TOP</span>':''}</td>`},
+    {h:"ETF", k:"etf", l:1, f:x=>`<td class="sym l"><span class="open" data-sym="${esc(x.etf)}">${esc(x.etf)}</span></td>`},
+    {h:"Stocks", k:"members", f:x=>`<td>${x.members}</td>`},
+    {h:"McClellan", k:"mco", tip:"19/39-day EMA of (advancers − decliners) ÷ total × 1000, within the theme", f:x=>`<td class="${x.mco>0?'up':x.mco<0?'dn':''}">${fmt(x.mco,0)}</td>`},
+    {h:"5d ago", k:"mco_5d", f:x=>`<td style="color:var(--t3)">${fmt(x.mco_5d,0)}</td>`},
+    {h:"Signal", l:1, f:x=>`<td class="l">${x.cross_up?'<span class="flag xu">CROSS UP</span>':x.cross_down?'<span class="flag xd">CROSS DOWN</span>':''}</td>`},
+  ], M.map(x=>({...x, symbol:x.etf, name:x.theme, rs_rating:x.rs})), {sort:"mco"});
+  // clusters
+  const C = X.clusters || [], cel = $("#sig-clusters");
+  cel.innerHTML = !C.length ? `<div class="sig-empty">No industry has 3+ names flagged today.</div>` :
+    C.map(c => `<div class="clu"><div class="ci"><b>${esc(c.industry)}</b> · ${c.n} names${c.eps?` · ${c.eps} EP`:''}${c.highs?` · ${c.highs} new high${c.highs>1?'s':''}`:''}</div>
+      <div class="cn">${c.names.map(n=>`<span class="c"><span class="open" data-sym="${esc(n.t)}" style="cursor:pointer">${esc(n.t)}</span> <span style="color:var(--t3)">${esc(n.why)}${n.rs!=null?' · RS '+n.rs:''}</span></span>`).join("")}</div></div>`).join("");
+  cel._rows = C.flatMap(c => c.names.map(n => ({symbol:n.t, rs_rating:n.rs, theme:c.industry})));
+  cel.querySelectorAll(".open").forEach(o => o.closest(".cn")._rows = cel._rows);
+  // insiders
+  const I = X.insiders || [];
+  if (!I.length) none($("#sig-ins"), "No insider buying clusters in the last 7 days.");
+  else table($("#sig-ins"), [
+    {h:"Ticker", k:"symbol", l:1, f:x=>symTd(x, exOf(x.symbol))},
+    {h:"Insiders", k:"insiders", f:x=>`<td>${x.insiders}</td>`},
+    {h:"Bought", k:"usd", f:x=>`<td>$${x.usd>=1e6?(x.usd/1e6).toFixed(1)+'M':Math.round(x.usd/1e3)+'k'}</td>`},
+    {h:"Avg price", k:"avg_price", f:x=>`<td>${x.avg_price!=null?x.avg_price.toFixed(2):'–'}</td>`},
+    {h:"RS", k:"rs_rating", f:ratingTd},
+    {h:"Who", l:1, f:x=>`<td class="nm l" title="${esc((x.titles||[]).join(', '))}">${esc((x.titles||[]).slice(0,2).join(', '))}</td>`},
+    {h:"", l:1, f:x=>`<td class="l">${x.leader?'<span class="flag new">LEADER</span>':''}</td>`},
+  ], I.map(x=>({...x, symbol:x.ticker, rs_rating:x.rs, name:x.theme})), {sort:"insiders"});
+  // code 33
+  const Q = X.code33 || [];
+  const g3 = a => (a||[]).map(v=>v>=999?'turn':(v>0?'+':'')+v+'%').join(' → ');
+  if (!Q.length) none($("#sig-c33"), "No RS 70+ name passes Code 33 today.");
+  else table($("#sig-c33"), [
+    {h:"Ticker", k:"symbol", l:1, f:x=>symTd(x, exOf(x.symbol))},
+    {h:"RS", k:"rs_rating", f:ratingTd},
+    {h:"EPS growth (3 qtrs)", l:1, f:x=>`<td class="l up">${g3(x.eps)}</td>`},
+    {h:"Sales YoY", k:"s_yoy", f:x=>`<td>${x.s_yoy!=null?'+'+x.s_yoy+'%':'–'}</td>`},
+    {h:"Sales QoQ", l:1, f:x=>`<td class="l" style="color:var(--t2)">${(x.sales_qoq||[]).map(v=>(v>0?'+':'')+v+'%').join(' → ')}</td>`},
+  ], Q.map(x=>({...x, symbol:x.t, rs_rating:(ST[x.t]||[])[2] ?? x.rs, s_yoy:(x.sales||[]).slice(-1)[0]})), {sort:"rs_rating"});
+}
 /* leader history */
 function drawHistory(){
   const H = D.history; if (!H || !H.rows) { $("#history").remove(); return; }
@@ -929,7 +1003,7 @@ function render(){
     {h:"ER", k:"er_days", tip:"Next earnings date", f:x=>`<td class="${x.er_soon?'dn':''}" style="${x.er_soon?'':'color:#6b645a'}">${x.earnings||'–'}</td>`},
     {h:"CANSLIM", k:"cs_n", l:1, tip:CS_TIP.join("\n") + "\n\nLit = passes · dim = fails · faint = no data", f:csTd},
     {h:"Funds", k:"funds_chg", tip:"Institutions holding it (SEC 13F, latest quarter) and the change vs the quarter before", f:fundsTd},
-    {h:"Flags", l:1, f:x=>`<td class="l">${x.setup?'<span class="flag setup">SETUP</span>':''}${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}${x.er_soon?'<span class="flag er">ER</span>':''}</td>`},
+    {h:"Flags", l:1, f:x=>`<td class="l">${x.setup?'<span class="flag setup">SETUP</span>':''}${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}${x.er_soon?'<span class="flag er">ER</span>':''}${x.code33&&x.code33.code33?'<span class="flag c33" title="Code 33: EPS accelerating 3 quarters, sales accelerating">33</span>':''}</td>`},
   ];
   const drawLeaders = () => {
     const q = $("#q").value.trim().toUpperCase();
@@ -947,7 +1021,7 @@ function render(){
     el.addEventListener("change", ()=>{ try { localStorage.setItem("rs_"+s.slice(1), el.value); } catch(e) {} drawLeaders(); drawTurners(); }); });
   drawLeaders();
 
-  drawTurners(); drawFunnel();
+  drawTurners(); drawFunnel(); try { drawSignals(); } catch(e) { console.log("signals", e); }
   let rt; window.addEventListener("resize", ()=>{clearTimeout(rt); rt=setTimeout(()=>{drawCharts(); drawRRG();},150);});
 }
 render();
