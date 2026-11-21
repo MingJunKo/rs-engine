@@ -110,36 +110,81 @@ def code33(F: dict, yoy) -> dict:
 
 
 # ───────────────────────── economic calendar
-def econ_calendar(days: int = 7) -> list:
-    """High-impact USD events from now to `days` ahead, in Singapore time."""
+HIGH_US = ("nonfarm payrolls", "unemployment rate", "cpi", "ppi", "retail sales", "gdp", "pce", "interest rate decision",
+           "fomc", "ism manufacturing", "ism non-manufacturing", "ism services", "jolts", "initial jobless claims", "fed chair")
+NOT_HIGH = ("cleveland", "atlanta", "chicago", "dallas", "richmond", "kansas", "philadelphia", "new york", "4-week", "continuing")
+
+
+def _nasdaq_day(day: dt.date) -> list:
+    """High-impact US releases for one day from Nasdaq's economic calendar (no impact field: filtered by name)."""
+    import html as _h
     import requests
-    rows = []
+    try:
+        r = requests.get("https://api.nasdaq.com/api/calendar/economicevents", params={"date": day.isoformat()},
+                         headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
+        rows = ((r.json().get("data") or {}).get("rows") or []) if r.ok else []
+    except Exception as e:
+        print(f"  econ calendar (nasdaq {day}): {e}")
+        return []
+    out = []
+    for x in rows:
+        name = _h.unescape(x.get("eventName") or "").strip()
+        low = name.lower()
+        if x.get("country") != "United States" or not any(k in low for k in HIGH_US) or any(k in low for k in NOT_HIGH):
+            continue
+        t = (x.get("gmt") or "").strip()
+        try:
+            hh, mm = (int(v) for v in t.split(":"))
+            when = dt.datetime(day.year, day.month, day.day, hh, mm, tzinfo=dt.timezone.utc).astimezone(SGT)
+        except Exception:
+            when = dt.datetime(day.year, day.month, day.day, 23, 59, tzinfo=SGT)       # all-day / tentative
+        clean = lambda v: "" if not v or v == "&nbsp;" else _h.unescape(v)
+        out.append({"title": name, "when": when, "forecast": clean(x.get("consensus")), "previous": clean(x.get("previous"))})
+    return out
+
+
+def econ_calendar(days: int = 7) -> list:
+    """High-impact USD events from now to `days` ahead, in Singapore time. ForexFactory's weekly feed first (it has an
+    impact rating); Nasdaq's calendar fills the days that feed doesn't cover yet (its 'next week' file is often missing)."""
+    import requests
+    now = dt.datetime.now(SGT)
+    cand, covered_to = [], None
     for wk in ("thisweek", "nextweek"):
         try:
             r = requests.get(f"https://nfs.faireconomy.media/ff_calendar_{wk}.json", timeout=20,
                              headers={"User-Agent": "Mozilla/5.0"})
-            if r.ok:
-                rows += r.json()
-            print(f"  econ calendar ({wk}): HTTP {r.status_code}, {len(r.json()) if r.ok else 0} events")
+            rows = r.json() if r.ok else []
+            print(f"  econ calendar ({wk}): HTTP {r.status_code}, {len(rows)} events")
         except Exception as e:
             print(f"  econ calendar ({wk}): {e}")
-    now = dt.datetime.now(SGT)
+            rows = []
+        for x in rows:
+            try:
+                when = dt.datetime.fromisoformat(x["date"]).astimezone(SGT)
+            except Exception:
+                continue
+            covered_to = max(covered_to, when) if covered_to else when
+            if x.get("country") == "USD" and x.get("impact") == "High":
+                cand.append({"title": x["title"], "when": when, "forecast": x.get("forecast") or "", "previous": x.get("previous") or ""})
+    # days the weekly feed doesn't reach (US dates, since releases are scheduled in New York)
+    ny_today = dt.datetime.now(dt.timezone(dt.timedelta(hours=-5))).date()
+    last_ff = (covered_to.astimezone(dt.timezone(dt.timedelta(hours=-5))).date() if covered_to else ny_today - dt.timedelta(days=1))
+    n_nas = 0
+    for k in range(days + 1):
+        day = ny_today + dt.timedelta(days=k)
+        if day > last_ff and day.weekday() < 5:
+            got = _nasdaq_day(day); n_nas += len(got); cand += got
+    print(f"  econ calendar: ForexFactory covers to {last_ff}, Nasdaq added {n_nas} events")
     out, seen = [], set()
-    for x in rows:
-        if x.get("country") != "USD" or x.get("impact") != "High":
+    for x in cand:
+        if not (now - dt.timedelta(hours=2) <= x["when"] <= now + dt.timedelta(days=days)):
             continue
-        try:
-            when = dt.datetime.fromisoformat(x["date"]).astimezone(SGT)
-        except Exception:
-            continue
-        if not (now - dt.timedelta(hours=2) <= when <= now + dt.timedelta(days=days)):
-            continue
-        key = (x["title"], when)
+        key = (x["title"].lower(), x["when"].date())
         if key in seen:
             continue
         seen.add(key)
-        out.append({"title": x["title"], "when": when.strftime("%a %d %b %H:%M"), "iso": when.isoformat(),
-                    "forecast": x.get("forecast") or "", "previous": x.get("previous") or ""})
+        out.append({"title": x["title"], "when": x["when"].strftime("%a %d %b %H:%M"), "iso": x["when"].isoformat(),
+                    "forecast": x["forecast"], "previous": x["previous"]})
     return sorted(out, key=lambda x: x["iso"])
 
 
