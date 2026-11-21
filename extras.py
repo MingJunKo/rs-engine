@@ -110,37 +110,51 @@ def code33(F: dict, yoy) -> dict:
 
 
 # ───────────────────────── economic calendar
-HIGH_US = ("nonfarm payrolls", "unemployment rate", "cpi", "ppi", "retail sales", "gdp", "pce", "interest rate decision",
-           "fomc", "ism manufacturing", "ism non-manufacturing", "ism services", "jolts", "initial jobless claims", "fed chair")
-NOT_HIGH = ("cleveland", "atlanta", "chicago", "dallas", "richmond", "kansas", "philadelphia", "new york", "4-week", "continuing")
+# Nasdaq has no impact rating: keep the US releases that move markets, under one short label each
+US_FAMILIES = [("nonfarm payrolls", "Nonfarm payrolls"), ("unemployment rate", "Unemployment rate"),
+               ("core cpi", "CPI"), ("cpi", "CPI"), ("core ppi", "PPI"), ("ppi", "PPI"),
+               ("core pce", "Core PCE"), ("pce price", "PCE"), ("retail sales", "Retail sales"), ("gdp", "GDP"),
+               ("interest rate decision", "FOMC decision"), ("fomc statement", "FOMC decision"),
+               ("fomc economic projections", "FOMC decision"), ("fomc meeting minutes", "FOMC minutes"),
+               ("ism manufacturing pmi", "ISM manufacturing"), ("ism non-manufacturing pmi", "ISM services"),
+               ("ism services pmi", "ISM services"), ("jolts job openings", "JOLTS"),
+               ("initial jobless claims", "Jobless claims"), ("fed chair", "Fed Chair speaks")]
+NOT_HIGH = ("cleveland", "atlanta", "chicago", "dallas", "richmond", "kansas", "philadelphia", "new york", "4-week",
+            "continuing", "gdpnow", "sales ex", "gdp sales", "gdp price", "pce prices", "member")
 
 
 def _nasdaq_day(day: dt.date) -> list:
-    """High-impact US releases for one day from Nasdaq's economic calendar (no impact field: filtered by name)."""
+    """High-impact US releases on `day` (New York date) from Nasdaq's economic calendar.
+    Quirks: its `date` parameter returns the PREVIOUS day's events, and times are New York time."""
     import html as _h
     import requests
+    from zoneinfo import ZoneInfo
     try:
-        r = requests.get("https://api.nasdaq.com/api/calendar/economicevents", params={"date": day.isoformat()},
+        r = requests.get("https://api.nasdaq.com/api/calendar/economicevents",
+                         params={"date": (day + dt.timedelta(days=1)).isoformat()},
                          headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
         rows = ((r.json().get("data") or {}).get("rows") or []) if r.ok else []
     except Exception as e:
         print(f"  econ calendar (nasdaq {day}): {e}")
         return []
-    out = []
+    groups = {}
     for x in rows:
-        name = _h.unescape(x.get("eventName") or "").strip()
-        low = name.lower()
-        if x.get("country") != "United States" or not any(k in low for k in HIGH_US) or any(k in low for k in NOT_HIGH):
+        low = _h.unescape(x.get("eventName") or "").strip().lower()
+        if x.get("country") != "United States" or any(k in low for k in NOT_HIGH):
+            continue
+        lab = next((l for k, l in US_FAMILIES if k in low), None)
+        if not lab:
             continue
         t = (x.get("gmt") or "").strip()
         try:
             hh, mm = (int(v) for v in t.split(":"))
-            when = dt.datetime(day.year, day.month, day.day, hh, mm, tzinfo=dt.timezone.utc).astimezone(SGT)
+            when = dt.datetime(day.year, day.month, day.day, hh, mm, tzinfo=ZoneInfo("America/New_York")).astimezone(SGT)
         except Exception:
-            when = dt.datetime(day.year, day.month, day.day, 23, 59, tzinfo=SGT)       # all-day / tentative
-        clean = lambda v: "" if not v or v == "&nbsp;" else _h.unescape(v)
-        out.append({"title": name, "when": when, "forecast": clean(x.get("consensus")), "previous": clean(x.get("previous"))})
-    return out
+            continue                                            # all-day / tentative items are not scheduled releases
+        g = groups.setdefault(when, [])
+        if lab not in g:
+            g.append(lab)
+    return [{"title": " · ".join(v), "when": k, "forecast": "", "previous": ""} for k, v in groups.items()]
 
 
 def econ_calendar(days: int = 7) -> list:
@@ -172,7 +186,7 @@ def econ_calendar(days: int = 7) -> list:
     n_nas = 0
     for k in range(days + 1):
         day = ny_today + dt.timedelta(days=k)
-        if day > last_ff and day.weekday() < 5:
+        if day > last_ff and day.weekday() < 5:            # weekday in New York
             got = _nasdaq_day(day); n_nas += len(got); cand += got
     print(f"  econ calendar: ForexFactory covers to {last_ff}, Nasdaq added {n_nas} events")
     out, seen = [], set()
