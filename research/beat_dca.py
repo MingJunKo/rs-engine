@@ -35,18 +35,25 @@ def prep(d):
                 z3any=np.r_[False, episodes(((z5 <= -3) | (z1 <= -3)).values)[:-1]],
                 ms=ms, idx=d.index)
 
-def sim(P, s, e, base="dca", reserve=0.0, cap=12, r3=0.5, r4=1.0, main_on_sig=False, sig="z3", regime="bull"):
+def sim(P, s, e, base="dca", reserve=0.0, cap=12, r3=0.5, r4=1.0, main_on_sig=False, sig="z3", regime="bull",
+        borrow3=0, borrow4=0, rate=0.05, front=False):
     c, o, lo, ma = P["c"], P["o"], P["lo"], P["ma50"]
     cash = res = sh = 0.0; flows = []
     for i in range(s, e):
-        cash *= DCF; res *= DCF
+        cash *= DCF if cash >= 0 else (1 + rate) ** (1 / 252); res *= DCF
+        if front and P["ms"][i] and P["idx"][i].month == 1:
+            flows.append(i)
+            n_ = 12; cash += n_; sh += cash / o[i]; cash = 0
+            continue
+        if front:
+            continue
         if P["ms"][i]:
             flows.append(i)
             put_res = reserve if res < cap * reserve * 1.0 + 1e-9 else 0.0       # reserve stops growing at `cap` months' worth
             res += put_res; cash += 1 - put_res
         # main bucket
         if base == "dca":
-            if P["ms"][i] and cash > 0:
+            if P["ms"][i] and cash != 0:
                 sh += cash / o[i]; cash = 0
         elif base == "mj":
             bull = P[regime][i]
@@ -57,6 +64,10 @@ def sim(P, s, e, base="dca", reserve=0.0, cap=12, r3=0.5, r4=1.0, main_on_sig=Fa
                 px = min(o[i], ma[i]); sh += cash / px; cash = 0
         # σ events (bought at today's open = day after the signal)
         hit4, hit3 = P["z4"][i], P[sig][i]
+        if (borrow3 or borrow4) and (hit3 or hit4):
+            b = borrow4 if hit4 else borrow3
+            if cash > -max(borrow3, borrow4):                  # don't stack loans beyond the larger limit
+                sh += b / o[i]; cash -= b                      # buy now, repaid from the next contributions
         if hit3 or hit4:
             if main_on_sig and cash > 0:
                 sh += cash / o[i]; cash = 0
@@ -88,6 +99,11 @@ STRATS = {
     "MJ + σ release + 20% reserve": dict(base="mj", reserve=0.20, main_on_sig=True),
     "MJ + 20% reserve, daily or 5d σ≤−3": dict(base="mj", reserve=0.20, sig="z3any"),
     "DCA + 20% reserve (½ at σ≤−3, all at σ≤−4)": dict(base="dca", reserve=0.20),
+    "DCA + borrow 3m at σ≤−3 / 6m at σ≤−4 (5%)": dict(base="dca", borrow3=3, borrow4=6),
+    "DCA + borrow 6m at σ≤−3 / 12m at σ≤−4 (5%)": dict(base="dca", borrow3=6, borrow4=12),
+    "DCA + borrow 6m at σ≤−4 only (5%)": dict(base="dca", borrow4=6),
+    "DCA + borrow 3m/6m at 7% rate": dict(base="dca", borrow3=3, borrow4=6, rate=0.07),
+    "Annual lump each January (front-load)": dict(front=True),
 }
 
 OUT = {}
