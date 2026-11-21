@@ -455,6 +455,12 @@ def market_read(data: dict, universe_close: pd.DataFrame | None = None, universe
         entry = {"close": round(float(c.iloc[-1]), 2), "years": round(years, 1), "since": c.index[0].strftime("%Y"),
                  "now": {k: (None if pd.isna(v) else round(float(v), 2)) for k, v in pf.iloc[i].items()},
                  "rank": rank_text(pf.z1, i), "base": baseline(c)}
+        r_ = c.pct_change()
+        past = r_.iloc[1:i]
+        if len(past) > 250 and not pd.isna(r_.iloc[i]):
+            entry["now"]["z1_long"] = round(float(r_.iloc[i] / past.std()), 1)       # vs its whole-history volatility
+            entry["now"]["z1_1y"] = round(float(r_.iloc[i] / r_.iloc[i - 252:i].std()), 1)
+            entry["now"]["worse"] = int((past <= r_.iloc[i]).sum() if r_.iloc[i] < 0 else (past >= r_.iloc[i]).sum())
         if vf is not None:
             entry["now"].update({"vix": round(float(vf.vix.iloc[i]), 1),
                                  "vix_spike": None if pd.isna(vf.spike.iloc[i]) else round(float(vf.spike.iloc[i]), 2),
@@ -515,67 +521,96 @@ def _fwd_line(fwd: dict, h=20) -> str:
     return f"next {hh}d: avg {x['avg']:+.1f}%, up {x['up']}% of {x['n']}"
 
 
+def _h(fwd: dict, h: int):
+    return (fwd or {}).get(h) or (fwd or {}).get(str(h))
+
+
+def _per_year(sig: dict, years: float) -> float:
+    return sig.get("episodes", 0) / max(years, 1)
+
+
+def _short(label: str) -> str:
+    return label.replace(" from the 50-day MA", " from 50d MA").replace(" from the 20-day average", " from 20d avg") \
+                .replace(" its 20-day average", " its 20d avg").replace(" of stocks fell ≥4% today", " of stocks −4%+ today")
+
+
 def build_message(res: dict, new_keys: set, weekly: bool) -> str | None:
+    """Digest format: verdict first, then per index how big / how rare / what usually follows, breadth once, caution."""
     e = lambda s: html.escape(str(s))
-    lines = []
-    for sym, ent in res["index"].items():
-        n, fams = score(ent)
-        nu, famu = score(ent, "overbought")
-        conf_on = bool(ent.get("confirm")) or (ent.get("ftd") or {}).get("ftd_today") or bool(ent.get("magnitude"))
-        if not (n or nu or conf_on) and not weekly:
+    idx = res["index"]
+    total = {sym: len(ent.get("oversold", [])) for sym, ent in idx.items()}
+    up_tot = {sym: len(ent.get("overbought", [])) for sym, ent in idx.items()}
+    any_conf = any(bool(ent.get("confirm")) or (ent.get("ftd") or {}).get("ftd_today") for ent in idx.values())
+    if not weekly and not any(total.values()) and not any(up_tot.values()) and not any_conf:
+        return None
+    mx = max(total.values(), default=0)
+    verdict = ("🟢🟢🟢 Extreme oversold" if mx >= 9 else "🟢🟢 Deeply oversold" if mx >= 5 else
+               "🟢 Oversold" if mx >= 2 else "🔴 Stretched up" if max(up_tot.values(), default=0) >= 2 else "⚪ Calm")
+    L = [f"<b>📉 Mean-reversion watch — {e(res['asof'])}</b>",
+         f"<b>{verdict}</b> · " + " · ".join(f"{s} {n} signals" for s, n in total.items()), ""]
+    for sym, ent in idx.items():
+        nw, yrs = ent["now"], ent.get("years") or 20
+        os_ = [x for x in ent.get("oversold", []) if x["family"] != "breadth"]
+        ob = ent.get("overbought", [])
+        if not (os_ or ob or weekly or ent.get("magnitude")):
             continue
-        head = f"<b>{sym}</b> {ent['close']}  ·  {ent['now']['ret1']:+.1f}% today ({ent['now']['z1']:+.1f}σ)"
-        lines.append(head)
-        if ent.get("rank"):
-            lines.append(f"   <i>{e(ent['rank'])}</i>")
-        for s in ent.get("oversold", []):
-            star = "🆕 " if s["key"] in new_keys else ""
-            fl = _fwd_line(s['fwd'])
-            lines.append(f"   🟢 {star}{e(s['label'])} — {e(s['freq'])}" + (f"; {e(fl)}" if fl else ""))
-            if s.get("last"):
-                lt = s["last"]
-                lines.append(f"      last time {lt['date']}" + (f" → {lt['fwd20']:+.1f}% 20d later" if lt['fwd20'] is not None else ""))
-        for s in ent.get("overbought", []):
-            fl = _fwd_line(s['fwd'])
-            lines.append(f"   🔴 {e(s['label'])} — {e(s['freq'])}" + (f"; {e(fl)}" if fl else ""))
+        L.append(f"<b>{sym} {ent['close']}</b>  {nw['ret1']:+.1f}% today · {nw['ret5']:+.1f}% 5d · {nw['off_high']:+.0f}% from high")
+        # how big
+        if nw.get("z1_long") is not None and abs(nw["ret1"]) >= 1.5:
+            sz = f"{nw['z1']:+.1f}σ vs last 20d · <b>{nw['z1_long']:+.1f}σ vs its {yrs:.0f}-yr norm</b>"
+            if nw.get("worse") is not None:
+                sz += f" · {'worse' if nw['ret1'] < 0 else 'bigger'} days since {ent['since']}: {nw['worse']}"
+            L.append(f"  📐 {sz}")
+        # how rare (the single rarest thing) + what usually follows
         cb = ent.get("oversold_combo", {})
         if cb.get("k", 0) >= 2 and cb.get("fwd"):
-            lines.append(f"   ➜ <b>{cb['k']} price/VIX signals at once</b>: {e(cb['freq'])}; {e(_fwd_line(cb['fwd']))}"
-                         + (f" (e.g. {', '.join(cb['dates'][-3:])})" if cb.get("dates") else ""))
-        for m in ent.get("magnitude", []):
-            fl = _fwd_line(m["fwd"])
-            lines.append(f"   📏 <b>{e(m['label'])}</b> — {e(m['what'])}: {m['episodes']} since {ent['since']} ({e(m['freq'])})"
-                         + (f"; {e(fl)}" if fl else "") + (f" (e.g. {', '.join(m['dates'][-3:])})" if m.get("dates") else ""))
+            x = _h(cb["fwd"], 20) or _h(cb["fwd"], 10)
+            small = " (small sample)" if x and x["n"] < 10 else ""
+            L.append(f"  🎯 {cb['k']} price/VIX signals at once — {e(cb['freq'])}")
+            if x:
+                L.append(f"      after those: next 20d avg <b>{x['avg']:+.1f}%</b>, up {x['up']}% of {x['n']}{small}"
+                         + (f" · e.g. {', '.join(cb['dates'][-2:])}" if cb.get("dates") else ""))
+        for m in ent.get("magnitude", [])[:1]:
+            x = _h(m["fwd"], 20)
+            L.append(f"  📏 {e(m['label'])}: {m['episodes']}× since {ent['since']}"
+                     + (f" → next 20d avg {x['avg']:+.1f}%, up {x['up']}%" if x else ""))
+        # three rarest individual signals, one line
+        top = sorted(os_, key=lambda x: _per_year(x, yrs))[:3]
+        if top:
+            L.append("  🔎 " + " · ".join(("🆕" if x["key"] in new_keys else "") + e(_short(x["label"])) for x in top))
+        if ob:
+            L.append("  🔴 " + " · ".join(e(_short(x["label"])) for x in ob[:3]))
         f_ = ent.get("ftd") or {}
-        if f_.get("state") in ("attempt", "confirmed"):
-            extra = ""
-            if f_.get("state") == "confirmed" and f_.get("fwd", {}).get(20):
-                x = f_["fwd"][20]
-                extra = f"; past FTDs: next 20d avg {x['avg']:+.1f}%, up {x['up']}%" + \
-                        (f", {f_['fail_rate']}% failed" if f_.get("fail_rate") is not None else "")
-            lines.append(f"   🟦 {e(f_['label'])}{e(extra)}")
-        for s in ent.get("confirm", []):
-            fl = _fwd_line(s['fwd'])
-            lines.append(f"   🟦 {e(s['label'])} — {e(s['freq'])}" + (f"; {e(fl)}" if fl else ""))
-        if weekly and not (n or nu):
-            nw = ent["now"]
-            lines.append(f"   calm: {nw['band']:+.1f}σ from 20d avg · {nw['ext50']:+.1f} ATR from 50d · RSI(2) {nw['rsi2']:.0f}"
-                         + (f" · VIX {nw['vix']}" if nw.get("vix") else ""))
-        lines.append("")
-    if not lines:
-        return None
+        if f_.get("state") in ("attempt", "confirmed") or ent.get("confirm"):
+            bits = [f_["label"]] if f_.get("state") in ("attempt", "confirmed") else []
+            bits += [x["label"] for x in ent.get("confirm", [])]
+            L.append("  🟦 " + e(" · ".join(bits)))
+        if weekly and not os_ and not ob:
+            L.append(f"  calm: {nw['band']:+.1f}σ from 20d avg · {nw['ext50']:+.1f} ATR from 50d · RSI(2) {nw['rsi2']:.0f}")
+        L.append("")
+    # breadth once (it is the same market for both)
     b = res.get("breadth_now")
+    ref = idx.get("SPY") or next(iter(idx.values()), {})
+    bsig = [x for x in ref.get("oversold", []) if x["family"] == "breadth"]
     if b:
         mo = " · ".join(f"{k.upper()} {b[k]:+.0f}" for k in ("nymo", "namo") if b.get(k) is not None)
-        lines.append(f"Breadth (RS universe): {b['t2108']:.0f}% above 40d MA · {b['down4']:.1f}% down ≥4% today · "
-                     f"5d ratio {b['ratio5'] if b['ratio5'] is not None else '—'} · McClellan {b['mco']:+.0f}" + (f" · {mo}" if mo else ""))
+        L.append(f"<b>Breadth</b> {len(bsig)} signals: {b['down4']:.0f}% of stocks −4%+ · {b['t2108']:.0f}% above 40d MA"
+                 + (f" · {mo}" if mo else ""))
+    # caution: recent episodes that kept falling (oversold can get more oversold in a downtrend)
+    bad = {}
+    for ent in idx.values():
+        for x in ent.get("oversold", []):
+            lt = x.get("last") or {}
+            if lt.get("fwd20") is not None and lt["fwd20"] < -3:
+                bad[lt["date"]] = min(bad.get(lt["date"], 0), lt["fwd20"])
+    recent = sorted(bad.items(), key=lambda kv: pd.Timestamp(kv[0]))[-2:]
+    if recent:
+        L.append("⚠️ <i>Recent washouts kept falling: " + ", ".join(f"{d} → {v:+.0f}% 20d later" for d, v in recent)
+                 + ". Snap-backs fail more often in a downtrend — wait for a reversal day / FTD.</i>")
     mv = res.get("movers") or []
     if mv:
-        lines.append("Unusual stock moves (≥4σ, $20M+/day): " + ", ".join(f"{m['symbol']} {m['ret']:+.0f}% ({m['z']:+.1f}σ)" for m in mv[:6]))
-    title = "Weekly stretch check" if weekly and not any(score(x)[0] for x in res["index"].values()) else "Mean-reversion watch"
-    hdr = [f"<b>{title} — {e(res['asof'])}</b>",
-           "<i>🟢 stretched down (snap-back odds) · 🔴 stretched up. Stats = SPY/QQQ after past episodes.</i>", ""]
-    return "\n".join(hdr + lines)
+        L.append("Unusual moves: " + ", ".join(f"{m['symbol']} {m['ret']:+.0f}%" for m in mv[:6]))
+    return "\n".join(L).rstrip()
 
 
 def notify(res: dict, settings: dict, force_weekly: bool = False):
@@ -603,7 +638,7 @@ def notify(res: dict, settings: dict, force_weekly: bool = False):
         msg += f'\n<a href="{url}/stretch/">Open the stretch page</a>'
     from notify import tg_send
     topic = "stretch" if (settings.get("telegram_topics") or {}).get("stretch") else "alerts"
-    tg_send("sendMessage", {"text": msg[:4000], "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings, topic)
+    tg_send("sendMessage", {"text": msg if len(msg) <= 4096 else msg[:4000].rsplit("\n", 1)[0], "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings, topic)
 
 
 # ───────────────────────── single stock
@@ -723,7 +758,7 @@ if __name__ == "__main__":
             if not a.no_telegram and not a.demo:
                 from notify import tg_send
                 topic = "stretch" if (settings.get("telegram_topics") or {}).get("stretch") else "alerts"
-                tg_send("sendMessage", {"text": msg[:4000], "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings, topic)
+                tg_send("sendMessage", {"text": msg if len(msg) <= 4096 else msg[:4000].rsplit("\n", 1)[0], "parse_mode": "HTML", "disable_web_page_preview": "true"}, settings, topic)
     else:
         data = demo_data() if a.demo else download(["SPY", "QQQ", "^VIX", "^VIX3M"])
         res = market_read(data, None)
