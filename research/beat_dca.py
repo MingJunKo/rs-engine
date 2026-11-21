@@ -36,11 +36,12 @@ def prep(d):
                 ms=ms, idx=d.index)
 
 def sim(P, s, e, base="dca", reserve=0.0, cap=12, r3=0.5, r4=1.0, main_on_sig=False, sig="z3", regime="bull",
-        borrow3=0, borrow4=0, rate=0.05, front=False):
+        borrow3=0, borrow4=0, rate=0.05, front=False, cash_rate=None, fill="limit"):
+    dcf = DCF if cash_rate is None else (1 + cash_rate) ** (1 / 252)
     c, o, lo, ma = P["c"], P["o"], P["lo"], P["ma50"]
     cash = res = sh = 0.0; flows = []
     for i in range(s, e):
-        cash *= DCF if cash >= 0 else (1 + rate) ** (1 / 252); res *= DCF
+        cash *= dcf if cash >= 0 else (1 + rate) ** (1 / 252); res *= dcf
         if front and P["ms"][i] and P["idx"][i].month == 1:
             flows.append(i)
             n_ = 12; cash += n_; sh += cash / o[i]; cash = 0
@@ -61,7 +62,7 @@ def sim(P, s, e, base="dca", reserve=0.0, cap=12, r3=0.5, r4=1.0, main_on_sig=Fa
                 if P["ms"][i] and cash > 0:
                     sh += cash / o[i]; cash = 0
             elif cash > 0 and not np.isnan(ma[i]) and lo[i] <= ma[i]:
-                px = min(o[i], ma[i]); sh += cash / px; cash = 0
+                px = min(o[i], ma[i]) if fill == "limit" else c[i]; sh += cash / px; cash = 0
         # σ events (bought at today's open = day after the signal)
         hit4, hit3 = P["z4"][i], P[sig][i]
         if (borrow3 or borrow4) and (hit3 or hit4):
@@ -106,33 +107,34 @@ STRATS = {
     "Annual lump each January (front-load)": dict(front=True),
 }
 
-OUT = {}
-for sym in ("SPY", "QQQ"):
-    P = prep(load(sym)); n = len(P["c"]); s0 = 260
-    full = {}
-    fd, ff = sim(P, s0, n, **STRATS["DCA monthly"])
-    for k, kw in STRATS.items():
-        f, fl = sim(P, s0, n, **kw)
-        half = (s0 + n) // 2
-        a, _ = sim(P, s0, half, **kw); b, _ = sim(P, half, n, **kw)
-        a0, _ = sim(P, s0, half); b0, _ = sim(P, half, n)
-        full[k] = {"vs_dca_pct": round(100 * (f / fd - 1), 1), "irr": round(100 * xirr(P, fl, f, n), 2),
-                   "first_half_vs_dca": round(100 * (a / a0 - 1), 1), "second_half_vs_dca": round(100 * (b / b0 - 1), 1)}
-    # rolling 10-year windows, monthly starts
-    starts = [i for i in range(s0, n - 2520) if P["ms"][i]][::1]
-    roll = {k: [] for k in STRATS}
-    for s in starts:
-        e = s + 2520
-        d0, _ = sim(P, s, e)
+if __name__ == "__main__":
+    OUT = {}
+    for sym in ("SPY", "QQQ"):
+        P = prep(load(sym)); n = len(P["c"]); s0 = 260
+        full = {}
+        fd, ff = sim(P, s0, n, **STRATS["DCA monthly"])
         for k, kw in STRATS.items():
-            if k == "DCA monthly":
-                continue
-            f, _ = sim(P, s, e, **kw); roll[k].append(f / d0 - 1)
-    for k, v in roll.items():
-        if v:
-            v = np.array(v)
-            full[k].update({"roll10_beat_pct": round(100 * float(np.mean(v > 0))), "roll10_median": round(100 * float(np.median(v)), 1),
-                            "roll10_worst": round(100 * float(v.min()), 1), "roll10_best": round(100 * float(v.max()), 1)})
-    OUT[sym] = {"since": str(P["idx"][s0].date()), "windows": len(starts), "results": full}
-    print(sym, "done", file=sys.stderr)
-print(json.dumps(OUT, indent=1))
+            f, fl = sim(P, s0, n, **kw)
+            half = (s0 + n) // 2
+            a, _ = sim(P, s0, half, **kw); b, _ = sim(P, half, n, **kw)
+            a0, _ = sim(P, s0, half); b0, _ = sim(P, half, n)
+            full[k] = {"vs_dca_pct": round(100 * (f / fd - 1), 1), "irr": round(100 * xirr(P, fl, f, n), 2),
+                       "first_half_vs_dca": round(100 * (a / a0 - 1), 1), "second_half_vs_dca": round(100 * (b / b0 - 1), 1)}
+        # rolling 10-year windows, monthly starts
+        starts = [i for i in range(s0, n - 2520) if P["ms"][i]][::1]
+        roll = {k: [] for k in STRATS}
+        for s in starts:
+            e = s + 2520
+            d0, _ = sim(P, s, e)
+            for k, kw in STRATS.items():
+                if k == "DCA monthly":
+                    continue
+                f, _ = sim(P, s, e, **kw); roll[k].append(f / d0 - 1)
+        for k, v in roll.items():
+            if v:
+                v = np.array(v)
+                full[k].update({"roll10_beat_pct": round(100 * float(np.mean(v > 0))), "roll10_median": round(100 * float(np.median(v)), 1),
+                                "roll10_worst": round(100 * float(v.min()), 1), "roll10_best": round(100 * float(v.max()), 1)})
+        OUT[sym] = {"since": str(P["idx"][s0].date()), "windows": len(starts), "results": full}
+        print(sym, "done", file=sys.stderr)
+    print(json.dumps(OUT, indent=1))
