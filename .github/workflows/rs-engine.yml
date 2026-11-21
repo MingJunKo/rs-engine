@@ -39,6 +39,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FORCE_NOTIFY: ${{ github.event_name == 'workflow_dispatch' && inputs.notify }}
+          DEPLOY_PLAN: ${{ secrets.DEPLOY_PLAN }}
         run: python rs_engine.py
       - name: Commit dashboard and history
         run: |

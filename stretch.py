@@ -23,6 +23,7 @@ import argparse
 import datetime as dt
 import html
 import json
+import os
 import math
 import sys
 from pathlib import Path
@@ -731,6 +732,68 @@ def write_page(res: dict, docs: Path):
     (docs / "stretch" / "index.html").write_text(tpl.replace("/*__DATA__*/null", json.dumps(res, default=str).replace("</", "<\\/")))
 
 
+# ───────────────────────── personal deployment plan (Telegram only; amounts live in the DEPLOY_PLAN secret)
+def deploy_events(spy: pd.DataFrame, plan: dict) -> tuple[list, float]:
+    """Replay the plan from its start date. Rules: a third of remaining cash on each new SPY 5-day σ ≤ −3 episode or each
+    further `drop_step`% fall below the start price; backstop = remaining ÷ months left on the first session on/after the
+    `day`th of each month. Returns (events [(date, reason, amount)], remaining)."""
+    c = spy.Close
+    z5 = price_features(c, spy.High, spy.Low).z5
+    start = pd.Timestamp(plan["start"])
+    ref = float(c.loc[:start].iloc[-1])
+    rem = float(plan["total"]) - float(plan["initial"])
+    months, step, day = int(plan.get("months", 12)), float(plan.get("drop_step", 5)), int(plan.get("day", 25))
+    last_sig, level, done_months, ev = c.index.get_loc(c.loc[:start].index[-1]), 0, 0, []
+    for i in range(last_sig + 1, len(c)):
+        d, px = c.index[i], float(c.iloc[i])
+        if rem < 1:
+            break
+        why = []
+        if z5.iloc[i] <= -3 and i - last_sig > 10:
+            why.append(f"SPY 5-day move {z5.iloc[i]:+.1f}σ")
+        if z5.iloc[i] <= -3:
+            last_sig = i
+        lv = int(max(0, (1 - px / ref) * 100) // step)
+        if lv > level:
+            why.append(f"SPY {100 * (px / ref - 1):+.1f}% from the start price {ref:.2f}")
+            level = lv
+        if why:
+            amt = rem / 3; rem -= amt; ev.append((d, " + ".join(why), amt))
+        mk = (d.year - start.year) * 12 + d.month - start.month
+        if mk >= 1 and d.day >= day and done_months < min(mk, months) and rem >= 1:
+            left = months - done_months
+            amt = rem / left; rem -= amt; done_months += 1
+            ev.append((d, f"monthly backstop {done_months}/{months}", amt))
+    return ev, rem
+
+
+def deploy_alert(data: dict, settings: dict):
+    raw = os.environ.get("DEPLOY_PLAN", "").strip()
+    spy = data.get("SPY")
+    if not raw or spy is None:
+        return
+    try:
+        plan = json.loads(raw)
+    except Exception as e:
+        print("DEPLOY_PLAN is not valid JSON:", e); return
+    ev, rem = deploy_events(spy, plan)
+    today = spy.index[-1]
+    now = [x for x in ev if x[0] == today]
+    print(f"deploy plan: {len(ev)} events since start, {len(now)} today")
+    if not now:
+        return
+    invested = float(plan["total"]) - rem
+    lines = [f"<b>💰 Deployment plan — buy today ({today:%a %d %b})</b>"]
+    for _, why, amt in now:
+        lines.append(f"• <b>${amt:,.0f}</b> — {html.escape(why)}")
+    lines += [f"Plan: ${invested:,.0f} of ${float(plan['total']):,.0f} invested · ${rem:,.0f} left",
+              "<i>S&P 500 unit trust via CPFIS — place the order today (fills at today's NAV). "
+              "Amounts assume every earlier step was followed.</i>"]
+    from notify import tg_send
+    topic = "stretch" if (settings.get("telegram_topics") or {}).get("stretch") else "alerts"
+    tg_send("sendMessage", {"text": "\n".join(lines), "parse_mode": "HTML"}, settings, topic)
+
+
 def run_daily(universe_close: pd.DataFrame | None, settings: dict, docs: Path, demo: bool = False, notify_on: bool = True,
               universe_vol: pd.DataFrame | None = None, exchange: dict | None = None):
     data = demo_data() if demo else download(["SPY", "QQQ", "^VIX", "^VIX3M"])
@@ -739,6 +802,10 @@ def run_daily(universe_close: pd.DataFrame | None, settings: dict, docs: Path, d
     write_page(res, docs)
     if notify_on and not demo:
         notify(res, settings)
+        try:
+            deploy_alert(data, settings)
+        except Exception as e:
+            print("deploy plan failed:", e)
     return res
 
 
