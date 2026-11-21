@@ -154,7 +154,7 @@ def _nasdaq_day(day: dt.date) -> list:
         g = groups.setdefault(when, [])
         if lab not in g:
             g.append(lab)
-    return [{"title": " · ".join(v), "when": k, "forecast": "", "previous": ""} for k, v in groups.items()]
+    return [{"title": ", ".join(v), "when": k, "forecast": "", "previous": ""} for k, v in groups.items()]
 
 
 def econ_calendar(days: int = 7) -> list:

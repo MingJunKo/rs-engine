@@ -91,7 +91,7 @@ def build_message(p: dict, settings: dict) -> str:
     ev = X.get("econ") or []
     if ev:
         soon = [x for x in ev][:5]
-        lines.append("📅 <b>US data ahead (SGT):</b> " + " · ".join(f"{e(x['title'])} {e(x['when'])}" for x in soon))
+        lines.append("📅 <b>US data ahead (SGT):</b> " + " | ".join(f"{e(x['when'])} {e(x['title'])}" for x in soon))
     al = p.get("alist") or []
     if al and not _uses_topic(settings, "alist"):
         lines += ["", "<b>A-list — open these first</b>"]
