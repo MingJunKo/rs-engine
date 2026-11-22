@@ -299,7 +299,7 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
     <details class="fold" style="margin-top:12px"><summary>How it's measured</summary><div class="body guide">
       <div><b>Setup</b> — the Leaders definition applied to every liquid stock: above the 50-day, RS ≥ 80, ADR ≥ 2.5%, within 6% of the 20-day high, 10-day range ≤ 2.5 ADRs, 0–4 ATRs above the 50-day.</div>
       <div><b>Breakout</b> — a stock in a setup closes above its prior 20-day high on ≥ 1.4× average volume. <b>Holding</b> = still above that pivot 10 sessions later; the line covers breakouts from 10–29 sessions ago, so it is known on the day.</div>
-      <div><b>Verdict</b> — Healthy: setups in the top 40% of their history and breakouts holding at or above their typical rate. Poor: setups in the bottom 30% and breakouts holding 5+ points below typical. Otherwise Mixed (or Improving when breakouts work but setups are still scarce).</div>
+      <div><b>Label</b> — Plentiful = setup count in the top 30% of its history, Scarce = bottom 30%, otherwise Normal. It describes how many opportunities there are, not whether they will work: the 10-year test above found neither line predicts the next month's breakouts. Use it to size your watchlist effort, and let price and the regime decide aggression.</div>
       <div><b>Caveat</b> — history uses today's stock list, so delisted names are missing; the % of liquid stocks keeps years comparable.</div>
     </div></details>
   </section>
@@ -487,6 +487,7 @@ function lineChart(el, series, dates, opts={}){
   const W = el.clientWidth || 560, H = opts.h || 230, P = {l:36, r:12, t:8, b:22};
   const all = series.flatMap(s => s.values.filter(v=>v!=null));
   let mn = Math.min(...all), mx = Math.max(...all); const pad = (mx-mn)*0.08 || 1; mn -= pad; mx += pad;
+  if (opts.lo != null) mn = Math.max(mn, opts.lo); if (opts.hi != null) mx = Math.min(mx, opts.hi);
   const n = dates.length, X = i => P.l + i/(n-1)*(W-P.l-P.r), Y = v => P.t + (1-(v-mn)/(mx-mn))*(H-P.t-P.b);
   let g = "";
   const ticks = 4;
@@ -833,8 +834,9 @@ function drawEnvironment(){
   const draw = n => {
     const k = n ? Math.max(0, E.dates.length - n) : 0, dts = E.dates.slice(k).map(d => d.slice(2,7).replace("-","/"));
     const raw = E.setup_series.slice(k), ma = raw.map((_,i) => i < 9 ? null : raw.slice(i-9,i+1).reduce((p,q)=>p+q,0)/10);
-    lineChart($("#env-c1"), [{values:raw, color:"#e0b25a", width:1, opacity:.3, dash:null}, {values:ma, color:"#e0b25a", width:1.8}], dts, {h:200, dp:1, ref:setMed});
-    lineChart($("#env-c2"), [{values:E.hold_series.slice(k), color:"#8fcf8a", width:1.5}], dts, {h:200, dp:0, ref:E.hold_median});
+    lineChart($("#env-c1"), [{values:raw, color:"#e0b25a", width:1, opacity:.3, dash:null}, {values:ma, color:"#e0b25a", width:1.8}], dts, {h:200, dp:1, ref:setMed, lo:0});
+    const hr = E.hold_series.slice(k), hma = hr.map((_,i) => { const w = hr.slice(Math.max(0,i-9), i+1).filter(v=>v!=null); return i < 9 || w.length < 5 ? null : w.reduce((p,q)=>p+q,0)/w.length; });
+    lineChart($("#env-c2"), [{values:hr, color:"#8fcf8a", width:1, opacity:.3}, {values:hma, color:"#8fcf8a", width:1.8}], dts, {h:200, dp:0, ref:E.hold_median, lo:0, hi:100});
   };
   document.querySelectorAll("#env-range button").forEach(b => b.onclick = () => {
     document.querySelectorAll("#env-range button").forEach(x => x.classList.toggle("on", x===b)); draw(+b.dataset.r); });
@@ -843,7 +845,7 @@ function drawEnvironment(){
   if (!S.setups) { $("#env-proof").innerHTML = `<div class="dim">The 10-year test runs with the monthly backtest; results appear here after it.</div>`; return; }
   const tbl = (x, label, unit) => `<table class="env-q"><tr><th>${label}</th><th>Range</th><th>Next 20 sessions: breakouts holding</th><th>Their avg 10-day gain</th><th>Breakouts / 20 sessions</th><th>SPY next 20d</th></tr>` +
     x.quintiles.map(q => `<tr><td>${['Lowest','Low','Middle','High','Highest'][q.bucket-1]} 20%</td><td>${q.lo}–${q.hi}${unit}</td><td>${q.fwd_hold}%</td><td>${fmt(q.fwd_gain10,1)}%</td><td>${q.fwd_bo}</td><td>${q.spy_fwd20==null?'–':fmt(q.spy_fwd20,1)+'%'}</td></tr>`).join("") + `</table>`;
-  const rho = r => Math.abs(r) < 0.1 ? "no real link" : Math.abs(r) < 0.25 ? "a weak link" : Math.abs(r) < 0.4 ? "a moderate link" : "a strong link";
+  const rho = r => (Math.abs(r) < 0.1 ? "no real link" : Math.abs(r) < 0.25 ? "a weak link" : Math.abs(r) < 0.4 ? "a moderate link" : "a strong link") + (r <= -0.1 ? " — inverse: more failures now, better breakouts next" : "");
   $("#env-proof").innerHTML = `<p style="font-size:12.5px;margin:0 0 10px">${S.period} · ${S.days.toLocaleString()} trading days. Days are split into fifths by each measure, then the next 20 sessions' breakouts are scored.</p>
     <p style="font-size:12.5px;margin:0 0 6px"><b>Setup count</b> → next breakouts: ${rho(S.setups.corr_fwd_hold)} (rank correlation ${S.setups.corr_fwd_hold}).</p>${tbl(S.setups, "Setups (% of liquid)", "%")}
     <p style="font-size:12.5px;margin:14px 0 6px"><b>Recent breakouts holding</b> → next breakouts: ${rho(S.hold.corr_fwd_hold)} (rank correlation ${S.hold.corr_fwd_hold}).</p>${tbl(S.hold, "Holding now", "%")}`;

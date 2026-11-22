@@ -118,11 +118,9 @@ def payload() -> dict | None:
     hr = env.hold_rate.dropna()
     med = float(hr.median()) if len(hr) else None
     hold_now = None if pd.isna(now.hold_rate) else float(now.hold_rate)
-    good_s, good_h = pct_rank >= 60, (hold_now is not None and med is not None and hold_now >= med)
-    poor_s, poor_h = pct_rank <= 30, (hold_now is not None and med is not None and hold_now < med - 5)
-    verdict = ("Healthy" if good_s and good_h else "Poor" if poor_s and poor_h else
-               "Improving" if (good_h and not good_s) else "Mixed")
-    tone = {"Healthy": "bull", "Poor": "bear"}.get(verdict, "warn")
+    # the 10-year test found neither series predicts how the next breakouts do, so the label describes supply only
+    verdict = "Plentiful setups" if pct_rank >= 70 else "Scarce setups" if pct_rank <= 30 else "Normal setup count"
+    tone = {"Plentiful setups": "bull", "Scarce setups": "bear"}.get(verdict, "warn")
     s20 = env.setups.iloc[-21] if len(env) > 21 else None
     return {"verdict": verdict, "tone": tone, "asof": env.index[-1].strftime("%d %b %Y"),
             "setups": int(now.setups), "setup_pct": round(float(now.setup_pct), 2), "setup_rank": pct_rank,
@@ -142,6 +140,6 @@ def brief_line(p: dict | None) -> str | None:
         return None
     hold = (f"{p['hold_rate']:.0f}% of recent breakouts holding (typical {p['hold_median']:.0f}%)"
             if p.get("hold_rate") is not None else "too few recent breakouts to judge")
-    icon = {"Healthy": "🟢", "Poor": "🔴"}.get(p["verdict"], "🟡")
-    return (f"{icon} <b>Breakout environment: {p['verdict']}</b> — {p['setups']} setups "
+    icon = {"bull": "🟢", "bear": "🔴"}.get(p["tone"], "🟡")
+    return (f"{icon} <b>{p['verdict']}</b> — {p['setups']} stocks in a setup "
             f"({p['setup_rank']}th percentile since {p['since']}) · {hold}")
