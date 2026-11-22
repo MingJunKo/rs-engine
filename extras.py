@@ -1,34 +1,3 @@
-    import time
-    cache_p = ROOT / "data" / "history" / "econ_cache.json"
-    try:
-        cache = json.loads(cache_p.read_text()) if cache_p.exists() else {}
-    except Exception:
-        cache = {}
-    rows, ok = [], False
-    for k in range(3):                       # the feed is intermittent: a failed reply has no "asOf" stamp
-        try:
-            r = requests.get("https://api.nasdaq.com/api/calendar/economicevents",
-                             params={"date": (day + dt.timedelta(days=1)).isoformat()},
-                             headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
-            data = (r.json().get("data") or {}) if r.ok else {}
-            if data.get("asOf"):
-                rows, ok = data.get("rows") or [], True
-                break
-        except Exception as e:
-            print(f"  econ calendar (nasdaq {day}): {e}")
-        time.sleep(2 + 2 * k)
-    key = day.isoformat()
-    if ok:
-        cache[key] = [x for x in rows if x.get("country") == "United States"]
-        cache = {d: v for d, v in cache.items() if d >= (day - dt.timedelta(days=14)).isoformat()}
-        try:
-            cache_p.write_text(json.dumps(cache))
-        except Exception:
-            pass
-    else:
-        rows = cache.get(key, [])
-    print(f"  econ calendar (nasdaq {day}): {'live' if ok else 'cached' if rows else 'unavailable'}, "
-          f"{sum(1 for x in rows if x.get('country') == 'United States')} US rows")
 """
 Extra signals borrowed from Brad Jelinek's "Scattered Focus" build, adapted to the RS Engine:
 
@@ -160,16 +129,37 @@ def _nasdaq_day(day: dt.date) -> list:
     import html as _h
     import requests
     from zoneinfo import ZoneInfo
+    import time
+    cache_p = ROOT / "data" / "history" / "econ_cache.json"
     try:
-        r = requests.get("https://api.nasdaq.com/api/calendar/economicevents",
-                         params={"date": (day + dt.timedelta(days=1)).isoformat()},
-                         headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
-        rows = ((r.json().get("data") or {}).get("rows") or []) if r.ok else []
-        print(f"  econ calendar (nasdaq {day}): HTTP {r.status_code}, {len(rows)} rows, "
-              f"{sum(1 for x in rows if x.get('country') == 'United States')} US")
-    except Exception as e:
-        print(f"  econ calendar (nasdaq {day}): {e}")
-        return []
+        cache = json.loads(cache_p.read_text()) if cache_p.exists() else {}
+    except Exception:
+        cache = {}
+    rows, ok = [], False
+    for n_try in range(3):                   # the feed is intermittent: a failed reply has no "asOf" stamp
+        try:
+            r = requests.get("https://api.nasdaq.com/api/calendar/economicevents",
+                             params={"date": (day + dt.timedelta(days=1)).isoformat()},
+                             headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
+            data = (r.json().get("data") or {}) if r.ok else {}
+            if data.get("asOf"):
+                rows, ok = data.get("rows") or [], True
+                break
+        except Exception as e:
+            print(f"  econ calendar (nasdaq {day}): {e}")
+        time.sleep(2 + 2 * n_try)
+    key = day.isoformat()
+    if ok:
+        cache[key] = [x for x in rows if x.get("country") == "United States"]
+        cache = {d: v for d, v in cache.items() if d >= (day - dt.timedelta(days=14)).isoformat()}
+        try:
+            cache_p.write_text(json.dumps(cache))
+        except Exception:
+            pass
+    else:
+        rows = cache.get(key, [])
+    print(f"  econ calendar (nasdaq {day}): {'live' if ok else 'cached' if rows else 'unavailable'}, "
+          f"{sum(1 for x in rows if x.get('country') == 'United States')} US rows")
     groups = {}
     for x in rows:
         low = _h.unescape(x.get("eventName") or "").strip().lower()
