@@ -78,6 +78,23 @@ td.sym .open:hover{color:var(--gold)}
 .btn{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:.5px solid var(--border-2);color:var(--t2);padding:6px 12px;border-radius:3px;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn:hover{color:var(--gold);border-color:var(--gold-dim)}
 .more{display:block;margin:10px auto 0}
+.bars.clickable .row{grid-template-columns:130px 1fr 66px;cursor:pointer;border-radius:3px;padding:3px 4px;margin:0 -4px}
+.bars.clickable .row:hover{background:#ffffff07}
+.bars .row.on span:first-child{color:var(--gold);font-weight:500}
+.bars .row .bw{position:relative;height:10px}
+.bars .row .bw i{position:absolute;left:0;top:0;height:10px;border-radius:2px}
+.bars .row .bw i.all{background:#2e2a23}.bars .row .bw i.yr{background:var(--gold-dim)}.bars .row.on .bw i.yr{background:var(--gold)}
+.bars .row b{font-family:"DM Mono",monospace;font-weight:400;text-align:right;color:var(--t1);font-size:12px}
+.bars .row b em{font-style:normal;color:var(--t3)}
+.ww-tabs{display:flex;gap:6px;align-items:center;margin:16px 0 8px}
+.ww-tabs button{background:none;border:.5px solid var(--border);color:var(--t3);font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.08em;padding:3px 9px;border-radius:3px;cursor:pointer}
+.ww-tabs button.on{color:var(--gold);border-color:var(--gold-dim)}
+#ww-sel{margin-left:auto;font-family:"DM Mono",monospace;font-size:10px;color:var(--t3);letter-spacing:.06em}
+#ww-names{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px}
+#ww-names .hd{width:100%;font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--t3);margin-bottom:2px}
+#ww-names .nm{font-family:"DM Mono",monospace;font-size:11px;padding:3px 7px;border:.5px solid var(--gold-dim);border-radius:3px;cursor:pointer;color:var(--t1)}
+#ww-names .nm i{font-style:normal;color:var(--up,#8fcf8a);margin-left:5px}
+#ww-names .nm:hover{background:#c9a55a1f}
 .bars .row{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;font-size:12px;padding:3px 0;color:var(--t2)}
 .bars .row i{display:block;height:10px;border-radius:2px;background:var(--gold-dim)}
 .bars .row span:last-child{font-family:"DM Mono",monospace;text-align:right;color:var(--t1)}
@@ -136,7 +153,11 @@ footer{padding:36px 0 48px;color:var(--t4);font-size:11px;font-family:"DM Mono",
     <p class="note-p"><b>How to read it:</b> each row is every breakout that had that trait. <b>% doubled</b> is how many of them went on to double; <b>× base rate</b> compares that to all breakouts — above 1× means the trait made a doubler more likely. <b>Share of winners</b> is how many of the actual winners had it (a trait can be powerful but rare).</p>
     <div class="grid2" style="margin-top:14px">
       <div class="card"><h3>Winners vs all breakouts</h3><div class="sub">Median on the breakout day (winners' middle-half range in grey)</div><table class="t" id="cmp-tbl"></table></div>
-      <div class="card"><h3>When and where</h3><div class="sub">Winning runs by breakout year, and by sector</div><div class="bars" id="by-year"></div><div class="bars" id="by-sector" style="margin-top:14px"></div></div>
+      <div class="card"><h3>When and where</h3><div class="sub">Winning runs by breakout year · click a year to see where they came from, click a group to list the names</div>
+        <div class="bars clickable" id="by-year"></div>
+        <div class="ww-tabs"><button data-g="theme" class="on">By theme</button><button data-g="sector">By sector</button><span id="ww-sel"></span></div>
+        <div class="bars clickable" id="by-group"></div>
+        <div id="ww-names"></div></div>
     </div>
   </section>
 
@@ -244,7 +265,37 @@ table($("#cmp-tbl"), [
 
 const bars = (el, rows, key) => { const m = Math.max(1, ...rows.map(r=>r.n));
   el.innerHTML = rows.map(r=>`<div class="row"><span>${esc(r[key])}</span><i style="width:${r.n/m*100}%"></i><span>${r.n}</span></div>`).join(""); };
-bars($("#by-year"), D.by_year, "year"); bars($("#by-sector"), D.by_sector, "sector");
+/* ── when and where: year → groups → names ── */
+{
+  const BK = D.book || [];
+  let yr = null, grp = "theme", pick = null;
+  const lab = (x, g) => (g === "theme" ? (x.theme || "No theme ETF") : (x.sector || "–"));
+  const years = [...new Set(BK.map(b => b.year))].sort();
+  const draw = () => {
+    const ym = Math.max(1, ...years.map(y => BK.filter(b => b.year === y).length));
+    $("#by-year").innerHTML = `<div class="row ${yr==null?'on':''}" data-y=""><span>All years</span><div class="bw"><i class="yr" style="width:100%;opacity:.35"></i></div><b>${BK.length}</b></div>` +
+      years.map(y => { const n = BK.filter(b => b.year === y).length;
+        return `<div class="row ${yr===y?'on':''}" data-y="${y}"><span>${y}</span><div class="bw"><i class="yr" style="width:${n/ym*100}%"></i></div><b>${n}</b></div>`; }).join("");
+    const all = {}, sel = {};
+    BK.forEach(b => { const k = lab(b, grp); all[k] = (all[k]||0) + 1; if (yr==null || b.year === yr) sel[k] = (sel[k]||0) + 1; });
+    const last = k => k === "No theme ETF" || k === "–";
+    const rows = Object.keys(all).filter(k => sel[k]).sort((a, b) => (last(a)-last(b)) || (sel[b]-sel[a]) || (all[b]-all[a])).slice(0, 16);
+    const gm = Math.max(1, ...rows.map(k => all[k]));
+    $("#by-group").innerHTML = rows.map(k => `<div class="row ${pick===k?'on':''}" data-k="${esc(k)}" title="${sel[k]} ${yr??'all years'} · ${all[k]} all years"><span>${esc(k)}</span>
+      <div class="bw"><i class="all" style="width:${all[k]/gm*100}%"></i><i class="yr" style="width:${sel[k]/gm*100}%"></i></div>
+      <b>${sel[k]}${yr!=null?`<em> /${all[k]}</em>`:''}</b></div>`).join("") || `<div class="sub">No winners.</div>`;
+    const tot = rows.reduce((a, k) => a + sel[k], 0);
+    $("#ww-sel").textContent = yr==null ? "all years" : `${yr}: ${BK.filter(b=>b.year===yr).length} runs · dark bar = all years`;
+    const names = pick ? BK.filter(b => lab(b, grp) === pick && (yr==null || b.year === yr)).sort((a, b) => b.run_gain - a.run_gain) : [];
+    $("#ww-names").innerHTML = !pick ? "" : `<div class="hd">${esc(pick)} · ${yr??'all years'} · ${names.length} runs · click to study</div>` +
+      names.slice(0, 40).map(x => `<span class="nm open" data-id="${x.id}" title="${esc(x.name)} · breakout ${x.date}">${esc(x.symbol)}<i>+${x.run_gain}%</i></span>`).join("");
+  };
+  $("#by-year").onclick = e => { const r = e.target.closest(".row"); if (!r) return; yr = r.dataset.y ? +r.dataset.y : null; pick = null; draw(); };
+  $("#by-group").onclick = e => { const r = e.target.closest(".row"); if (!r) return; pick = pick === r.dataset.k ? null : r.dataset.k; draw(); };
+  document.querySelector(".ww-tabs").onclick = e => { const b = e.target.closest("button"); if (!b) return; grp = b.dataset.g; pick = null;
+    document.querySelectorAll(".ww-tabs button").forEach(x => x.classList.toggle("on", x === b)); draw(); };
+  draw();
+}
 
 /* ── the book ── */
 const B = D.book;
