@@ -76,6 +76,10 @@
       <span class="count" id="count"></span>
     </div>
     <div class="tbl-wrap"><table class="t" id="tbl"></table></div>
+    <div id="dropped" style="margin-top:22px">
+      <div class="sec-head" style="margin-bottom:10px"><h2 style="font-size:11px">Dropped this week</h2><div class="line"></div><p>On the list 3+ of the last 20 sessions, off it in the last 5 · the rules it failed at its two closest screens</p></div>
+      <div class="tbl-wrap"><table class="t" id="drop-tbl"></table></div>
+    </div>
     <div class="lookup"><span>Why isn't</span><input id="why-q" placeholder="TICKER" maxlength="6" autocomplete="off"><span>on the list?</span><div id="why-a"></div></div>
   </section>
 
@@ -186,6 +190,19 @@ function render(){
   $("#seg").onclick = e => { const b = e.target.closest("button"); if (b) { seg = b.dataset.k; draw(); } };
   ["#f-tb","#f-er","#f-bio"].forEach(s => $(s).onchange = draw);
   draw();
+
+  // dropped this week
+  const DR = D.dropped || [];
+  if (!DR.length) $("#dropped").remove();
+  else table($("#drop-tbl"), [
+    {h:"Ticker", k:"symbol", l:1, f:symTd},
+    {h:"Name", l:1, f:x=>`<td class="nm l">${esc(x.name||'')}</td>`},
+    {h:"RS", k:"rs_rating", f:x=>`<td><span class="rating" style="background:${ratingColor(x.rs_rating)}">${x.rs_rating??'–'}</span></td>`},
+    {h:"Last on list", k:"last", f:x=>`<td style="color:var(--t2)">${esc(x.last.slice(5).replace('-','/'))}</td>`},
+    {h:"Sessions", k:"n", tip:"Sessions on the list out of the last 20", f:x=>`<td>${x.n}</td>`},
+    {h:"Since", k:"since", tip:"Price change since its last day on the list", f:x=>`<td class="${x.since>0?'up':x.since<0?'dn':''}">${x.since==null?'–':(x.since>0?'+':'')+x.since.toFixed(1)+'%'}</td>`},
+    {h:"Why it dropped", l:1, f:x=>`<td class="l" style="color:var(--t2);white-space:normal;min-width:260px">${x.setup?'<span class="flag" style="color:#0b0b0a;background:#c9a55a" title="Still meets the RS Engine setup">SETUP</span> ':''}${esc(x.why)}</td>`},
+  ], DR, null);
 
   // "why isn't X on the list?"
   const NAMES = {s1:"1 Daily tightness",s2:"2 Momentum 6M >10B",s3:"3 Momentum 3M >10B",s4:"4 Momentum 1M >10B",s5:"5 Momentum 1W >10B",s6:"6 Post-earnings",s7:"7 Strongest >10B",s8:"8 Fundamentals",s9:"9 Strongest <10B",s10:"10 Momentum 6M <10B",s11:"11 Momentum 3M <10B",s12:"12 Momentum 1M <10B",s13:"13 Momentum 1W <10B",s14:"14 Institutional (FinViz)",s27:"Weekly RS scan"};

@@ -362,6 +362,7 @@ def run_scans(ctx: dict) -> dict:
                 "biotech": bool(bio.get(t)), "spark_px": [round(float(x), 2) for x in c[t].tail(22)]}
 
     rows = [row(t) for t in d.index[final]]
+    W = {}
     try:                                                    # "why isn't X on the list?" lookup, loaded on demand
         W = why(d, conds, member, tb, ta, bio, final)
         (ROOT / "docs" / "data").mkdir(parents=True, exist_ok=True)
@@ -369,8 +370,10 @@ def run_scans(ctx: dict) -> dict:
     except Exception as e:
         print("  scan lookup skipped:", e)
     rows.sort(key=lambda x: -((x["rs_rating"] or 0) + 8 * (x["lead_theme"] + x["both"] + x["leader"] + x["turner"])))
+    drop = []
     try:
-        persistence(rows, c, live=bool(ctx.get("live")))
+        hlog = persistence(rows, c, live=bool(ctx.get("live")))
+        drop = dropped(hlog, rows, W, c, stk)
     except Exception as e:
         print("  scan persistence skipped:", e)
 
@@ -395,7 +398,7 @@ def run_scans(ctx: dict) -> dict:
     return {"asof": ctx["asof"], "generated": ctx["generated"], "watchlists": wls, "rs_scan": rs_scan,
             "funnel": {"base": int(in_wl.sum()), "tight": int((in_wl & (tb | ta)).sum()), "rs_scan": int(S["s27"].sum()),
                        "wl6": int(wl6.sum()), "final": len(rows), "biotech": sum(r["biotech"] for r in rows)},
-            "rows": rows, "ep": eps, "parabolic": para, "coverage": cover, "top_themes": top_themes,
+            "rows": rows, "dropped": drop, "ep": eps, "parabolic": para, "coverage": cover, "top_themes": top_themes,
             "premarket": _premarket()}
 
 
@@ -432,6 +435,46 @@ def persistence(rows: list, c: pd.DataFrame, window: int = 20, live: bool = True
         r["persist"] = {"dots": dots, "n": n, "of": len(dates), "streak": streak, "first": first.get(t, today),
                         "gain": None if gain is None else round(gain, 1),
                         "stale": bool(n >= 15 and gain is not None and gain < 5)}
+    return log
+
+
+def dropped(log: pd.DataFrame, rows: list, W: dict, c: pd.DataFrame, stk: pd.DataFrame, sessions: int = 5,
+            min_n: int = 3, cap: int = 15) -> list:
+    """Names on the final list in the last `sessions` sessions that are off it today, with the rule(s) that knocked
+    them out (from the why-lookup: the screen they came closest to and what they failed there)."""
+    today = c.index[-1].strftime("%Y-%m-%d")
+    dates = sorted(log.date.unique())
+    recent = [d for d in dates if d < today][-sessions:]
+    now = {r["symbol"] for r in rows}
+    out = []
+    for t, g in log[log.date.isin(recent)].groupby("symbol"):
+        if t in now or t not in c.columns:
+            continue
+        last = g.date.max()
+        w = W.get(t) or {}
+        if w.get("bio"):
+            why_ = "biotech set aside"
+        elif w.get("tight_miss"):
+            why_ = "in a watchlist, failed the tightness pass: " + ", ".join(w["tight_miss"])
+        elif w.get("miss") is not None:
+            why_ = f"{SCREEN_NAMES.get(w.get('best'), w.get('best'))}: failed " + ", ".join(w["miss"])
+            nk, nm = next(iter((w.get("near") or {}).items()), (None, None))
+            if nk:
+                why_ += f" · {SCREEN_NAMES.get(nk, nk)}: failed " + ", ".join(nm)
+        else:
+            why_ = "no longer in the scan universe"
+        try:
+            chg = float(c[t].iloc[-1] / c[t].loc[:pd.Timestamp(last)].iloc[-1] - 1) * 100
+        except Exception:
+            chg = None
+        r = stk.loc[t] if t in stk.index else {}
+        out.append({"symbol": t, "last": last, "n": int(log[log.symbol == t].date.isin(dates[-20:]).sum()),
+                    "since": None if chg is None else round(chg, 1), "why": why_,
+                    "rs_rating": None if pd.isna(r.get("rs_rating")) else int(r.get("rs_rating")),
+                    "theme": r.get("theme") if len(r) else None, "exchange": r.get("exchange") if len(r) else None,
+                    "name": r.get("name") if len(r) else None, "setup": bool(r.get("setup_all")) if len(r) else False})
+    out = [x for x in out if x["n"] >= min_n]                # persistent names only: one-day visitors churn a lot
+    return sorted(out, key=lambda x: (x["n"], x["last"]), reverse=True)[:cap]
 
 
 def _er(t, ctx):
