@@ -23,6 +23,11 @@ a{color:inherit}
 
 /* nav */
 nav{position:sticky;top:0;z-index:50;background:rgba(11,11,10,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--border)}
+.pagebar{border-bottom:.5px solid var(--border);background:#0d0d0c}
+.pagebar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;padding-top:8px;padding-bottom:8px}
+.pagebar span{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.2em;color:var(--t3)}
+.pagebar a{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);text-decoration:none;white-space:nowrap}
+.pagebar a:hover{color:var(--t1)}
 nav .wrap{display:flex;align-items:center;gap:26px;height:48px;overflow-x:auto;scrollbar-width:none}
 nav .brand{font-family:"Playfair Display",serif;font-weight:700;font-size:16px;white-space:nowrap}
 nav .brand em{color:var(--gold);font-style:italic}
@@ -261,9 +266,10 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
 <nav><div class="wrap">
   <div class="brand">MJ — <em>RS Engine</em></div>
   <a href="#regime">Regime</a><a href="#environment">Breakouts</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
-  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#turners">Turning</a><a href="#signals">Signals</a><a href="#history">History</a><a href="constellation/" style="color:var(--gold)">Constellation →</a><a href="cockpit/" style="color:var(--gold)">Cockpit →</a><a href="stretch/" style="color:var(--gold)">Stretch →</a><a href="scans/" style="color:var(--gold)">Scans →</a><a href="tracker/" style="color:var(--gold)">Tracker →</a><a href="backtest/" style="color:var(--gold)">Backtests →</a><a href="modelbook/" style="color:var(--gold)">Model book →</a><a href="#method">Method</a>
+  <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#turners">Turning</a><a href="#signals">Signals</a><a href="#history">History</a><a href="#method">Method</a>
   <div class="asof" id="nav-asof"></div>
 </div></nav>
+<div class="pagebar"><div class="wrap"><span>PAGES</span><a href="constellation/">Constellation →</a><a href="cockpit/">Cockpit →</a><a href="stretch/">Stretch →</a><a href="scans/">Scans →</a><a href="tracker/">Tracker →</a><a href="backtest/">Backtests →</a><a href="modelbook/">Model book →</a></div></div>
 
 <div class="wrap">
   <header class="hero">
