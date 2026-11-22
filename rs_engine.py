@@ -1341,7 +1341,7 @@ def run(demo: bool, notify: bool):
     if not silent and (notify or is_saturday or SETTINGS.get("telegram_daily")):
         from notify import send_summary
         send_summary(payload, DATA_OUT / "tradingview_leaders.txt", SETTINGS)
-    elif alert and not demo and SETTINGS.get("telegram_alerts", True):
+    elif alert and not demo and not silent and SETTINGS.get("telegram_alerts", True):
         from notify import send_alert
         send_alert(payload, alert, SETTINGS)
     return payload
