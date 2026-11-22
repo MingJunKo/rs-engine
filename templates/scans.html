@@ -148,7 +148,7 @@ function render(){
 
   // final list
   let seg = "all";
-  const SEG = {all:["All",x=>true], lt:["Leading theme",x=>x.lead_theme], both:["Tech + fund",x=>x.both], ld:["Leaders",x=>x.leader], tu:["Turning",x=>x.turner]};
+  const SEG = {all:["All",x=>true], su:["Engine setup",x=>x.setup], lt:["Leading theme",x=>x.lead_theme], both:["Tech + fund",x=>x.both], ld:["Leaders",x=>x.leader], tu:["Turning",x=>x.turner]};
   const base = () => D.rows.filter(x => ($("#f-bio").checked || !x.biotech));
   const drawSeg = () => $("#seg").innerHTML = Object.entries(SEG).map(([k,[n,f]])=>`<button class="${k===seg?'on':''}" data-k="${k}">${n}<b>${base().filter(f).length}</b></button>`).join('');
   D.rows.forEach(x => { const p = x.persist; x.seen = p ? p.n + p.streak/100 : null; });
