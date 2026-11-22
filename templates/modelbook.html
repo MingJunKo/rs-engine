@@ -155,7 +155,7 @@ footer{padding:36px 0 48px;color:var(--t4);font-size:11px;font-family:"DM Mono",
       <div class="card"><h3>Winners vs all breakouts</h3><div class="sub">Median on the breakout day (winners' middle-half range in grey)</div><table class="t" id="cmp-tbl"></table></div>
       <div class="card"><h3>When and where</h3><div class="sub">Winning runs by breakout year · click a year to see where they came from, click a group to list the names</div>
         <div class="bars clickable" id="by-year"></div>
-        <div class="ww-tabs"><button data-g="theme" class="on">By theme</button><button data-g="sector">By sector</button><span id="ww-sel"></span></div>
+        <div class="ww-tabs"><button data-g="sector" class="on">By sector</button><button data-g="theme">By theme</button><span id="ww-sel"></span></div>
         <div class="bars clickable" id="by-group"></div>
         <div id="ww-names"></div></div>
     </div>
@@ -268,7 +268,7 @@ const bars = (el, rows, key) => { const m = Math.max(1, ...rows.map(r=>r.n));
 /* ── when and where: year → groups → names ── */
 {
   const BK = D.book || [];
-  let yr = null, grp = "theme", pick = null;
+  let yr = null, grp = "sector", pick = null;
   const lab = (x, g) => (g === "theme" ? (x.theme || "No theme ETF") : (x.sector || "–"));
   const years = [...new Set(BK.map(b => b.year))].sort();
   const draw = () => {
