@@ -70,7 +70,7 @@ gates = {"liquid ($10M+, $5+)": liquid, "above the 50-day": C > sma50, "RS ≥ 8
 strong = gates["liquid ($10M+, $5+)"] & gates["above the 50-day"] & gates["RS ≥ 80"] & gates["ADR ≥ 2.5%"]
 shape = {"within 6% of the 20-day high": (C / H.rolling(20).max() - 1) * 100 >= -6,
          "10-day range ≤ 2.5 ADRs": (H.rolling(10).max() - L.rolling(10).min()) / C * 100 / adr <= 2.5,
-         "0–4 ATRs above the 50-day": ((C - sma50) / a).between(0, 4)}
+         "0–4 ATRs above the 50-day": (((C - sma50) / a) >= 0) & (((C - sma50) / a) <= 4)}
 setup = strong & shape["within 6% of the 20-day high"] & shape["10-day range ≤ 2.5 ADRs"] & shape["0–4 ATRs above the 50-day"]
 
 # top-8 themes by RS each day → leader
