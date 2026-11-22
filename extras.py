@@ -134,6 +134,8 @@ def _nasdaq_day(day: dt.date) -> list:
                          params={"date": (day + dt.timedelta(days=1)).isoformat()},
                          headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
         rows = ((r.json().get("data") or {}).get("rows") or []) if r.ok else []
+        print(f"  econ calendar (nasdaq {day}): HTTP {r.status_code}, {len(rows)} rows, "
+              f"{sum(1 for x in rows if x.get('country') == 'United States')} US")
     except Exception as e:
         print(f"  econ calendar (nasdaq {day}): {e}")
         return []
