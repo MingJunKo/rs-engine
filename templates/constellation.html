@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Market Constellation · RS Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{--ink:#070706;--surface:rgba(16,16,15,.82);--border:#26241f;--gold:#c9a55a;--gold-b:#e8c070;--gold-d:#7a6234;
+  --t1:#ede6d8;--t2:#a59c8f;--t3:#6b645a;--up:#8fcf8a;--dn:#e0a17a;--info:#7c9cff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--ink);color:var(--t1);font-family:Barlow,system-ui,sans-serif;font-weight:300;font-size:13px;overflow:hidden}
+a{color:inherit;text-decoration:none}
+.mono{font-family:"DM Mono",monospace}
+#bar{position:fixed;top:0;left:0;right:0;height:52px;display:flex;align-items:center;gap:22px;padding:0 18px;
+  border-bottom:.5px solid var(--border);background:linear-gradient(#0b0b0aee,#0b0b0acc);z-index:5;backdrop-filter:blur(6px)}
+#bar .brand{font-family:"Playfair Display",serif;font-style:italic;font-size:18px;white-space:nowrap}
+#bar .brand b{font-family:"DM Mono",monospace;font-style:normal;font-size:10px;letter-spacing:.24em;color:var(--gold);margin-left:10px;font-weight:500}
+#stats{display:flex;gap:18px;flex:1;overflow-x:auto;scrollbar-width:none}
+.st{white-space:nowrap}.st .k{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.16em;color:var(--t3)}
+.st .v{font-family:"DM Mono",monospace;font-size:15px;color:var(--t1)}.st .v.g{color:var(--gold-b)}
+.badge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border:.5px solid;border-radius:3px;white-space:nowrap}
+.badge.bull{color:var(--up);border-color:#5bbf7a66}.badge.bear{color:#d4706a;border-color:#d4706a66}.badge.warn{color:var(--gold-b);border-color:var(--gold-d)}
+#back{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.14em;color:var(--t3);white-space:nowrap}#back:hover{color:var(--gold)}
+#sky{position:fixed;top:52px;left:0;width:100vw;height:calc(100vh - 52px);display:block;cursor:crosshair}
+.panel{position:fixed;background:var(--surface);border:.5px solid var(--border);border-radius:6px;z-index:4;backdrop-filter:blur(8px)}
+.ph{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.2em;color:var(--gold);padding:10px 12px 8px;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between}
+.ph span{color:var(--t3);letter-spacing:.08em}
+#left{top:66px;left:14px;width:218px}
+#filters{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px}
+#filters button{background:none;border:.5px solid var(--border);color:var(--t2);font-family:"DM Mono",monospace;font-size:10px;padding:4px 7px;border-radius:3px;cursor:pointer}
+#filters button.on{color:var(--ink);background:var(--gold);border-color:var(--gold)}
+#filters button b{font-weight:400;opacity:.65;margin-left:4px}
+#q{margin:0 12px 10px;width:calc(100% - 24px);background:#0b0b0a;border:.5px solid var(--border);color:var(--t1);font-family:"DM Mono",monospace;font-size:11px;padding:6px 8px;border-radius:3px;outline:none}
+#q:focus{border-color:var(--gold-d)}
+.legend{padding:8px 12px 12px;border-top:.5px solid var(--border);display:grid;gap:6px;font-size:11.5px;color:var(--t2)}
+.legend i{display:inline-block;width:14px;text-align:center;margin-right:7px}
+#right{top:66px;right:14px;width:300px;bottom:14px;display:flex;flex-direction:column}
+#log{overflow-y:auto;flex:1;padding:4px 0}
+.ev{display:grid;grid-template-columns:70px 1fr;gap:8px;padding:6px 12px;font-size:11.5px;color:var(--t2);border-bottom:.5px solid #1a1917;cursor:default}
+.ev.click{cursor:pointer}.ev.click:hover{background:#ffffff06;color:var(--t1)}
+.ev .k{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.12em;padding-top:2px}
+.ev .k.bull{color:var(--up)}.ev .k.bear{color:#d4706a}.ev .k.info{color:var(--info)}.ev .k.warn{color:var(--gold-b)}
+.ev .ts{color:var(--t3);font-family:"DM Mono",monospace;font-size:9px}
+#tip{position:fixed;pointer-events:none;z-index:6;background:#0b0b0af2;border:.5px solid var(--gold-d);border-radius:4px;padding:8px 10px;font-size:11.5px;display:none;min-width:170px}
+#tip b{font-family:"DM Mono",monospace;font-size:13px;color:var(--t1);font-weight:500}
+#tip .s{color:var(--t3);font-size:10.5px}
+.fl{font-family:"DM Mono",monospace;font-size:8.5px;letter-spacing:.08em;padding:1px 4px;border-radius:2px;margin-right:3px;display:inline-block;margin-top:4px}
+.fl.su{background:var(--gold);color:#0b0b0a}.fl.ld{color:var(--gold-b);background:#17130a}.fl.ep{color:var(--up);background:#1a2a1c}
+.fl.in{color:var(--info);background:#161b2e}.fl.c3{color:#0b0b0a;background:#e0b25a}.fl.sc{color:var(--t1);background:#26241f}.fl.tt{color:var(--up);background:#14201a}
+#card{right:328px;bottom:14px;width:260px;display:none}
+#card .body{padding:12px}
+#card .t{font-family:"DM Mono",monospace;font-size:20px}#card .n{color:var(--t2);font-size:12px;margin:2px 0 8px}
+#card .row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--t2)}#card .row b{color:var(--t1);font-weight:400;font-family:"DM Mono",monospace}
+#card .btns{display:flex;gap:6px;margin-top:10px}
+#card .btns a,#card .btns button{flex:1;text-align:center;background:none;border:.5px solid var(--gold-d);color:var(--gold-b);font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.1em;padding:6px;border-radius:3px;cursor:pointer}
+#hint{position:fixed;left:246px;bottom:16px;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.12em;color:var(--t3);z-index:3;pointer-events:none}
+@media (max-width:900px){
+  html,body{overflow:auto}
+  #sky{position:relative;top:52px;height:68vh;width:100%;margin-bottom:52px}
+  .panel{position:relative;top:auto;left:auto;right:auto;bottom:auto;width:auto;margin:12px}
+  #right{height:auto;max-height:none}#log{max-height:none}
+  #card{position:fixed;right:10px;left:10px;bottom:10px;width:auto;margin:0}
+  #hint{display:none}#bar .brand b{display:none}
+}
+</style>
+</head>
+<body>
+<div id="bar">
+  <a class="brand" href="../">MJ — RS Engine<b>CONSTELLATION</b></a>
+  <div id="stats"></div>
+  <span id="regime"></span>
+  <a id="back" href="../">← DASHBOARD</a>
+</div>
+<canvas id="sky"></canvas>
+<div class="panel" id="left">
+  <div class="ph">FILTER<span id="asof"></span></div>
+  <div id="filters"></div>
+  <input id="q" placeholder="Find a ticker… (Enter)" autocomplete="off" spellcheck="false">
+  <div class="legend">
+    <div><i style="color:#ede6d8">●</i>size &amp; brightness = RS rating</div>
+    <div><i style="color:#e8c070;text-shadow:0 0 6px #e8c070">●</i>gold glow = in a setup</div>
+    <div><i style="color:#8fcf8a">◯</i>green pulse = episodic pivot (2 days)</div>
+    <div><i style="color:#7c9cff">◯</i>blue ring = insider buying</div>
+    <div><i style="color:#e0b25a">◆</i>amber = Code 33</div>
+    <div style="color:var(--t3);font-size:11px;line-height:1.45">Themes sit by their ETF's RS rating (→ stronger) and its change this week (↑ gaining). Scroll to zoom, drag to pan, click a star.</div>
+  </div>
+</div>
+<div class="panel" id="right"><div class="ph">EVENT LOG<span id="evn"></span></div><div id="log"></div></div>
+<div class="panel" id="card"><div class="ph">SELECTED<span id="card-x" style="cursor:pointer">✕</span></div><div class="body" id="card-b"></div></div>
+<div id="tip"></div>
+<div id="hint">← WEAKER · THEME RS RATING · STRONGER →</div>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const F = {SETUP:1, LEADER:2, EP:4, INS:8, C33:16, SCAN:32, TT:64, A50:128};
+const tv = (s, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + s : s);
+
+if (!D) { document.body.innerHTML = "<p style='padding:80px;color:#a59c8f'>No data yet — the page fills in after the next engine run.</p>"; throw 0; }
+
+/* ── header ───────────────────────────────────────────── */
+const C = D.counts;
+$("#stats").innerHTML = [["STOCKS", C.stocks], ["IN SETUP", C.setups, 1], ["LEADERS", C.leaders], ["ON SCAN", C.scan],
+  ["EP · 2D", C.ep, 1], ["INSIDER", C.insiders], ["CODE 33", C.c33]]
+  .map(([k, v, g]) => `<div class="st"><div class="k">${k}</div><div class="v ${g ? 'g' : ''}">${v}</div></div>`).join("");
+$("#regime").innerHTML = D.regime ? `<span class="badge ${esc(D.tone || 'warn')}">${esc(D.regime)}</span>` : "";
+$("#asof").textContent = D.asof || "";
+
+/* ── world layout: theme anchors by RS (x) and RS change this week (y) ── */
+const WW = 1000, WH = 640, T = D.themes;
+const nodes = D.nodes.map(a => ({t: a[0], th: a[1], rs: a[2] ?? 1, d1: a[3], f: a[4], rs1w: a[5], dv: a[6], seen: a[7], name: a[8], ex: a[9]}));
+const byTheme = T.map(() => []); nodes.forEach(n => byTheme[n.th].push(n));
+const clampD = v => Math.max(-24, Math.min(24, v || 0));
+const anchors = T.map((t, i) => ({i, tx: 70 + ((t.rs ?? 50) - 1) / 98 * (WW - 140), ty: WH / 2 - clampD(t.d) / 24 * (WH / 2 - 70),
+  R: 12 + Math.sqrt(byTheme[i].length) * 5.2}));
+anchors.forEach(a => { a.x = a.tx; a.y = a.ty; });
+d3.forceSimulation(anchors).force("x", d3.forceX(a => a.tx).strength(.35)).force("y", d3.forceY(a => a.ty).strength(.35))
+  .force("c", d3.forceCollide(a => a.R + 6).iterations(3)).stop().tick(260);
+const rad = n => 0.9 + Math.pow(n.rs / 99, 3) * 3.4 + (n.f & F.LEADER ? .7 : 0);
+nodes.forEach((n, k) => { const a = anchors[n.th]; const ang = k * 2.399963; const rr = a.R * Math.sqrt((k % 97) / 97);
+  n.x = a.x + Math.cos(ang) * rr; n.y = a.y + Math.sin(ang) * rr; n.r = rad(n); n.ph = Math.random() * 6.28; });
+d3.forceSimulation(nodes).force("x", d3.forceX(n => anchors[n.th].x).strength(.16)).force("y", d3.forceY(n => anchors[n.th].y).strength(.16))
+  .force("c", d3.forceCollide(n => n.r + .9).iterations(2)).stop().tick(240);
+const qt = d3.quadtree(nodes, n => n.x, n => n.y);
+// each theme's real centre and edge (for labels and hover), and the box the whole sky occupies (for fitting the view)
+anchors.forEach((a, i) => { const m = byTheme[i]; if (!m.length) return;
+  a.x = d3.mean(m, n => n.x); a.y = d3.mean(m, n => n.y); a.R = d3.max(m, n => Math.hypot(n.x - a.x, n.y - a.y) + n.r) || 6; });
+const BB = {x0: d3.min(nodes, n => n.x - n.r) - 30, x1: d3.max(nodes, n => n.x + n.r) + 30,
+            y0: d3.min(nodes, n => n.y - n.r) - 20, y1: d3.max(anchors.filter((a, i) => byTheme[i].length), a => a.y + a.R + 22)};
+
+/* ── canvas, zoom ─────────────────────────────────────── */
+const cv = $("#sky"), ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = 1, base = {k: 1, x: 0, y: 0}, zt = d3.zoomIdentity;
+function size() {
+  DPR = Math.min(2, window.devicePixelRatio || 1); W = cv.clientWidth; H = cv.clientHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  const wide = W > 900, padL = wide ? 240 : 10, padR = wide ? 320 : 10;
+  const bw = BB.x1 - BB.x0, bh = BB.y1 - BB.y0, k = Math.min((W - padL - padR) / bw, (H - 24) / bh);
+  base = {k, x: padL + (W - padL - padR - bw * k) / 2 - BB.x0 * k, y: (H - bh * k) / 2 - BB.y0 * k};
+}
+size(); window.addEventListener("resize", () => { size(); });
+const zoom = d3.zoom().scaleExtent([.6, 12]).on("zoom", e => { zt = e.transform; });
+d3.select(cv).call(zoom);
+const toScreen = (x, y) => { const sx = base.x + x * base.k, sy = base.y + y * base.k; return [zt.x + sx * zt.k, zt.y + sy * zt.k]; };
+const toWorld = (px, py) => { const sx = (px - zt.x) / zt.k, sy = (py - zt.y) / zt.k; return [(sx - base.x) / base.k, (sy - base.y) / base.k]; };
+
+/* glow sprites */
+function sprite(col, a0) { const s = document.createElement("canvas"); s.width = s.height = 64; const g = s.getContext("2d");
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, col.replace("A", a0)); gr.addColorStop(.25, col.replace("A", a0 * .45));
+  gr.addColorStop(1, col.replace("A", 0)); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return s; }
+const SP = {gold: sprite("rgba(232,192,112,A)", .9), white: sprite("rgba(237,230,216,A)", .55), green: sprite("rgba(143,207,138,A)", .8)};
+const lerp = (a, b, t) => a + (b - a) * t;
+function starCol(rs, a) { const t = Math.max(0, Math.min(1, (rs - 20) / 79));
+  return `rgba(${Math.round(lerp(74, 237, t))},${Math.round(lerp(68, 230, t))},${Math.round(lerp(60, 216, t))},${a})`; }
+
+/* ── filters & selection ─────────────────────────────── */
+const FILTERS = [["All", 0], ["Setups", F.SETUP], ["Leaders", F.LEADER], ["On scan", F.SCAN], ["EP", F.EP], ["Insider", F.INS], ["Code 33", F.C33], ["Trend tmpl", F.TT]];
+let filt = 0, sel = null, hov = null, hovTheme = null;
+const cnt = m => m ? nodes.filter(n => n.f & m).length : nodes.length;
+function drawFilters() { $("#filters").innerHTML = FILTERS.map(([n, m]) => `<button class="${filt === m ? 'on' : ''}" data-m="${m}">${n}<b>${cnt(m)}</b></button>`).join(""); }
+drawFilters();
+$("#filters").onclick = e => { const b = e.target.closest("button"); if (b) { filt = +b.dataset.m; drawFilters(); } };
+const match = n => !filt || (n.f & filt);
+
+/* ── render loop ─────────────────────────────────────── */
+let last = 0;
+function frame(ts) {
+  requestAnimationFrame(frame);
+  if (ts - last < 33) return; last = ts;
+  const t = ts / 1000, k = base.k * zt.k;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.clearRect(0, 0, W, H);
+  // guides: RS 50 / 80 columns and the zero line for "gaining this week"
+  ctx.lineWidth = 1; ctx.setLineDash([2, 5]); ctx.strokeStyle = "#1f1e1b"; ctx.font = "9px 'DM Mono', monospace"; ctx.fillStyle = "#45403a";
+  [50, 80].forEach(r => { const x = 70 + (r - 1) / 98 * (WW - 140); const [a, b] = toScreen(x, BB.y0), [, c] = toScreen(x, BB.y1);
+    ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(a, c); ctx.stroke(); ctx.fillText("THEME RS " + r, a + 4, Math.max(b, 12) + 10); });
+  { const [a, b] = toScreen(BB.x0, WH / 2), [c] = toScreen(BB.x1, WH / 2); ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(c, b); ctx.stroke();
+    ctx.fillText("↑ RS GAINING THIS WEEK", a + 6, b - 6); ctx.fillText("↓ LOSING", a + 6, b + 14); }
+  ctx.setLineDash([]);
+  // theme links when a theme is hovered or a star selected
+  const lt = hovTheme ?? (sel ? sel.th : null);
+  if (lt != null) { const [ax, ay] = toScreen(anchors[lt].x, anchors[lt].y); ctx.strokeStyle = "rgba(201,165,90,.18)"; ctx.lineWidth = .7;
+    ctx.beginPath(); byTheme[lt].forEach(n => { const [x, y] = toScreen(n.x, n.y); ctx.moveTo(ax, ay); ctx.lineTo(x, y); }); ctx.stroke(); }
+  // glow pass (additive)
+  ctx.globalCompositeOperation = "lighter";
+  for (const n of nodes) {
+    if (!match(n)) continue;
+    const [x, y] = toScreen(n.x, n.y); if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
+    if (n.f & F.SETUP) { const s = (n.r * 7 + 6) * Math.sqrt(k) * (1 + .18 * Math.sin(t * 2.2 + n.ph)); ctx.globalAlpha = .75; ctx.drawImage(SP.gold, x - s / 2, y - s / 2, s, s); }
+    else if (n.rs >= 85) { const s = n.r * 6 * Math.sqrt(k); ctx.globalAlpha = .35 + .15 * Math.sin(t * 1.3 + n.ph); ctx.drawImage(SP.white, x - s / 2, y - s / 2, s, s); }
+  }
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+  // stars
+  for (const n of nodes) {
+    const [x, y] = toScreen(n.x, n.y); if (x < -20 || y < -20 || x > W + 20 || y > H + 20) continue;
+    const on = match(n), r = Math.max(.7, n.r * Math.sqrt(k) * .62);
+    ctx.fillStyle = (n.f & F.SETUP) && on ? "#f3d48d" : n.f & F.C33 && on ? "#e0b25a" : starCol(n.rs, on ? .95 : .12);
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+    if (!on) continue;
+    if (n.f & F.EP) { const p = (t * .55 + n.ph) % 1; ctx.strokeStyle = `rgba(143,207,138,${(1 - p) * .9})`; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(x, y, r + 2 + p * 16 * Math.sqrt(k), 0, 6.283); ctx.stroke(); }
+    if (n.f & F.INS) { ctx.strokeStyle = "rgba(124,156,255,.85)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r + 3, 0, 6.283); ctx.stroke(); }
+  }
+  // theme labels
+  ctx.textAlign = "center";
+  const crowded = k < .75;                               // zoomed out on a small screen: label only the leading themes
+  anchors.forEach((a, i) => { const th = T[i]; if (!byTheme[i].length) return;
+    if (crowded && !th.top && i !== lt) return;
+    const [x, y0] = toScreen(a.x, a.y + a.R); const y = y0 + 12; const big = th.top || i === lt;
+    ctx.font = `${big ? 500 : 400} ${big ? 10.5 : 9.5}px 'DM Mono', monospace`;
+    ctx.fillStyle = i === lt ? "#e8c070" : th.top ? "#c9a55a" : "#6b645a";
+    ctx.fillText(th.n.toUpperCase() + (th.xu ? " ▲" : th.xd ? " ▼" : ""), x, y); });
+  ctx.textAlign = "start";
+  // selection reticle
+  const mark = (n, c) => { const [x, y] = toScreen(n.x, n.y); const r = n.r * Math.sqrt(k) * .62 + 7;
+    ctx.strokeStyle = c; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.stroke();
+    [0, 1.571, 3.142, 4.712].forEach(an => { ctx.beginPath(); ctx.moveTo(x + Math.cos(an) * (r + 2), y + Math.sin(an) * (r + 2));
+      ctx.lineTo(x + Math.cos(an) * (r + 7), y + Math.sin(an) * (r + 7)); ctx.stroke(); }); };
+  if (hov && hov !== sel) mark(hov, "rgba(237,230,216,.55)");
+  if (sel) mark(sel, "#e8c070");
+}
+requestAnimationFrame(frame);
+
+/* ── hover, click, search ───────────────────────────── */
+const flags = n => [[F.SETUP, "su", "SETUP"], [F.LEADER, "ld", "LEADER"], [F.EP, "ep", "EP"], [F.INS, "in", "INSIDER"], [F.C33, "c3", "CODE 33"],
+  [F.SCAN, "sc", "ON SCAN"], [F.TT, "tt", "TT"]].filter(([m]) => n.f & m).map(([, c, l]) => `<span class="fl ${c}">${l}</span>`).join("");
+const fmt = (v, d = 1) => v == null ? "–" : (v > 0 ? "+" : "") + Number(v).toFixed(d);
+function pick(px, py) { const [x, y] = toWorld(px, py); const r = 10 / (base.k * zt.k); const n = qt.find(x, y, r); return n && match(n) ? n : null; }
+function themeAt(px, py) { const [x, y] = toWorld(px, py); let best = null, bd = 1e9;
+  anchors.forEach((a, i) => { const d = Math.hypot(a.x - x, a.y - y); if (d < a.R + 8 && d < bd) { bd = d; best = i; } }); return best; }
+cv.addEventListener("mousemove", e => {
+  const b = cv.getBoundingClientRect(), px = e.clientX - b.left, py = e.clientY - b.top;
+  hov = pick(px, py); hovTheme = hov ? null : themeAt(px, py);
+  const tip = $("#tip");
+  if (hov) { const n = hov, th = T[n.th];
+    tip.innerHTML = `<b>${esc(n.t)}</b> <span class="s">${esc(n.name)}</span><div class="s" style="margin-top:3px">${esc(th.n)} · RS <span style="color:#ede6d8">${n.rs}</span> (${fmt(n.rs1w, 0)} wk) · ${fmt(n.d1)}% today${n.seen ? ` · on scan ${n.seen}/20` : ''}</div>${flags(n)}`;
+  } else if (hovTheme != null) { const th = T[hovTheme], m = byTheme[hovTheme];
+    tip.innerHTML = `<b>${esc(th.n)}</b> <span class="s">${esc(th.etf)}</span><div class="s" style="margin-top:3px">Theme RS ${th.rs ?? '–'} (${fmt(th.d, 0)} this week) · ${m.length} stocks · ${m.filter(n => n.f & F.SETUP).length} in setup${th.mco != null ? ` · McClellan ${fmt(th.mco, 0)}` : ''}</div>`;
+  }
+  tip.style.display = hov || hovTheme != null ? "block" : "none";
+  tip.style.left = Math.min(e.clientX + 14, innerWidth - 260) + "px"; tip.style.top = (e.clientY + 14) + "px";
+  cv.style.cursor = hov ? "pointer" : hovTheme != null ? "help" : "crosshair";
+});
+cv.addEventListener("mouseleave", () => { hov = null; hovTheme = null; $("#tip").style.display = "none"; });
+cv.addEventListener("click", e => { const b = cv.getBoundingClientRect(); const n = pick(e.clientX - b.left, e.clientY - b.top); select(n); });
+function select(n, fly) {
+  sel = n; const card = $("#card");
+  if (!n) { card.style.display = "none"; return; }
+  const th = T[n.th], peers = byTheme[n.th].filter(m => m.f & F.SETUP).length;
+  $("#card-b").innerHTML = `<div class="t">${esc(n.t)}</div><div class="n">${esc(n.name)}</div>
+    <div class="row"><span>Theme</span><b>${esc(th.n)}</b></div><div class="row"><span>RS rating</span><b>${n.rs} (${fmt(n.rs1w, 0)} wk)</b></div>
+    <div class="row"><span>Today</span><b>${fmt(n.d1)}%</b></div><div class="row"><span>$ volume</span><b>${n.dv ?? '–'}M</b></div>
+    <div class="row"><span>On scan list</span><b>${n.seen ? n.seen + ' of last 20 sessions' : (n.f & F.SCAN) ? 'today' : 'no'}</b></div>
+    <div class="row"><span>Theme setups</span><b>${peers} of ${byTheme[n.th].length}</b></div><div>${flags(n)}</div>
+    <div class="btns"><a href="${tv(n.t, n.ex)}" target="_blank" rel="noopener">CHART ↗</a><button id="peers">THEME</button></div>`;
+  card.style.display = "block";
+  $("#peers").onclick = () => { filt = 0; drawFilters(); hovTheme = n.th; setTimeout(() => hovTheme = null, 2500); };
+  if (fly) { const [sx, sy] = [base.x + n.x * base.k, base.y + n.y * base.k], k = 3.2;
+    d3.select(cv).transition().duration(900).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - sx * k, H / 2 - sy * k).scale(k)); }
+}
+$("#card-x").onclick = () => select(null);
+$("#q").addEventListener("keydown", e => { if (e.key !== "Enter") return; const q = e.target.value.trim().toUpperCase();
+  const n = nodes.find(n => n.t === q); if (n) { filt = 0; drawFilters(); select(n, true); e.target.style.borderColor = ""; } else e.target.style.borderColor = "#d4706a"; });
+window.addEventListener("keydown", e => { if (e.key === "Escape") { select(null); d3.select(cv).transition().duration(600).call(zoom.transform, d3.zoomIdentity); } });
+
+/* ── event log ──────────────────────────────────────── */
+$("#evn").textContent = D.events.length + " today";
+$("#log").innerHTML = D.events.map((e, i) => `<div class="ev ${e.sym ? 'click' : ''}" data-i="${i}"><span class="k ${esc(e.tone || 'warn')}">${esc(e.k)}</span><span>${esc(e.t)}</span></div>`).join("")
+  || `<div class="ev"><span class="k">—</span><span>Quiet day: no events.</span></div>`;
+$("#log").onclick = ev => { const r = ev.target.closest(".ev.click"); if (!r) return; const e = D.events[+r.dataset.i];
+  const n = nodes.find(n => n.t === e.sym); if (n) { filt = 0; drawFilters(); select(n, true); return; }
+  const ti = T.findIndex(t => t.etf === e.sym); if (ti >= 0) { hovTheme = ti; setTimeout(() => hovTheme = null, 3000); } };
+</script>
+</body>
+</html>

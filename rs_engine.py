@@ -1217,6 +1217,13 @@ def run(demo: bool, notify: bool):
                 f"breadth {breadth_now:.0f}%"),
         "note": {0: "cash — no new longs", 25: "pilot positions only, A+ setups",
                  50: "half size, best setups", 100: "full size, press winners"}[expo]}
+    try:                                                    # market constellation page
+        import constellation as CN
+        cn_ = CN.build(stk, payload, SETTINGS, scans_payload)
+        CN.write_page(_clean_json(cn_), DOCS)
+        log(f"  constellation: {cn_['counts']['stocks']} stocks · {len(cn_['events'])} events")
+    except Exception as e:
+        log(f"  constellation failed: {e}")
     # re-write the dashboard now that the extras (signals) and exposure exist
     try:
         payload = _clean_json(payload)
