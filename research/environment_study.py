@@ -31,7 +31,8 @@ ev = ev[ev.complete == True].copy()
 log(f"{len(ev):,} complete breakouts, {int(ev.winner.sum())} winners, {ev.date.min().date()} → {ev.date.max().date()}")
 
 # ── market data ─────────────────────────────────────────────────────
-px = E.download_yahoo(["SPY", "QQQ", "IWM", "RSP", "^VIX", "^VIX3M"], period="16y", want=("Close",))["Close"]
+px = E.download_yahoo(["SPY", "QQQ", "IWM", "RSP", "^VIX", "^VIX3M", "^IRX", "^TNX", "HYG", "IEF", "DX-Y.NYB"],
+                      period="16y", want=("Close",))["Close"]
 px = px.ffill()
 idx = px.index
 
@@ -64,6 +65,31 @@ C["VIX below its 50-day average"] = (vix < vix.rolling(50).mean()).astype(float)
 if "^VIX3M" in px:
     C["VIX term structure calm (VIX < VIX3M)"] = (px["^VIX"] < px["^VIX3M"]).astype(float).where(px["^VIX3M"].notna())
 
+# where the market is in its cycle
+hi = spy.rolling(252, min_periods=120).max()
+dd = (spy / hi - 1) * 100
+C["SPY in a correction (≥ 10% below its high)"] = (dd <= -10).astype(float)
+C["SPY within 3% of its 52-week high"] = (dd >= -3).astype(float)
+C["Recovering: was ≥ 10% off the high in the last 3 months, now above the 50-day"] = (
+    (dd.rolling(63).min() <= -10) & (spy > spy.rolling(50).mean())).astype(float)
+C["VIX above 20"] = (vix >= 20).astype(float)
+C["VIX above 25"] = (vix >= 25).astype(float)
+# macro, from market prices (FRED blocks GitHub's servers)
+irx, tnx = px.get("^IRX"), px.get("^TNX")
+if irx is not None:
+    ch = irx - irx.shift(126)
+    C["Rates falling: 3-month T-bill down ≥ 0.25 in 6 months (Fed cutting)"] = (ch <= -0.25).astype(float).where(irx.notna())
+    C["Rates rising: 3-month T-bill up ≥ 0.25 in 6 months (Fed hiking)"] = (ch >= 0.25).astype(float).where(irx.notna())
+    C["Short rates near zero (T-bill < 1%)"] = (irx < 1).astype(float).where(irx.notna())
+if tnx is not None:
+    C["10-year yield falling (3 months)"] = ((tnx - tnx.shift(63)) < 0).astype(float).where(tnx.notna())
+    if irx is not None:
+        C["Yield curve not inverted (10-year > 3-month)"] = ((tnx - irx) > 0).astype(float).where(tnx.notna() & irx.notna())
+if "HYG" in px and "IEF" in px:
+    C["Credit improving (HYG/IEF up over 3 months)"] = ((px["HYG"] / px["IEF"]).pct_change(63) > 0).astype(float)
+if "DX-Y.NYB" in px:
+    C["US dollar falling (3 months)"] = (px["DX-Y.NYB"].pct_change(63) < 0).astype(float).where(px["DX-Y.NYB"].notna())
+
 # engine breadth + breakout environment
 try:
     b = pd.read_csv(ROOT / "data" / "history" / "breadth_long.csv", index_col=0, parse_dates=True).reindex(idx, method="ffill")
@@ -95,41 +121,6 @@ def fred(sid, lag_days=0):
         return None
 
 
-ff = fred("DFF", 1)
-if ff is not None:
-    ch = ff - ff.shift(126)
-    C["Fed cutting (funds rate down ≥ 0.25 in 6 months)"] = (ch <= -0.25).astype(float)
-    C["Fed hiking (funds rate up ≥ 0.25 in 6 months)"] = (ch >= 0.25).astype(float)
-    C["Fed on hold (6-month change under 0.25)"] = (ch.abs() < 0.25).astype(float)
-    C["Fed funds rate below 2%"] = (ff < 2).astype(float)
-y10 = fred("DGS10", 1)
-if y10 is not None:
-    C["10-year yield falling (3 months)"] = ((y10 - y10.shift(63)) < 0).astype(float)
-crv = fred("T10Y2Y", 1)
-if crv is not None:
-    C["Yield curve not inverted (10y > 2y)"] = (crv > 0).astype(float)
-hy = fred("BAMLH0A0HYM2", 1)
-if hy is not None:
-    C["Credit spreads tightening (high-yield, 3 months)"] = ((hy - hy.shift(63)) < 0).astype(float)
-    C["Credit spreads below their 1-year median"] = (hy < hy.rolling(252).median()).astype(float)
-bs = fred("WALCL", 7)
-if bs is not None:
-    C["Fed balance sheet growing (13 weeks)"] = ((bs - bs.shift(63)) > 0).astype(float)
-m2 = fred("M2SL", 45)
-if m2 is not None:
-    C["M2 money supply growing > 5% a year"] = ((m2 / m2.shift(252) - 1) * 100 > 5).astype(float)
-nf = fred("NFCI", 7)
-if nf is not None:
-    C["Financial conditions loose (Chicago Fed NFCI < 0)"] = (nf < 0).astype(float)
-    C["Financial conditions easing (NFCI falling, 3 months)"] = ((nf - nf.shift(63)) < 0).astype(float)
-usd = fred("DTWEXBGS", 1)
-if usd is not None:
-    C["US dollar falling (3 months)"] = ((usd - usd.shift(63)) < 0).astype(float)
-cpi = fred("CPIAUCSL", 45)
-if cpi is not None:
-    yoy = (cpi / cpi.shift(252) - 1) * 100
-    C["Inflation falling (CPI YoY lower than 3 months ago)"] = (yoy < yoy.shift(63)).astype(float)
-
 # ── score every condition ───────────────────────────────────────────
 prev = lambda s: s.shift(1)                                  # as known the evening before the breakout
 ev = ev.set_index("date")
@@ -156,6 +147,18 @@ for name, s in C.items():
                  "years_tested": len(yrs), "years_on_better": int(sum(yrs)),
                  "since": str(e.index.min().date())})
 R = pd.DataFrame(rows).sort_values("lift", ascending=False)
+inv = R[R.lift < 1].copy()                                   # "NOT x" is the useful side
+inv["condition"] = "NOT: " + inv.condition
+inv["events_on"] = len(ev) - inv.events_on
+inv["share_on"] = 100 - inv.share_on
+inv[["win_on", "win_off"]] = inv[["win_off", "win_on"]].values
+inv[["ret20_on", "ret20_off"]] = inv[["ret20_off", "ret20_on"]].values
+inv["lift"] = (inv.win_on / inv.win_off).round(2)
+inv["lift_ex2020"] = (1 / inv.lift_ex2020).round(2)
+inv["years_on_better"] = inv.years_tested - inv.years_on_better
+for k in [r_["condition"] for r_ in rows if r_["lift"] is not None and r_["lift"] < 1]:
+    C["NOT: " + k] = 1 - C[k]
+R = pd.concat([R[R.lift >= 1], inv]).sort_values("lift", ascending=False)
 
 # ── checklist score: robust conditions only ─────────────────────────
 robust = R[(R.lift >= 1.25) & (R.lift_ex2020 >= 1.15) & (R.years_tested >= 5) & (R.years_on_better >= 0.65 * R.years_tested)]
