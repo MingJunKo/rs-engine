@@ -184,10 +184,12 @@ if picked:
         f_on = prev(C[k]).reindex(g.index) == 1
         loo[k] = {"with": round(100 * g[f_on].winner.mean(), 2), "without": round(100 * g[~f_on].winner.mean(), 2)}
     # per-year check of the composite: high score (≥ 3) vs low (≤ 1)
-    scy = score.reindex(ev.index)
+    scy = score.reindex(ev.index).values                       # aligned by position (dates repeat across events)
+    yrs_ = ev.index.year.values
     py = []
-    for y, g in ev.groupby(ev.index.year):
-        hi_, lo_ = g[scy.reindex(g.index) >= 3], g[scy.reindex(g.index) <= 1]
+    for y in sorted(set(yrs_)):
+        m_ = yrs_ == y
+        hi_, lo_ = ev[m_ & (scy >= 3)], ev[m_ & (scy <= 1)]
         if len(hi_) >= 100 and len(lo_) >= 100:
             py.append({"year": int(y), "hi": round(100 * hi_.winner.mean(), 2), "lo": round(100 * lo_.winner.mean(), 2)})
 out = {"events": int(len(ev)), "winners": int(ev.winner.sum()), "base_win_pct": round(100 * ev.winner.mean(), 2),
