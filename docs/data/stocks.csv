@@ -2113,7 +2113,7 @@ NMAX,Newsmax Inc.,Industrials,34,-27,35.0,-20.22,7.0,-26.93,-14.32,-33.84,-38.76
 ZWS,Zurn Elkay Water Solutions Corporation,Water,34,-3,65.0,-3.03,43.95,-3.91,-9.42,-9.79,-16.93,3.14,66908499.72,-1.7,False,False,0100010,438.0,4.78,CGW PAVE PHO
 ZUMZ,Zumiez Inc.,Retail,34,10,40.0,-13.48,13.01,-7.07,-9.46,-29.71,-57.51,4.91,2831330.75,-1.45,False,False,0000000,125.0,-3.1,
 ACDC,ProFrac Holding Corp.,Energy,34,19,40.0,-27.69,2.75,-12.7,-28.76,-42.95,-65.88,12.06,8094318.42,-3.94,False,False,0000010,144.0,5.11,
-HCC,Warrior Met Coal Inc.,Metals & Mining,34,3,50.0,-10.55,76.56,-8.15,-5.42,-26.36,-28.75,4.38,56017939.41,-2.5,False,False,1000010,346.0,0.87,XME
+HCC,Warrior Met Coal Inc.,Metals & Mining,34,3,50.0,-10.55,76.56,-8.15,-5.42,-26.36,-28.75,4.38,56017939.5,-2.5,False,False,1000010,346.0,0.87,XME
 BLTE,Belite Bio Inc,Health Care,34,-38,30.0,-12.87,127.38,-22.5,-15.23,-19.82,-34.21,5.67,32839198.24,-3.24,False,False,0000010,82.0,10.81,
 AMBP,Ardagh Metal Packaging S.A.,Industrials,34,-2,40.0,-6.87,4.32,-6.9,-8.67,-17.11,-17.72,3.16,6466765.63,-1.46,False,False,00000-0,,,
 SFST,Southern First Bancshares Inc.,Banks,34,-13,50.0,-2.5,56.9,-6.15,-7.09,-9.7,-11.92,2.67,5025767.72,-2.23,False,False,0010010,165.0,10.74,KRE
@@ -3186,7 +3186,6 @@ RIO,Rio Tinto Plc,Metals & Mining,1,-6,50.0,-16.15,72.73,-12.32,-13.56,-30.6,-33
 DUOT,Duos Technologies Group Inc.,Software & Cloud,1,-9,40.0,-58.78,2.59,-48.46,-56.76,-74.78,-82.31,10.47,5458934.4,-7.86,False,False,0000010,98.0,44.12,
 HSBC,HSBC Holdings plc.,Banks,1,-14,40.0,-11.55,80.02,-10.71,-12.42,-22.69,-25.03,1.79,170365096.74,-6.04,False,False,1000010,706.0,9.63,
 VALE,VALE S.A.,Metals & Mining,1,-5,30.0,-22.79,9.49,-15.42,-22.21,-36.9,-45.23,2.96,423552928.37,-8.17,False,False,0000000,538.0,-2.89,SLX
-ACA,ACA,Infrastructure,,,0.0,,,,,,,,,,False,False,10-1--0,,,PAVE
 ADRX,ADARx Pharmaceuticals Inc.,Health Care,,,35.0,,12.79,-9.93,-27.66,,,12.33,7264234.01,,False,False,---0--0,,,
 ASBH,American Savings Bank N.A.,,,,45.0,,19.54,-7.52,1.32,,,4.62,5175687.2,,False,False,---1--0,,,
 ETRA,Electra Therapeutics Inc. Common stock,Health Care,,,45.0,,8.11,-8.26,-12.32,,,13.6,3034975.83,,False,False,---0--0,,,
