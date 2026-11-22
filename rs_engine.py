@@ -1158,6 +1158,18 @@ def run(demo: bool, notify: bool):
               "adr": round(float(r.adr), 1)}
              for t, r in leaders[a_ok].sort_values("rs_rating", ascending=False).iterrows()]
     payload["alist"], payload["mkt_wmacd"] = alist, mk
+    # breakout environment: today's setup count and breakout follow-through (history rebuilt monthly by backtest10)
+    try:
+        import environment as ENV
+        if not demo:
+            env_ = ENV.compute(close[S], high[S], low[S], vol[S], stk_rating, SETTINGS)
+            ENV.save_history(env_.tail(30))
+        payload["environment"] = _clean_json(ENV.payload())
+        if payload["environment"]:
+            pe = payload["environment"]
+            log(f"  environment: {pe['verdict']} · {pe['setups']} setups ({pe['setup_rank']}th pct) · hold {pe['hold_rate']}%")
+    except Exception as e:
+        log(f"  environment failed: {e}")
 
     # ── extras: theme McClellan, industry clusters, code 33, insider buying, economic calendar ──
     try:

@@ -87,6 +87,13 @@ def build_message(p: dict, settings: dict) -> str:
     mw = p.get("mkt_wmacd") or {}
     if mw:
         lines.append("Index weekly MACD: " + " · ".join(f"{k} {'🟢 green' if v else '🔴 red'}" for k, v in mw.items()))
+    try:
+        import environment as ENV
+        bl = ENV.brief_line(p.get("environment"))
+        if bl:
+            lines.append(bl)
+    except Exception:
+        pass
     X = p.get("extras") or {}
     ev = X.get("econ") or []
     if ev:

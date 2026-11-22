@@ -58,6 +58,17 @@ section{padding:30px 0 6px}
 .grid2>*,.grid-rrg>*{min-width:0}
 
 /* gauges */
+.env-top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+.env-tiles{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+.env-tile{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:10px 14px;min-width:150px}
+.env-tile .k{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase}
+.env-tile .v{font-size:22px;margin-top:3px}.env-tile .s{font-size:11px;color:var(--t3);margin-top:2px}
+.env-range{display:flex;gap:6px;margin-bottom:10px}
+.env-range button{background:none;border:.5px solid var(--border);color:var(--t3);font-family:"DM Mono",monospace;font-size:10px;padding:3px 9px;border-radius:3px;cursor:pointer}
+.env-range button.on{color:var(--gold);border-color:var(--gold-dim)}
+.env-chart{min-height:200px}
+.env-q{width:100%;border-collapse:collapse;font-size:12px}.env-q td,.env-q th{padding:5px 8px;border-bottom:.5px solid var(--border);text-align:right}
+.env-q th{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;color:var(--t3);font-weight:400}.env-q td:first-child,.env-q th:first-child{text-align:left}
 .gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px}
 .gauge{background:var(--surface);border:.5px solid var(--border);border-radius:7px;padding:13px 14px 10px;position:relative;overflow:hidden}
 .gauge::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--dn);opacity:.7}
@@ -249,7 +260,7 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
 <body>
 <nav><div class="wrap">
   <div class="brand">MJ — <em>RS Engine</em></div>
-  <a href="#regime">Regime</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
+  <a href="#regime">Regime</a><a href="#environment">Breakouts</a><a href="#rotation">Rotation</a><a href="#sectors">Sectors</a>
   <a href="#groups">Groups</a><a href="#leaders">Leaders</a><a href="#turners">Turning</a><a href="#signals">Signals</a><a href="#history">History</a><a href="cockpit/" style="color:var(--gold)">Cockpit →</a><a href="stretch/" style="color:var(--gold)">Stretch →</a><a href="scans/" style="color:var(--gold)">Scans →</a><a href="tracker/" style="color:var(--gold)">Tracker →</a><a href="backtest/" style="color:var(--gold)">Backtests →</a><a href="modelbook/" style="color:var(--gold)">Model book →</a><a href="#method">Method</a>
   <div class="asof" id="nav-asof"></div>
 </div></nav>
@@ -274,6 +285,23 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
     </div></details>
     <details class="fold" id="cal-fold" style="margin-top:12px"><summary>Economic calendar <span>— US events this week (Jeff's rule: no new entries right before major data)</span></summary>
       <div class="body"><div id="cal"></div></div></details>
+  </section>
+
+  <section id="environment">
+    <div class="sec-head"><h2>Breakout environment</h2><div class="line"></div><p id="env-sub">Are there setups, and are breakouts working?</p></div>
+    <div class="env-top"><div id="env-badge"></div><div class="env-tiles" id="env-tiles"></div></div>
+    <div class="env-range" id="env-range"><button data-r="252">1Y</button><button data-r="756" class="on">3Y</button><button data-r="0">All</button></div>
+    <div class="grid2">
+      <div class="card"><h3>Stocks in a setup <span style="color:var(--t3)">· % of liquid stocks</span></h3><div id="env-c1" class="env-chart"></div></div>
+      <div class="card"><h3>Breakouts holding <span style="color:var(--t3)">· % still above the pivot 10 days later</span></h3><div id="env-c2" class="env-chart"></div></div>
+    </div>
+    <details class="fold" style="margin-top:12px"><summary>Does it predict anything? <span>— tested on history</span></summary><div class="body" id="env-proof"></div></details>
+    <details class="fold" style="margin-top:12px"><summary>How it's measured</summary><div class="body guide">
+      <div><b>Setup</b> — the Leaders definition applied to every liquid stock: above the 50-day, RS ≥ 80, ADR ≥ 2.5%, within 6% of the 20-day high, 10-day range ≤ 2.5 ADRs, 0–4 ATRs above the 50-day.</div>
+      <div><b>Breakout</b> — a stock in a setup closes above its prior 20-day high on ≥ 1.4× average volume. <b>Holding</b> = still above that pivot 10 sessions later; the line covers breakouts from 10–29 sessions ago, so it is known on the day.</div>
+      <div><b>Verdict</b> — Healthy: setups in the top 40% of their history and breakouts holding at or above their typical rate. Poor: setups in the bottom 30% and breakouts holding 5+ points below typical. Otherwise Mixed (or Improving when breakouts work but setups are still scarce).</div>
+      <div><b>Caveat</b> — history uses today's stock list, so delisted names are missing; the % of liquid stocks keeps years comparable.</div>
+    </div></details>
   </section>
 
   <section id="rotation">
@@ -467,8 +495,9 @@ function lineChart(el, series, dates, opts={}){
   if (opts.ref != null && opts.ref>mn && opts.ref<mx) g += `<line x1="${P.l}" x2="${W-P.r}" y1="${Y(opts.ref)}" y2="${Y(opts.ref)}" stroke="#45403a" stroke-dasharray="3 3"/>`;
   [0, Math.floor(n/3), Math.floor(2*n/3), n-1].forEach(i => g += `<text x="${X(i)}" y="${H-6}" fill="#6b645a" font-size="9" text-anchor="${i===0?'start':i===n-1?'end':'middle'}">${dates[i]}</text>`);
   series.forEach(s => {
-    const pts = s.values.map((v,i)=> v==null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).filter(Boolean).join(" ");
-    g += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.width||1.8}" ${s.dash?`stroke-dasharray="${s.dash}"`:""} stroke-linejoin="round"/>`;
+    const segs = [[]];                                   // a missing value breaks the line instead of bridging the gap
+    s.values.forEach((v,i) => v==null ? (segs[segs.length-1].length && segs.push([])) : segs[segs.length-1].push(`${X(i).toFixed(1)},${Y(v).toFixed(1)}`));
+    segs.filter(p => p.length).forEach(p => g += `<polyline points="${p.join(" ")}" fill="none" stroke="${s.color}" stroke-width="${s.width||1.8}" ${s.dash?`stroke-dasharray="${s.dash}"`:""} ${s.opacity?`opacity="${s.opacity}"`:""} stroke-linejoin="round"/>`);
     const lv = s.values[s.values.length-1];
     if (lv!=null && !s.dash) g += `<circle cx="${X(n-1)}" cy="${Y(lv)}" r="3" fill="${s.color}"/>`;
   });
@@ -786,6 +815,39 @@ function drawSignals(){
     {h:"Sales QoQ", l:1, f:x=>`<td class="l" style="color:var(--t2)">${(x.sales_qoq||[]).map(v=>(v>0?'+':'')+v+'%').join(' → ')}</td>`},
   ], Q.map(x=>({...x, symbol:x.t, rs_rating:(ST[x.t]||[])[2] ?? x.rs, s_yoy:(x.sales||[]).slice(-1)[0]})), {sort:"rs_rating"});
 }
+
+/* breakout environment */
+function drawEnvironment(){
+  const E = D.environment; if (!E || !E.dates) { $("#environment").remove(); return; }
+  $("#env-sub").textContent = `Data ${E.asof} · history since ${E.since}`;
+  $("#env-badge").innerHTML = `<span class="badge ${E.tone}">${esc(E.verdict)}</span>`;
+  const d20 = E.setups_20d_ago==null ? '' : ` · ${E.setups_20d_ago} twenty sessions ago`;
+  $("#env-tiles").innerHTML = [
+    ["Setups now", E.setups, `${E.setup_pct}% of liquid stocks${d20}`],
+    ["vs history", E.setup_rank + "th", `percentile since ${E.since}`],
+    ["Breakouts holding", E.hold_rate==null ? "–" : E.hold_rate.toFixed(0)+"%", E.hold_median==null ? "too few breakouts" : `typical ${E.hold_median.toFixed(0)}%`],
+    ["Avg 10-day gain", E.bo_gain10==null ? "–" : fmt(E.bo_gain10,1)+"%", "of recent breakouts"],
+  ].map(([k,v,sub]) => `<div class="env-tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`).join("");
+  const med = a => { const x = a.filter(v=>v!=null).sort((p,q)=>p-q); return x.length ? x[Math.floor(x.length/2)] : null; };
+  const setMed = med(E.setup_series);
+  const draw = n => {
+    const k = n ? Math.max(0, E.dates.length - n) : 0, dts = E.dates.slice(k).map(d => d.slice(2,7).replace("-","/"));
+    const raw = E.setup_series.slice(k), ma = raw.map((_,i) => i < 9 ? null : raw.slice(i-9,i+1).reduce((p,q)=>p+q,0)/10);
+    lineChart($("#env-c1"), [{values:raw, color:"#e0b25a", width:1, opacity:.3, dash:null}, {values:ma, color:"#e0b25a", width:1.8}], dts, {h:200, dp:1, ref:setMed});
+    lineChart($("#env-c2"), [{values:E.hold_series.slice(k), color:"#8fcf8a", width:1.5}], dts, {h:200, dp:0, ref:E.hold_median});
+  };
+  document.querySelectorAll("#env-range button").forEach(b => b.onclick = () => {
+    document.querySelectorAll("#env-range button").forEach(x => x.classList.toggle("on", x===b)); draw(+b.dataset.r); });
+  draw(756);
+  const S = E.stats || {};
+  if (!S.setups) { $("#env-proof").innerHTML = `<div class="dim">The 10-year test runs with the monthly backtest; results appear here after it.</div>`; return; }
+  const tbl = (x, label, unit) => `<table class="env-q"><tr><th>${label}</th><th>Range</th><th>Next 20 sessions: breakouts holding</th><th>Their avg 10-day gain</th><th>Breakouts / 20 sessions</th><th>SPY next 20d</th></tr>` +
+    x.quintiles.map(q => `<tr><td>${['Lowest','Low','Middle','High','Highest'][q.bucket-1]} 20%</td><td>${q.lo}–${q.hi}${unit}</td><td>${q.fwd_hold}%</td><td>${fmt(q.fwd_gain10,1)}%</td><td>${q.fwd_bo}</td><td>${q.spy_fwd20==null?'–':fmt(q.spy_fwd20,1)+'%'}</td></tr>`).join("") + `</table>`;
+  const rho = r => Math.abs(r) < 0.1 ? "no real link" : Math.abs(r) < 0.25 ? "a weak link" : Math.abs(r) < 0.4 ? "a moderate link" : "a strong link";
+  $("#env-proof").innerHTML = `<p style="font-size:12.5px;margin:0 0 10px">${S.period} · ${S.days.toLocaleString()} trading days. Days are split into fifths by each measure, then the next 20 sessions' breakouts are scored.</p>
+    <p style="font-size:12.5px;margin:0 0 6px"><b>Setup count</b> → next breakouts: ${rho(S.setups.corr_fwd_hold)} (rank correlation ${S.setups.corr_fwd_hold}).</p>${tbl(S.setups, "Setups (% of liquid)", "%")}
+    <p style="font-size:12.5px;margin:14px 0 6px"><b>Recent breakouts holding</b> → next breakouts: ${rho(S.hold.corr_fwd_hold)} (rank correlation ${S.hold.corr_fwd_hold}).</p>${tbl(S.hold, "Holding now", "%")}`;
+}
 /* RS rating sparkline on a fixed 40–99 scale, so lines compare across rows */
 function rsLine(v, w=120, h=26){
   if (!v || v.length < 2) return '<span class="dim">–</span>';
@@ -1034,7 +1096,7 @@ function render(){
     el.addEventListener("change", ()=>{ try { localStorage.setItem("rs_"+s.slice(1), el.value); } catch(e) {} drawLeaders(); drawTurners(); }); });
   drawLeaders();
 
-  drawTurners(); drawFunnel(); try { drawSignals(); } catch(e) { console.log("signals", e); }
+  drawTurners(); drawFunnel(); try { drawSignals(); } catch(e) { console.log("signals", e); } try { drawEnvironment(); } catch(e) { console.log("environment", e); }
   let rt; window.addEventListener("resize", ()=>{clearTimeout(rt); rt=setTimeout(()=>{drawCharts(); drawRRG();},150);});
 }
 render();

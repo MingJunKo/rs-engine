@@ -72,6 +72,16 @@ def main(years="10y"):
     log(f"{len(idx)} sessions from {idx[0].date()} · {len(S)} stocks · {len(G)} theme ETFs with data")
 
     rating, _, _ = E.rs_rating(close[S], h[S], l[S], b_close, b_atr)
+    # breakout environment history: setups count + breakout follow-through, with its validation
+    try:
+        import environment as ENV
+        env = ENV.compute(close[S], h[S], l[S], v[S], rating, E.SETTINGS, with_forward=True)
+        stats = ENV.validate(env, b_close)
+        ENV.save_history(env, stats)
+        log(f"  environment: {env.index[0].date()} → {env.index[-1].date()} · setups↔next breakouts ρ={stats['setups']['corr_fwd_hold']} "
+            f"· hold↔next ρ={stats['hold']['corr_fwd_hold']}")
+    except Exception as e_:
+        log(f"  environment history failed: {e_}")
     erating, _, _ = E.rs_rating(close[G], h[G], l[G], b_close, b_atr)
     # top-8 themes each day, from the ETFs that existed then
     th = {e: meta.at[e, "theme"] for e in G}
