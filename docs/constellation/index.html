@@ -33,6 +33,10 @@ a{color:inherit;text-decoration:none}
 #filters button{background:none;border:.5px solid var(--border);color:var(--t2);font-family:"DM Mono",monospace;font-size:10px;padding:4px 7px;border-radius:3px;cursor:pointer}
 #filters button.on{color:var(--ink);background:var(--gold);border-color:var(--gold)}
 #filters button b{font-weight:400;opacity:.65;margin-left:4px}
+#hits{padding:0 12px 10px;display:flex;flex-wrap:wrap;gap:4px;max-height:190px;overflow-y:auto}
+#hits .hn{width:100%;font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;color:var(--t3);margin-bottom:2px}
+#hits .hit{font-family:"DM Mono",monospace;font-size:11px;padding:2px 6px;border:.5px solid var(--gold-d);border-radius:3px;color:var(--gold-b);cursor:pointer}
+#hits .hit:hover{background:#c9a55a22}#hits .hit i{font-style:normal;color:var(--t3);margin-left:4px;font-size:10px}
 #q{margin:0 12px 10px;width:calc(100% - 24px);background:#0b0b0a;border:.5px solid var(--border);color:var(--t1);font-family:"DM Mono",monospace;font-size:11px;padding:6px 8px;border-radius:3px;outline:none}
 #q:focus{border-color:var(--gold-d)}
 .legend{padding:8px 12px 12px;border-top:.5px solid var(--border);display:grid;gap:6px;font-size:11.5px;color:var(--t2)}
@@ -78,6 +82,7 @@ a{color:inherit;text-decoration:none}
 <div class="panel" id="left">
   <div class="ph">FILTER<span id="asof"></span></div>
   <div id="filters"></div>
+  <div id="hits"></div>
   <input id="q" placeholder="Find a ticker… (Enter)" autocomplete="off" spellcheck="false">
   <div class="legend">
     <div><i style="color:#ede6d8">●</i>size &amp; brightness = RS rating</div>
@@ -85,7 +90,7 @@ a{color:inherit;text-decoration:none}
     <div><i style="color:#8fcf8a">◯</i>green pulse = episodic pivot (2 days)</div>
     <div><i style="color:#7c9cff">◯</i>blue ring = insider buying</div>
     <div><i style="color:#e0b25a">◆</i>amber = Code 33</div>
-    <div style="color:var(--t3);font-size:11px;line-height:1.45">Themes sit by their ETF's RS rating (→ stronger) and its change this week (↑ gaining). Scroll to zoom, drag to pan, click a star.</div>
+    <div style="color:var(--t3);font-size:11px;line-height:1.45">Tick several filters to combine them (e.g. On scan + Setups). Themes sit by their ETF's RS rating (→ stronger) and its change this week (↑ gaining). Scroll to zoom, drag to pan, click a star.</div>
   </div>
 </div>
 <div class="panel" id="right"><div class="ph">EVENT LOG<span id="evn"></span></div><div id="log"></div></div>
@@ -159,12 +164,18 @@ function starCol(rs, a) { const t = Math.max(0, Math.min(1, (rs - 20) / 79));
 
 /* ── filters & selection ─────────────────────────────── */
 const FILTERS = [["All", 0], ["Setups", F.SETUP], ["Leaders", F.LEADER], ["On scan", F.SCAN], ["EP", F.EP], ["Insider", F.INS], ["Code 33", F.C33], ["Trend tmpl", F.TT]];
-let filt = 0, sel = null, hov = null, hovTheme = null;
-const cnt = m => m ? nodes.filter(n => n.f & m).length : nodes.length;
-function drawFilters() { $("#filters").innerHTML = FILTERS.map(([n, m]) => `<button class="${filt === m ? 'on' : ''}" data-m="${m}">${n}<b>${cnt(m)}</b></button>`).join(""); }
+let filt = 0, sel = null, hov = null, hovTheme = null;      // filt = bitmask of the ticked filters; a star must have ALL of them
+const match = n => (n.f & filt) === filt;
+const cnt = m => nodes.filter(n => (n.f & (filt | m)) === (filt | m)).length;   // what you'd get by adding this filter
+function drawFilters() {
+  $("#filters").innerHTML = FILTERS.map(([n, m]) => { const on = m ? (filt & m) === m : !filt;
+    return `<button class="${on ? 'on' : ''}" data-m="${m}" title="${m ? (on ? 'Click to remove' : 'Click to combine with the others (AND)') : 'Clear filters'}">${n}<b>${m ? (on ? nodes.filter(match).length : cnt(m)) : nodes.length}</b></button>`; }).join("");
+  const hits = filt ? nodes.filter(match).sort((a, b) => b.rs - a.rs) : [];
+  $("#hits").innerHTML = !filt ? "" : !hits.length ? `<div class="hn">No stock matches all of these.</div>` :
+    `<div class="hn">${hits.length} ${hits.length === 1 ? "match" : "matches"} · by RS</div>` + hits.slice(0, 60).map(n => `<span class="hit" data-t="${esc(n.t)}">${esc(n.t)}<i>${n.rs}</i></span>`).join("");
+}
 drawFilters();
-$("#filters").onclick = e => { const b = e.target.closest("button"); if (b) { filt = +b.dataset.m; drawFilters(); } };
-const match = n => !filt || (n.f & filt);
+$("#filters").onclick = e => { const b = e.target.closest("button"); if (!b) return; const m = +b.dataset.m; filt = m ? filt ^ m : 0; drawFilters(); };
 
 /* ── render loop ─────────────────────────────────────── */
 let last = 0;
@@ -262,6 +273,7 @@ function select(n, fly) {
     d3.select(cv).transition().duration(900).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - sx * k, H / 2 - sy * k).scale(k)); }
 }
 $("#card-x").onclick = () => select(null);
+$("#hits").onclick = e => { const h = e.target.closest(".hit"); if (!h) return; const n = nodes.find(n => n.t === h.dataset.t); if (n) select(n, true); };
 $("#q").addEventListener("keydown", e => { if (e.key !== "Enter") return; const q = e.target.value.trim().toUpperCase();
   const n = nodes.find(n => n.t === q); if (n) { filt = 0; drawFilters(); select(n, true); e.target.style.borderColor = ""; } else e.target.style.borderColor = "#d4706a"; });
 window.addEventListener("keydown", e => { if (e.key === "Escape") { select(null); d3.select(cv).transition().duration(600).call(zoom.transform, d3.zoomIdentity); } });
