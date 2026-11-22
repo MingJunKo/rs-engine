@@ -89,7 +89,8 @@ def validate(env: pd.DataFrame, spy: pd.Series | None = None) -> dict:
                          "fwd_hold": round(float(g.fwd_hold.mean()), 1), "fwd_gain10": round(float(g.fwd_gain10.mean()), 2),
                          "fwd_bo": round(float(g.fwd_bo.mean()), 1),
                          **({"spy_fwd20": round(float(g.spy_fwd20.mean()), 2)} if "spy_fwd20" in g else {})})
-        res[label] = {"quintiles": rows, "corr_fwd_hold": round(float(x[col].corr(x.fwd_hold, method="spearman")), 3)}
+        rho = x[col].rank().corr(x.fwd_hold.rank())                       # Spearman without scipy
+        res[label] = {"quintiles": rows, "corr_fwd_hold": round(float(rho), 3)}
     res["median_hold"] = round(float(env.hold_rate.median()), 1)
     return res
 

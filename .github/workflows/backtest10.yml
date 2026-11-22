@@ -31,6 +31,6 @@ jobs:
         run: |
           git config user.name "rs-engine-bot"
           git config user.email "rs-engine-bot@users.noreply.github.com"
-          git add docs/backtest data/backtest10.json data/history/breadth_long.csv data/history/environment.csv data/history/environment_stats.json
+          git add docs/backtest data/backtest10.json data/history/breadth_long.csv; for f in data/history/environment.csv data/history/environment_stats.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "10-year backtest $(date -u +%Y-%m-%d)"
           for i in 1 2 3; do git pull --rebase --autostash -X theirs && git push && break; sleep 5; done
