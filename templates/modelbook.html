@@ -351,6 +351,8 @@ const SYNC = (() => {
   const gh = (path, opt={}) => fetch("https://api.github.com" + path, {...opt, headers:{Authorization:"token " + cfg.token, Accept:"application/vnd.github+json"}})
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
   const status = t => { const el = $("#d-sync"); if (el) el.textContent = t; };
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i), m = k && k.match(/^mb-(note|done):(.+)$/);
+    if (m && localStorage.getItem(k) && !localStorage.getItem("mb-t:" + m[2])) localStorage.setItem("mb-t:" + m[2], new Date().toISOString()); }
   const collect = () => { const notes = {};
     for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i), m = k && k.match(/^mb-(note|done|t):(.+)$/); if (!m) continue;
       const o = notes[m[2]] = notes[m[2]] || {}; o[m[1] === "note" ? "n" : m[1] === "done" ? "d" : "t"] = m[1] === "done" ? 1 : localStorage.getItem(k); }
@@ -364,7 +366,9 @@ const SYNC = (() => {
       const R = JSON.parse(f.content || "{}").notes || {}; let n = 0;
       Object.entries(R).forEach(([id, o]) => { const lt = store.get("mb-t:" + id) || "";
         if ((o.t || "") > lt) { store.set("mb-note:" + id, o.n || null); store.set("mb-done:" + id, o.d ? "1" : null); store.set("mb-t:" + id, o.t || null); n++; } });
-      if (n) { try { drawBook(); } catch(e) {} } status("synced ✓"); })
+      if (n) { try { drawBook(); } catch(e) {} }
+      const mine = collect().notes, missing = Object.keys(mine).some(id => !R[id] || (mine[id].t || "") > (R[id].t || ""));
+      if (missing) push(); else status("synced ✓"); })                 // upload anything annotated before sync existed
     .catch(e => status("sync failed (" + e.message + ")"));
   if (!on) status("not synced · turn on Sync in VPA Arena");
   return {on, push, pull};

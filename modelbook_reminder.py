@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parent
 SGT = ZoneInfo("Asia/Singapore")
 FILE = "modelbook_notes.json"
 GOAL = (1, 2)
+TARGET = 300                                  # MJ's goal: 300 annotated charts
 PAGE = "https://mingjunko.github.io/rs-engine/modelbook/"
 STATE = ROOT / "data" / "history" / "modelbook_reminder.json"
 
@@ -107,10 +108,11 @@ def main():
         L.append("<b>📚 Last call — no model book chart annotated today</b>")
         if x:
             L.append(f"Five minutes: {link(x)} +{x['run_gain']}% · {e(x.get('sector') or '')}")
-    left = len(studyable) - len(done & {x['id'] for x in studyable})
-    pace = f" · at {GOAL[0]}–{GOAL[1]}/day: {left // GOAL[1]}–{left // GOAL[0]} days to go" if left else ""
+    left = max(0, TARGET - len(done))
+    pace = f" · {left} to go: {-(-left // GOAL[1])}–{left // GOAL[0]} days at {GOAL[0]}–{GOAL[1]}/day" if left else " · 🎯 goal reached!"
+    bar = "▰" * min(10, len(done) * 10 // TARGET) + "▱" * (10 - min(10, len(done) * 10 // TARGET))
     if synced:
-        L.append(f"\nProgress: <b>{len(done)}</b>/{len(studyable)} annotated · today {n_today} · yesterday {n_yday} · "
+        L.append(f"\n{bar} <b>{len(done)}</b>/{TARGET} · today {n_today} · yesterday {n_yday} · "
                  f"7 days {week} · streak {streak} day{'s' if streak != 1 else ''}{pace}")
     else:
         L.append("\n<i>Progress not visible yet: open VPA Arena → Stats → Sync my devices on the device you annotate on, "
