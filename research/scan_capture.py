@@ -141,8 +141,26 @@ for i in range(start, len(idx)):
     js_final.iloc[i] = fin.values
 log(f"Jeff Sun pipeline replayed · {time.time() - t0:.0f}s")
 
+# ── candidate refinements of the RS setup (tested the same way) ──────
+rsl = C.div(b_close, axis=0)
+rsl_nh = rsl >= rsl.rolling(252, min_periods=120).max() * 0.999          # RS line at a 52-week high
+rs_lead = rsl_nh.rolling(10).max().astype(bool) & (C < C.rolling(252, min_periods=120).max() * 0.98)
+pivot = (C / H.rolling(20).max() - 1) * 100
+tightr = (H.rolling(10).max() - L.rolling(10).min()) / C * 100 / adr
+ext = (C - sma50) / a
+base_ok = liquid & (C > sma50)
+VARIANTS = {
+    "A: tight ≤ 3.5 ADRs": strong & (pivot >= -6) & (tightr <= 3.5) & (ext >= 0) & (ext <= 4),
+    "B: A + RS ≥ 70": base_ok & (rating >= 70) & (adr >= 2.5) & (pivot >= -6) & (tightr <= 3.5) & (ext >= 0) & (ext <= 4),
+    "C: B + ADR ≥ 4%": base_ok & (rating >= 70) & (adr >= 4) & (pivot >= -6) & (tightr <= 3.5) & (ext >= 0) & (ext <= 4),
+    "D: C + RS line at a new high (10d)": base_ok & (rating >= 70) & (adr >= 4) & (pivot >= -8) & (tightr <= 4) & (ext >= 0) & (ext <= 5) & rsl_nh.rolling(10).max().astype(bool),
+    "E: RS-line lead, ADR ≥ 4%, near pivot": base_ok & (adr >= 4) & (pivot >= -10) & rs_lead,
+}
+for k_, f_ in VARIANTS.items():
+    FLAGS_V = f_
+
 # ── capture per winner ───────────────────────────────────────────────
-FLAGS = {"RS setup": setup, "RS leader": leader, "RS strong (gates)": strong, "Jeff Sun final": js_final,
+FLAGS = {**{"V " + k_: f_ for k_, f_ in VARIANTS.items()}, "RS setup": setup, "RS leader": leader, "RS strong (gates)": strong, "Jeff Sun final": js_final,
          "Jeff Sun watchlists": js_wl, "EP": ep}
 col = {t: j for j, t in enumerate(S)}
 rows = []
@@ -177,6 +195,7 @@ for k in FLAGS:
     out["capture"][k] = {"before": round(100 * U[k + " · before"].mean(), 1), "after_only": round(100 * (~U[k + " · before"] & U[k + " · after"]).mean(), 1),
                          "lead_days_median": None if U[k + " · first"].dropna().empty else float(U[k + " · first"].dropna().median())}
 combos = {"RS setup or Jeff Sun final": U["RS setup · before"] | U["Jeff Sun final · before"],
+          **{f"V {k_} or Jeff Sun final": U[f"V {k_} · before"] | U["Jeff Sun final · before"] for k_ in VARIANTS},
           "RS setup or Jeff Sun final or EP": U["RS setup · before"] | U["Jeff Sun final · before"] | U["EP · before"],
           "RS strong or Jeff Sun watchlists": U["RS strong (gates) · before"] | U["Jeff Sun watchlists · before"]}
 out["combos"] = {k: round(100 * s.mean(), 1) for k, s in combos.items()}
