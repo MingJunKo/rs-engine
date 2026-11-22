@@ -1,0 +1,105 @@
+{
+ "period": "Dec 2017 \u2013 Oct 2026",
+ "days": 1890,
+ "setups": {
+  "quintiles": [
+   {
+    "bucket": 1,
+    "lo": 0.0,
+    "hi": 0.39,
+    "fwd_hold": 63.5,
+    "fwd_gain10": 0.78,
+    "fwd_bo": 13.8,
+    "spy_fwd20": 1.74
+   },
+   {
+    "bucket": 2,
+    "lo": 0.39,
+    "hi": 0.71,
+    "fwd_hold": 60.6,
+    "fwd_gain10": -0.22,
+    "fwd_bo": 13.9,
+    "spy_fwd20": 1.28
+   },
+   {
+    "bucket": 3,
+    "lo": 0.71,
+    "hi": 1.1,
+    "fwd_hold": 59.2,
+    "fwd_gain10": -0.58,
+    "fwd_bo": 14.8,
+    "spy_fwd20": 0.93
+   },
+   {
+    "bucket": 4,
+    "lo": 1.1,
+    "hi": 1.64,
+    "fwd_hold": 61.6,
+    "fwd_gain10": -0.09,
+    "fwd_bo": 16.1,
+    "spy_fwd20": 1.63
+   },
+   {
+    "bucket": 5,
+    "lo": 1.64,
+    "hi": 8.48,
+    "fwd_hold": 64.7,
+    "fwd_gain10": 1.12,
+    "fwd_bo": 19.2,
+    "spy_fwd20": 1.54
+   }
+  ],
+  "corr_fwd_hold": 0.027
+ },
+ "hold": {
+  "quintiles": [
+   {
+    "bucket": 1,
+    "lo": 0.0,
+    "hi": 46.7,
+    "fwd_hold": 67.5,
+    "fwd_gain10": 1.27,
+    "fwd_bo": 18.1,
+    "spy_fwd20": 2.69
+   },
+   {
+    "bucket": 2,
+    "lo": 46.7,
+    "hi": 60.0,
+    "fwd_hold": 62.7,
+    "fwd_gain10": 0.22,
+    "fwd_bo": 13.9,
+    "spy_fwd20": 1.78
+   },
+   {
+    "bucket": 3,
+    "lo": 60.0,
+    "hi": 70.0,
+    "fwd_hold": 56.0,
+    "fwd_gain10": -0.44,
+    "fwd_bo": 14.8,
+    "spy_fwd20": 1.1
+   },
+   {
+    "bucket": 4,
+    "lo": 70.0,
+    "hi": 77.8,
+    "fwd_hold": 58.9,
+    "fwd_gain10": -0.26,
+    "fwd_bo": 14.6,
+    "spy_fwd20": 0.49
+   },
+   {
+    "bucket": 5,
+    "lo": 77.8,
+    "hi": 100.0,
+    "fwd_hold": 62.9,
+    "fwd_gain10": -0.06,
+    "fwd_bo": 14.9,
+    "spy_fwd20": 0.45
+   }
+  ],
+  "corr_fwd_hold": -0.107
+ },
+ "median_hold": 66.7
+}
