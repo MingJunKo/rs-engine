@@ -369,6 +369,10 @@ def run_scans(ctx: dict) -> dict:
     except Exception as e:
         print("  scan lookup skipped:", e)
     rows.sort(key=lambda x: -((x["rs_rating"] or 0) + 8 * (x["lead_theme"] + x["both"] + x["leader"] + x["turner"])))
+    try:
+        persistence(rows, c, live=bool(ctx.get("live")))
+    except Exception as e:
+        print("  scan persistence skipped:", e)
 
     eps = ep_scan(o, h, l, c, v, d)
     para = parabolic_scan(o, h, l, c, v, d)
@@ -393,6 +397,41 @@ def run_scans(ctx: dict) -> dict:
                        "wl6": int(wl6.sum()), "final": len(rows), "biotech": sum(r["biotech"] for r in rows)},
             "rows": rows, "ep": eps, "parabolic": para, "coverage": cover, "top_themes": top_themes,
             "premarket": _premarket()}
+
+
+HITS = ROOT / "data" / "history" / "scan_hits.csv"
+
+
+def persistence(rows: list, c: pd.DataFrame, window: int = 20, live: bool = True):
+    """How often each name made the final scan list in the last `window` sessions (log: data/history/scan_hits.csv).
+    Adds to each row: dots (1 = on the list that session, oldest first), n (appearances), streak (consecutive sessions
+    up to today), first (first appearance ever), stale (on the list ≥ 15 of 20 sessions but up < 5% since the window began:
+    a base that keeps setting up without going anywhere)."""
+    today = c.index[-1].strftime("%Y-%m-%d")
+    log = pd.read_csv(HITS) if HITS.exists() else pd.DataFrame(columns=["date", "symbol"])
+    log = pd.concat([log[log.date != today], pd.DataFrame({"date": today, "symbol": [r["symbol"] for r in rows]})])
+    if live:
+        log.sort_values(["date", "symbol"]).to_csv(HITS, index=False)
+    dates = sorted(log.date.unique())[-window:]
+    on = set(zip(log.date, log.symbol))
+    first = log.groupby("symbol").date.min()
+    for r in rows:
+        t = r["symbol"]
+        dots = [int((d, t) in on) for d in dates]
+        streak = 0
+        for x in reversed(dots):
+            if not x:
+                break
+            streak += 1
+        n = sum(dots)
+        d0 = next((d for d, x in zip(dates, dots) if x), today)
+        try:
+            gain = float(c[t].iloc[-1] / c[t].loc[:pd.Timestamp(d0)].iloc[-1] - 1) * 100
+        except Exception:
+            gain = None
+        r["persist"] = {"dots": dots, "n": n, "of": len(dates), "streak": streak, "first": first.get(t, today),
+                        "gain": None if gain is None else round(gain, 1),
+                        "stale": bool(n >= 15 and gain is not None and gain < 5)}
 
 
 def _er(t, ctx):

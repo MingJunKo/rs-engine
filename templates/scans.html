@@ -150,6 +150,12 @@ function render(){
   const SEG = {all:["All",x=>true], lt:["Leading theme",x=>x.lead_theme], both:["Tech + fund",x=>x.both], ld:["Leaders",x=>x.leader], tu:["Turning",x=>x.turner]};
   const base = () => D.rows.filter(x => ($("#f-bio").checked || !x.biotech));
   const drawSeg = () => $("#seg").innerHTML = Object.entries(SEG).map(([k,[n,f]])=>`<button class="${k===seg?'on':''}" data-k="${k}">${n}<b>${base().filter(f).length}</b></button>`).join('');
+  D.rows.forEach(x => { const p = x.persist; x.seen = p ? p.n + p.streak/100 : null; });
+  const seenTd = x => { const p = x.persist; if (!p) return '<td class="l dim">–</td>';
+    const w = 4, g = 1.5, W = p.dots.length*(w+g);
+    const sq = p.dots.map((v,i)=>`<rect x="${i*(w+g)}" y="${v?0:3}" width="${w}" height="${v?11:5}" rx="1" fill="${v?(i===p.dots.length-1?'#f0c46a':'#c9a14f'):'#2a2723'}"/>`).join('');
+    return `<td class="l" style="white-space:nowrap" title="First seen ${esc(p.first)} · ${p.gain==null?'':'since first in window '+fmt(p.gain)+'%'}"><svg width="${W}" height="11" style="vertical-align:middle">${sq}</svg>`+
+      `<span style="margin-left:7px;font-size:11.5px">${p.n}<span class="dim">/${p.of}</span></span>${p.streak>=3?`<span class="dim" style="font-size:10.5px;margin-left:5px">${p.streak} in a row</span>`:''}${p.stale?'<span class="flag" style="color:#e0a17a;background:rgba(224,161,122,.12)">STALE</span>':''}</td>`; };
   const cols = [
     {h:"Ticker", k:"symbol", l:1, f:symTd},
     {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}</td>`},
@@ -170,6 +176,7 @@ function render(){
     {h:"CANSLIM", l:1, f:x=>`<td class="l">${csH(x.cs)}</td>`},
     {h:"Funds", k:"funds_chg", f:x=>`<td>${x.funds==null?'–':x.funds.toLocaleString()}${x.funds_chg==null?'':` <small class="${x.funds_chg>0?'up':'dn'}">${fmt(x.funds_chg)}%</small>`}</td>`},
     {h:"ER", k:"er_days", f:x=>`<td class="${x.er_days!=null&&x.er_days<=7?'dn':''}" style="${x.er_days!=null&&x.er_days<=7?'':'color:#6b645a'}">${x.earnings||'–'}</td>`},
+    {h:"Seen", k:"seen", l:1, tip:"Sessions on this list out of the last 20 (newest on the right). STALE = on the list 15+ of 20 sessions but up less than 5% since: the base isn't going anywhere", f:seenTd},
     {h:"Watchlists", l:1, tip:"Which of your watchlists it came from", f:x=>`<td class="l">${x.wls.map(w=>`<span class="wl ${w}">${w.replace('WL','')}</span>`).join('')}</td>`},
   ];
   const draw = () => { const f = SEG[seg][1];
