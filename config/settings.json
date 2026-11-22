@@ -26,5 +26,8 @@
     "min_rs": 70,
     "min_adr": 4,
     "max_tight": 3.5
+  },
+  "modelbook": {
+    "period": "15y"
   }
 }
