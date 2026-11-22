@@ -719,7 +719,11 @@ def run(demo: bool, notify: bool):
                             & (stk.rs_rating >= SETTINGS["min_rs_rating"])).sum())
     funnel_now["adr"] = int(elig.sum())
     funnel_now["theme"] = int((elig & in_top).sum())
-    stk["setup_all"] = ((stk.pivot_dist >= -6) & (stk.tightness <= 2.5) & (stk.atr_ext.between(0, 4)))
+    # ONE setup definition for the whole site: the buyable shape (near a pivot, tight, not extended) on a stock that
+    # passes the leader gates (liquid, above the 50-day, RS ≥ min, ADR ≥ min). Leaders' setups are the subset in top themes.
+    stk["setup_shape"] = ((stk.pivot_dist >= -6) & (stk.tightness <= 2.5) & (stk.atr_ext.between(0, 4)))
+    stk["setup_all"] = stk.setup_shape & elig
+    funnel_now["setup_all"] = int(stk.setup_all.sum())
     leaders["theme"] = leaders.all_themes.apply(
         lambda l: sorted([x for x in l if x in top_themes], key=lambda x: top_themes.index(x))[0])
     leaders = leaders.sort_values(["rs_rating", "rs_score"], ascending=False).head(SETTINGS["max_leaders"])
@@ -766,6 +770,11 @@ def run(demo: bool, notify: bool):
     flog.to_csv(fpath_, index=False)
     for k in ("theme", "setups"):                 # these depend on the day's top themes: from the daily log
         funnel_hist[k] = [int(x) for x in flog[k].dropna().tail(n_hist)]
+    try:                                          # all-theme setups: history from the breakout-environment log
+        _eh = pd.read_csv(HIST / "environment.csv", index_col=0)["setups"].dropna().tail(n_hist - 1)
+        funnel_hist["setup_all"] = [int(x) for x in _eh] + [funnel_now["setup_all"]]
+    except Exception:
+        funnel_hist["setup_all"] = [funnel_now["setup_all"]]
     for k in ("universe", "liquid", "above50", "rs", "adr"):
         funnel_hist[k][-1] = funnel_now[k]
     funnel = [{"key": k, "label": lbl, "n": funnel_now[k], "hist": funnel_hist[k],
@@ -773,7 +782,7 @@ def run(demo: bool, notify: bool):
                "note": (f"{setups_er} report ≤ 7d" if k == "setups" and setups_er else None)}
               for k, lbl in (("universe", "Universe"), ("liquid", "Liquid"), ("above50", "Above 50-day"),
                              ("rs", f"RS ≥ {SETTINGS['min_rs_rating']}"), ("adr", f"ADR ≥ {SETTINGS.get('min_adr', 2.5)}%"),
-                             ("theme", "In a top theme"), ("setups", "Setups"))]
+                             ("setup_all", "In a setup"), ("setups", "…and a leader"))]
 
     # ── Early turners: groups outside the top themes whose RS is turning up fast ──
     # Watchlist only. A group qualifies when its RS jumped (1 week or 3 days), it is back above its
@@ -1163,6 +1172,11 @@ def run(demo: bool, notify: bool):
         import environment as ENV
         if not demo:
             env_ = ENV.compute(close[S], high[S], low[S], vol[S], stk_rating, SETTINGS)
+            last_ = env_.index[-1]
+            if int(env_.at[last_, "setups"]) != funnel_now["setup_all"]:
+                log(f"  environment: recomputed {int(env_.at[last_, 'setups'])} setups vs engine {funnel_now['setup_all']} — using the engine's")
+            env_.at[last_, "setups"] = funnel_now["setup_all"]
+            env_.at[last_, "setup_pct"] = round(funnel_now["setup_all"] / max(int(env_.at[last_, "liquid"]), 1) * 100, 3)
             ENV.save_history(env_.tail(30))
         payload["environment"] = _clean_json(ENV.payload())
         if payload["environment"]:

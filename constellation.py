@@ -34,7 +34,7 @@ def build(stk: pd.DataFrame, payload: dict, settings: dict, scans: dict | None =
     ep = {e["symbol"]: e for e in (scans.get("ep") or []) if (e.get("days_ago") or 0) <= 2}
     ins = {x["ticker"]: x for x in (X.get("insiders") or [])}
     c33 = {x["t"] for x in (X.get("code33") or [])}
-    scan_rows = {r["symbol"]: r for r in (scans.get("rows") or [])}
+    scan_rows = {r["symbol"]: r for r in (scans.get("rows") or []) if not r.get("biotech")}   # the final list, as on Scans
     leaders = {r["symbol"] for r in (payload.get("leaders") or [])}
 
     liq = (stk.price >= settings.get("min_price", 5)) & (stk.dollar_vol >= settings.get("min_dollar_volume", 1e7) / 2)

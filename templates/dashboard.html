@@ -668,7 +668,8 @@ function drawFunnel(){
     return `<svg viewBox="0 0 ${w} ${ht}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${h[h.length-1]>=h[0]?'#5bbf7a':'#d4706a'}" stroke-width="1.2" vector-effect="non-scaling-stroke" opacity=".7"/></svg>`; };
   const tips = {universe:"Stocks in your universe with prices", liquid:"Price ≥ min and 20-day $ volume ≥ min", above50:"…and above the 50-day average",
     rs:"…and RS rating at or above your minimum", adr:"…and average daily range at or above your minimum", theme:"…and in one of the top themes (the list shows the strongest of these)",
-    setups:"Leaders near a pivot, tight, not extended (same as the Setups only filter)"};
+    setup_all:"…and in a setup: within 6% of the 20-day high, 10-day range ≤ 2.5 ADRs, 0–4 ATRs above the 50-day. The same number as the Breakout environment and the Constellation",
+    setups:"…and on the leaders list (a top-8 theme): the Setups only filter in the Leaders table"};
   el.innerHTML = `<button class="ftog" title="Collapse / expand">▾ FUNNEL</button><div class="fv"></div><div class="rows">${F.map((s,i) =>
     `<div class="rw${i===F.length-1?' last':''}" title="${esc(tips[s.key]||'')} · line = last ${s.hist.length} sessions"><span class="lb">${esc(s.label)}</span>
      <span class="n">${s.n.toLocaleString()}</span><span class="ch">${s.note?`<span style="color:#d4706a" title="Setups with earnings within 7 days: don't open new positions into the print">${esc(s.note)}</span>`:s.chg_1w==null?'':`<span class="${s.chg_1w>0?'up':s.chg_1w<0?'dn':''}">${s.chg_1w>0?'+':''}${s.chg_1w}</span> 1W`}</span>${line(s.hist)}</div>`).join('')}</div>

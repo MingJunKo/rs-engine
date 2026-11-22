@@ -60,6 +60,7 @@
     <div class="edge">
       <span><span class="flag lt">LEAD THEME</span> in one of the top RS themes</span>
       <span><span class="flag ld">LEADER</span> on the RS leaders list</span>
+      <span><span class="flag" style="color:#0b0b0a;background:#c9a55a">SETUP</span> also meets the RS Engine setup</span>
       <span><span class="flag bf">TECH+FUND</span> passed a momentum screen and an earnings/ownership screen</span>
       <span><span class="flag tu">TURNING</span> its theme is an early turner</span>
     </div>
@@ -159,7 +160,7 @@ function render(){
   const cols = [
     {h:"Ticker", k:"symbol", l:1, f:symTd},
     {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}</td>`},
-    {h:"Edge", l:1, tip:"Why this one has extra edge", f:x=>`<td class="l">${x.lead_theme?'<span class="flag lt">LEAD THEME</span>':''}${x.leader?'<span class="flag ld">LEADER</span>':''}${x.both?'<span class="flag bf">TECH+FUND</span>':''}${x.turner?'<span class="flag tu">TURNING</span>':''}${x.biotech?'<span class="flag br">BIOTECH</span>':''}</td>`},
+    {h:"Edge", l:1, tip:"Why this one has extra edge", f:x=>`<td class="l">${x.setup?'<span class="flag" style="color:#0b0b0a;background:#c9a55a" title="Also meets the RS Engine setup: RS ≥ 80, above the 50-day, near a pivot, tight, not extended">SETUP</span>':''}${x.lead_theme?'<span class="flag lt">LEAD THEME</span>':''}${x.leader?'<span class="flag ld">LEADER</span>':''}${x.both?'<span class="flag bf">TECH+FUND</span>':''}${x.turner?'<span class="flag tu">TURNING</span>':''}${x.biotech?'<span class="flag br">BIOTECH</span>':''}</td>`},
     {h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.theme||'–')}</span></td>`},
     {h:"RS", k:"rs_rating", f:x=>`<td><span class="rating" style="background:${ratingColor(x.rs_rating)}">${x.rs_rating??'–'}</span></td>`},
     {h:"Δ1W", k:"rs_chg_1w", f:x=>`<td class="${x.rs_chg_1w>0?'up':x.rs_chg_1w<0?'dn':''}">${fmt(x.rs_chg_1w,0)}</td>`},
