@@ -162,8 +162,10 @@ R = pd.concat([R[R.lift >= 1], inv]).sort_values("lift", ascending=False)
 
 # ── checklist score: robust conditions only ─────────────────────────
 robust = R[(R.lift >= 1.25) & (R.lift_ex2020 >= 1.15) & (R.years_tested >= 5) & (R.years_on_better >= 0.65 * R.years_tested)]
-picked = robust.condition.tolist()
-score = sum(prev(C[k]).fillna(0) for k in picked) if picked else None
+picked = [k for k in ["VIX above 20", "NOT: Rates rising: 3-month T-bill up ≥ 0.25 in 6 months (Fed hiking)",
+                      "NOT: SPY within 3% of its 52-week high", "Setup count above its median",
+                      "Small caps leading (IWM/SPY up over 3 months)"] if k in C]   # distinct factors, one each
+score = sum(prev(C[k]) for k in picked) if picked else None          # NaN where any factor is unknown
 by_score = []
 if picked:
     sc = score.reindex(ev.index)
@@ -173,9 +175,26 @@ if picked:
             by_score.append({"score": k, "of": len(picked), "events": int(len(g)), "win_pct": round(100 * g.winner.mean(), 2),
                              "ret20": round(float(g.ret_20.mean()), 2), "share_of_days": round(100 * float((score == k).mean()), 1)})
 now = {k: (None if pd.isna(C[k].iloc[-1]) else bool(C[k].iloc[-1])) for k in C}
+# leave-one-out: how much each factor adds on top of the others
+loo = {}
+if picked:
+    for k in picked:
+        sc2 = sum(prev(C[x]) for x in picked if x != k).reindex(ev.index)
+        g = ev[(sc2 >= len(picked) - 2)]
+        f_on = prev(C[k]).reindex(g.index) == 1
+        loo[k] = {"with": round(100 * g[f_on].winner.mean(), 2), "without": round(100 * g[~f_on].winner.mean(), 2)}
+    # per-year check of the composite: high score (≥ 3) vs low (≤ 1)
+    scy = score.reindex(ev.index)
+    py = []
+    for y, g in ev.groupby(ev.index.year):
+        hi_, lo_ = g[scy.reindex(g.index) >= 3], g[scy.reindex(g.index) <= 1]
+        if len(hi_) >= 100 and len(lo_) >= 100:
+            py.append({"year": int(y), "hi": round(100 * hi_.winner.mean(), 2), "lo": round(100 * lo_.winner.mean(), 2)})
 out = {"events": int(len(ev)), "winners": int(ev.winner.sum()), "base_win_pct": round(100 * ev.winner.mean(), 2),
        "period": f"{ev.index.min():%b %Y} – {ev.index.max():%b %Y}", "conditions": R.to_dict("records"),
-       "checklist": picked, "by_score": by_score, "today": now, "today_score": None if not picked else int(score.iloc[-1]),
+       "checklist": picked, "by_score": by_score, "leave_one_out": loo if picked else {}, "by_year_score": py if picked else [], "today": now, "today_score": None if not picked or pd.isna(score.iloc[-1]) else int(score.iloc[-1]),
+       "today_inputs": {"vix": round(float(vix.iloc[-1]), 1), "spy_off_high": round(float(dd.iloc[-1]), 1),
+                        "tbill_6m_change": None if irx is None else round(float(irx.iloc[-1] - irx.iloc[-127]), 2)},
        "asof": str(idx[-1].date())}
 (ROOT / "research" / "environment_study.json").write_text(json.dumps(out, indent=1, default=str))
 print("RESULT_JSON_START"); print(json.dumps(out, indent=1, default=str)); print("RESULT_JSON_END")
