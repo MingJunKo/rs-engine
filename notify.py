@@ -139,6 +139,12 @@ def build_message(p: dict, settings: dict) -> str:
                          " ⚡33" if (x.get("code33") or {}).get("code33") else "", " ⚠ext" if x["extended"] else ""])
         lines.append(f"<code>{x['symbol']:<6}</code> {x['rs_rating']} · {e(x['theme'])}{flags}")
 
+    runners = p.get("runners") or []
+    if runners:
+        st_ = p.get("stocks") or {}
+        lines += ["", f"<b>Runner setups — RS 70+, ADR 4%+, base ≤ 3.5 ADRs</b> ({len(runners)})",
+                  "  ".join(f"<code>{t}</code> {(st_.get(t) or [None, None, '–'])[2]}" for t in runners[:12])
+                  + (" …" if len(runners) > 12 else "")]
     setups = [x for x in p["leaders"] if x.get("setup") and not x.get("er_soon")]
     if setups:
         lines += ["", f"<b>Setups — near pivot, tight, not extended</b> ({len(setups)})"]

@@ -52,7 +52,7 @@ a{color:inherit;text-decoration:none}
 #tip b{font-family:"DM Mono",monospace;font-size:13px;color:var(--t1);font-weight:500}
 #tip .s{color:var(--t3);font-size:10.5px}
 .fl{font-family:"DM Mono",monospace;font-size:8.5px;letter-spacing:.08em;padding:1px 4px;border-radius:2px;margin-right:3px;display:inline-block;margin-top:4px}
-.fl.su{background:var(--gold);color:#0b0b0a}.fl.ld{color:var(--gold-b);background:#17130a}.fl.ep{color:var(--up);background:#1a2a1c}
+.fl.su{background:var(--gold);color:#0b0b0a}.fl.ru{background:#f0c46a;color:#0b0b0a;box-shadow:0 0 6px #e8c07088}.fl.ld{color:var(--gold-b);background:#17130a}.fl.ep{color:var(--up);background:#1a2a1c}
 .fl.in{color:var(--info);background:#161b2e}.fl.c3{color:#0b0b0a;background:#e0b25a}.fl.sc{color:var(--t1);background:#26241f}.fl.tt{color:var(--up);background:#14201a}
 #card{right:328px;bottom:14px;width:260px;display:none}
 #card .body{padding:12px}
@@ -87,6 +87,7 @@ a{color:inherit;text-decoration:none}
   <div class="legend">
     <div><i style="color:#ede6d8">●</i>size &amp; brightness = RS rating</div>
     <div><i style="color:#e8c070;text-shadow:0 0 6px #e8c070">●</i>gold glow = in a setup (RS ≥ 80, above the 50-day, near a pivot, tight)</div>
+    <div><i style="color:#ffecbe">◎</i>bright ring = runner setup (RS 70+, ADR 4%+, base ≤ 3.5 ADRs)</div>
     <div><i style="color:#8fcf8a">◯</i>green pulse = episodic pivot (2 days)</div>
     <div><i style="color:#7c9cff">◯</i>blue ring = insider buying</div>
     <div><i style="color:#e0b25a">◆</i>amber = Code 33</div>
@@ -102,14 +103,14 @@ a{color:inherit;text-decoration:none}
 const D = /*__DATA__*/null;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const F = {SETUP:1, LEADER:2, EP:4, INS:8, C33:16, SCAN:32, TT:64, A50:128};
+const F = {SETUP:1, LEADER:2, EP:4, INS:8, C33:16, SCAN:32, TT:64, A50:128, RUN:256};
 const tv = (s, ex) => "https://www.tradingview.com/chart/?symbol=" + encodeURIComponent(ex ? ex + ":" + s : s);
 
 if (!D) { document.body.innerHTML = "<p style='padding:80px;color:#a59c8f'>No data yet — the page fills in after the next engine run.</p>"; throw 0; }
 
 /* ── header ───────────────────────────────────────────── */
 const C = D.counts;
-$("#stats").innerHTML = [["STOCKS", C.stocks], ["IN SETUP", C.setups, 1], ["LEADERS", C.leaders], ["ON SCAN", C.scan],
+$("#stats").innerHTML = [["STOCKS", C.stocks], ["RUNNERS", C.runners ?? 0, 1], ["IN SETUP", C.setups, 1], ["LEADERS", C.leaders], ["ON SCAN", C.scan],
   ["EP · 2D", C.ep, 1], ["INSIDER", C.insiders], ["CODE 33", C.c33]]
   .map(([k, v, g]) => `<div class="st"><div class="k">${k}</div><div class="v ${g ? 'g' : ''}">${v}</div></div>`).join("");
 $("#regime").innerHTML = D.regime ? `<span class="badge ${esc(D.tone || 'warn')}">${esc(D.regime)}</span>` : "";
@@ -163,7 +164,7 @@ function starCol(rs, a) { const t = Math.max(0, Math.min(1, (rs - 20) / 79));
   return `rgba(${Math.round(lerp(74, 237, t))},${Math.round(lerp(68, 230, t))},${Math.round(lerp(60, 216, t))},${a})`; }
 
 /* ── filters & selection ─────────────────────────────── */
-const FILTERS = [["All", 0], ["Setups", F.SETUP], ["Leaders", F.LEADER], ["On scan", F.SCAN], ["EP", F.EP], ["Insider", F.INS], ["Code 33", F.C33], ["Trend tmpl", F.TT]];
+const FILTERS = [["All", 0], ["Runners", F.RUN], ["Setups", F.SETUP], ["Leaders", F.LEADER], ["On scan", F.SCAN], ["EP", F.EP], ["Insider", F.INS], ["Code 33", F.C33], ["Trend tmpl", F.TT]];
 let filt = 0, sel = null, hov = null, hovTheme = null;      // filt = bitmask of the ticked filters; a star must have ALL of them
 const match = n => (n.f & filt) === filt;
 const cnt = m => nodes.filter(n => (n.f & (filt | m)) === (filt | m)).length;   // what you'd get by adding this filter
@@ -213,6 +214,8 @@ function frame(ts) {
     if (!on) continue;
     if (n.f & F.EP) { const p = (t * .55 + n.ph) % 1; ctx.strokeStyle = `rgba(143,207,138,${(1 - p) * .9})`; ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.arc(x, y, r + 2 + p * 16 * Math.sqrt(k), 0, 6.283); ctx.stroke(); }
+    if (n.f & F.RUN) { ctx.strokeStyle = `rgba(255,236,190,${.55 + .35 * Math.sin(t * 3 + n.ph)})`; ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.arc(x, y, r + 2.2, 0, 6.283); ctx.stroke(); }
     if (n.f & F.INS) { ctx.strokeStyle = "rgba(124,156,255,.85)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r + 3, 0, 6.283); ctx.stroke(); }
   }
   // theme labels
@@ -236,7 +239,7 @@ function frame(ts) {
 requestAnimationFrame(frame);
 
 /* ── hover, click, search ───────────────────────────── */
-const flags = n => [[F.SETUP, "su", "SETUP"], [F.LEADER, "ld", "LEADER"], [F.EP, "ep", "EP"], [F.INS, "in", "INSIDER"], [F.C33, "c3", "CODE 33"],
+const flags = n => [[F.RUN, "ru", "RUNNER"], [F.SETUP, "su", "SETUP"], [F.LEADER, "ld", "LEADER"], [F.EP, "ep", "EP"], [F.INS, "in", "INSIDER"], [F.C33, "c3", "CODE 33"],
   [F.SCAN, "sc", "ON SCAN"], [F.TT, "tt", "TT"]].filter(([m]) => n.f & m).map(([, c, l]) => `<span class="fl ${c}">${l}</span>`).join("");
 const fmt = (v, d = 1) => v == null ? "–" : (v > 0 ? "+" : "") + Number(v).toFixed(d);
 function pick(px, py) { const [x, y] = toWorld(px, py); const r = 10 / (base.k * zt.k); const n = qt.find(x, y, r); return n && match(n) ? n : null; }

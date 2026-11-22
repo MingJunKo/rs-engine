@@ -357,7 +357,7 @@ def run_scans(ctx: dict) -> dict:
                 "lead_theme": bool(set(r.all_themes) & set(top_themes)), "leader": t in leaders.index,
                 "turner": bool(set(r.all_themes) & turn_th), "fund": fund, "tech": tech, "both": fund and tech,
                 "cs": r.get("cs"), "funds": None if pd.isna(r.get("funds")) else int(r.funds),
-                "funds_chg": _r(r.get("funds_chg")), "setup": bool(r.get("setup_all")),
+                "funds_chg": _r(r.get("funds_chg")), "setup": bool(r.get("setup_all")), "runner": bool(r.get("runner")),
                 **_er(t, ctx),
                 "biotech": bool(bio.get(t)), "spark_px": [round(float(x), 2) for x in c[t].tail(22)]}
 

@@ -177,7 +177,8 @@ details.fold .body{padding:2px 18px 16px;font-size:12.5px;color:var(--t2);line-h
 .tt-list li::before{content:counter(tt);position:absolute;left:0;top:1px;width:17px;height:17px;border-radius:50%;border:.5px solid var(--gold-dim);color:var(--gold);font-family:"DM Mono",monospace;font-size:9.5px;display:flex;align-items:center;justify-content:center}
 .guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:6px 22px}
 .guide b{color:var(--t1);font-weight:500;font-family:"DM Mono",monospace;font-size:11px}
-.flag.setup{color:#0b0b0a;background:var(--gold)}.flag.er{color:var(--dn);background:var(--dn-bg)}
+.fr-note{font-size:11.5px;color:var(--t2);margin-top:8px;padding-top:8px;border-top:.5px solid var(--border)}.fr-note b{color:var(--t1);font-weight:500}
+.flag.setup{color:#0b0b0a;background:var(--gold)}.flag.runner{color:#0b0b0a;background:#f0c46a;box-shadow:0 0 6px #e8c07088}.flag.er{color:var(--dn);background:var(--dn-bg)}
 .exp{width:22px;padding-right:0!important}
 .xbtn{background:transparent;border:.5px solid var(--border-2);color:var(--t3);width:20px;height:20px;border-radius:3px;font-size:10px;line-height:1;cursor:pointer}
 .xbtn:hover,.xbtn.on{color:var(--gold);border-color:var(--gold-dim)}
@@ -353,6 +354,7 @@ td.funds{font-family:"DM Mono",monospace;font-size:11px;white-space:nowrap}td.fu
       <label><input type="checkbox" id="f-ext"> Hide extended</label>
       <label><input type="checkbox" id="f-new"> New this week</label>
       <label><input type="checkbox" id="f-setup"> Setups only</label>
+      <label title="RS 70+, ADR 4%+, base ≤ 3.5 ADRs — the profile of past 100%+ winners"><input type="checkbox" id="f-runner"> Runners only</label>
       <label><input type="checkbox" id="f-er"> Hide earnings ≤ 7d</label>
       <label title="Minimum share price (also applies to Early turners)">Price ≥ <select id="f-px"><option value="0">any</option><option value="10">$10</option><option value="20">$20</option><option value="50">$50</option></select></label>
       <label title="Minimum average daily dollar volume, 20 days (also applies to Early turners)">$Vol ≥ <select id="f-dv"><option value="0">any</option><option value="20">$20M</option><option value="50">$50M</option><option value="100">$100M</option></select></label>
@@ -635,14 +637,14 @@ function fundStrip(sym){
 }
 
 /* ETF holdings: expand any sector/group row to see its stocks ranked by RS */
-const HKEYS = ["name","exchange","rs_rating","rs_chg_1w","chg_1m","off_high","adr","atr_ext","above_50","trend_template","setup","leader","rs_win_1m","cs","funds","funds_chg"];
+const HKEYS = ["name","exchange","rs_rating","rs_chg_1w","chg_1m","off_high","adr","atr_ext","above_50","trend_template","setup","leader","rs_win_1m","cs","funds","funds_chg","runner"];
 let HOLD_BY = 'rs';
 function holdingsOf(etf, by=HOLD_BY){ const W=(D.weights||{})[etf]||{};
   return ((D.members||{})[etf]||[]).filter(s=>D.stocks[s]).map(s=>{ const a=D.stocks[s], o={symbol:s, weight:W[s]??null}; HKEYS.forEach((k,i)=>o[k]=a[i]); return o; })
   .sort(by==='weight'? (a,b)=>(b.weight??-1)-(a.weight??-1) : (a,b)=>(b.rs_rating??-1)-(a.rs_rating??-1)); }
 function holdingsHTML(etf, all){
   const H=holdingsOf(etf), show=all?H:H.slice(0,10), hasW=H.some(h=>h.weight!=null), above=H.filter(h=>h.above_50).length, rs=H.map(h=>h.rs_rating).filter(v=>v!=null).sort((a,b)=>a-b), med=rs.length?rs[Math.floor(rs.length/2)]:null;
-  const flag=h=>`${h.leader?'<span class="flag new">LEADER</span>':''}${h.setup?'<span class="flag setup">SETUP</span>':''}${h.trend_template?'<span class="flag tt">TT</span>':''}${h.atr_ext>4?'<span class="flag ext">EXT</span>':''}${!h.above_50?'<span class="flag" style="color:#6b645a">below 50d</span>':''}`;
+  const flag=h=>`${h.leader?'<span class="flag new">LEADER</span>':''}${h.runner?'<span class="flag runner" title="Runner setup: RS 70+, ADR 4%+, base ≤ 3.5 ADRs — the profile of past 100%+ winners">RUNNER</span>':''}${h.setup?'<span class="flag setup">SETUP</span>':''}${h.trend_template?'<span class="flag tt">TT</span>':''}${h.atr_ext>4?'<span class="flag ext">EXT</span>':''}${!h.above_50?'<span class="flag" style="color:#6b645a">below 50d</span>':''}`;
   return `<div class="hold-head"><b>${esc(etf)}</b> holdings in your universe · ${H.length} stock${H.length===1?'':'s'} · ${above} above the 50-day · median RS ${med??'–'}${H.length<=10?' <span style="color:#45403a">(top holdings only)</span>':''}
     <span class="hold-sort">rank by <button class="${HOLD_BY==='rs'?'on':''}" data-by="rs" data-etf="${esc(etf)}">RS</button><button class="${HOLD_BY==='weight'?'on':''}" data-by="weight" data-etf="${esc(etf)}" ${hasW?'':'disabled title="No weights yet: run Actions → Refresh universe"'}>Fund weight</button></span></div>
     <table class="t hold-t" data-etf="${esc(etf)}"><thead><tr><th class="l">Ticker</th><th class="l">Name</th><th title="% of the fund">Weight</th><th>RS</th><th>Δ1W</th><th>RS win 1M</th><th>1M</th><th>Off high</th><th>ADR</th><th>ATR ext</th><th class="l" title="${esc(CS_TIP.join('\n'))}">CANSLIM</th><th title="Institutions holding it (13F) · change vs last quarter">Funds</th><th class="l">Flags</th></tr></thead><tbody>
@@ -684,6 +686,8 @@ function drawFunnel(){
   let closed = false; try { closed = localStorage.getItem("rs_funnel_closed") === "1"; } catch(e) {}
   set(closed); tog.onclick = () => { closed = !closed; set(closed); try { localStorage.setItem("rs_funnel_closed", closed ? "1" : "0"); } catch(e) {} };
   funnelArt(el.querySelector(".fv"), F);
+  if (D.runners) el.querySelector(".rows").insertAdjacentHTML("beforeend", `<div class="fr-note" title="Separate list, not a step of the funnel: liquid, above the 50-day, RS 70+, ADR 4%+, within 6% of the pivot, base ≤ 3.5 ADRs, 0–4 ATRs above the 50-day">
+    <span class="flag runner">RUNNER</span> <b>${D.runners.length}</b> runner setups (RS 70+, ADR 4%+, looser base) ${D.runners.slice(0,8).map(t=>`<span class="open" data-sym="${esc(t)}" style="cursor:pointer;color:var(--gold)">${esc(t)}</span>`).join(" ")}${D.runners.length>8?' …':''}</div>`);
 }
 
 function funnelArt(box, F){
@@ -1087,7 +1091,7 @@ function render(){
     {h:"ER", k:"er_days", tip:"Next earnings date", f:x=>`<td class="${x.er_soon?'dn':''}" style="${x.er_soon?'':'color:#6b645a'}">${x.earnings||'–'}</td>`},
     {h:"CANSLIM", k:"cs_n", l:1, tip:CS_TIP.join("\n") + "\n\nLit = passes · dim = fails · faint = no data", f:csTd},
     {h:"Funds", k:"funds_chg", tip:"Institutions holding it (SEC 13F, latest quarter) and the change vs the quarter before", f:fundsTd},
-    {h:"Flags", l:1, f:x=>`<td class="l">${x.setup?'<span class="flag setup">SETUP</span>':''}${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}${x.er_soon?'<span class="flag er">ER</span>':''}${x.code33&&x.code33.code33?'<span class="flag c33" title="Code 33: EPS accelerating 3 quarters, sales accelerating">33</span>':''}</td>`},
+    {h:"Flags", l:1, f:x=>`<td class="l">${x.runner?'<span class="flag runner" title="Runner setup: RS 70+, ADR 4%+, base ≤ 3.5 ADRs — the profile of past 100%+ winners">RUNNER</span>':''}${x.setup?'<span class="flag setup">SETUP</span>':''}${x.trend_template?'<span class="flag tt">TT</span>':''}${x.near_high?'<span class="flag nh">NH</span>':''}${x.extended?'<span class="flag ext">EXT</span>':''}${x.er_soon?'<span class="flag er">ER</span>':''}${x.code33&&x.code33.code33?'<span class="flag c33" title="Code 33: EPS accelerating 3 quarters, sales accelerating">33</span>':''}</td>`},
   ];
   const drawLeaders = () => {
     const q = $("#q").value.trim().toUpperCase();
@@ -1095,12 +1099,12 @@ function render(){
       (!activeTheme || l.theme===activeTheme) && (!q || l.symbol.includes(q) || (l.name||"").toUpperCase().includes(q)) &&
       (!$("#f-tt").checked || l.trend_template) && (!$("#f-nh").checked || l.near_high) &&
       (!$("#f-ext").checked || !l.extended) && (!$("#f-new").checked || l.new) &&
-      (!$("#f-setup").checked || l.setup) && (!$("#f-er").checked || !l.er_soon) && liqOK(l));
+      (!$("#f-setup").checked || l.setup) && (!$("#f-runner").checked || l.runner) && (!$("#f-er").checked || !l.er_soon) && liqOK(l));
     $("#count").textContent = `${rows.length} of ${D.leaders.length}`;
     table($("#leader-tbl"), lcols, rows, {sort:"rs_rating"});
   };
   $("#themechips").querySelectorAll("button").forEach(b=>b.onclick=()=>{activeTheme=b.dataset.t||null; $("#themechips").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); drawLeaders();});
-  ["#q","#f-tt","#f-nh","#f-ext","#f-new","#f-setup","#f-er"].forEach(s=>$(s).addEventListener("input", drawLeaders));
+  ["#q","#f-tt","#f-nh","#f-ext","#f-new","#f-setup","#f-runner","#f-er"].forEach(s=>$(s).addEventListener("input", drawLeaders));
   ["#f-px","#f-dv"].forEach(s=>{ const el=$(s); try { el.value = localStorage.getItem("rs_"+s.slice(1)) || "0"; } catch(e) {}
     el.addEventListener("change", ()=>{ try { localStorage.setItem("rs_"+s.slice(1), el.value); } catch(e) {} drawLeaders(); drawTurners(); }); });
   drawLeaders();

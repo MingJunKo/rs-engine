@@ -724,6 +724,14 @@ def run(demo: bool, notify: bool):
     stk["setup_shape"] = ((stk.pivot_dist >= -6) & (stk.tightness <= 2.5) & (stk.atr_ext.between(0, 4)))
     stk["setup_all"] = stk.setup_shape & elig
     funnel_now["setup_all"] = int(stk.setup_all.sum())
+    # RUNNER SETUP — tuned on the model book (100%+ winners, 2022–26): looser base, faster mover.
+    # Caught 32% of winners in the 20 sessions before their breakout (vs 11% for SETUP), ~31 names a day,
+    # 3.9× the base rate of becoming a winner. Defensive / slow names won't qualify; SETUP keeps them visible.
+    RUN = SETTINGS.get("runner", {})
+    stk["runner"] = ((stk.price >= SETTINGS["min_price"]) & (stk.dollar_vol >= SETTINGS["min_dollar_volume"]) & stk.above_50
+                     & (stk.rs_rating >= RUN.get("min_rs", 70)) & (stk.adr >= RUN.get("min_adr", 4))
+                     & (stk.pivot_dist >= -6) & (stk.tightness <= RUN.get("max_tight", 3.5)) & stk.atr_ext.between(0, 4))
+    leaders["runner"] = stk.runner.reindex(leaders.index).fillna(False).astype(bool)
     leaders["theme"] = leaders.all_themes.apply(
         lambda l: sorted([x for x in l if x in top_themes], key=lambda x: top_themes.index(x))[0])
     leaders = leaders.sort_values(["rs_rating", "rs_score"], ascending=False).head(SETTINGS["max_leaders"])
@@ -1021,7 +1029,7 @@ def run(demo: bool, notify: bool):
                 "adr": rnd(r.adr), "dollar_vol": rnd(r.dollar_vol / 1e6, 1), "rvol": rnd(r.rvol, 2),
                 "atr_ext": rnd(r.atr_ext), "trend_template": bool(r.trend_template),
                 "near_high": bool(r.near_high), "extended": bool(r.extended), "new": bool(r.new),
-                "setup": bool(r.setup), "pivot_dist": rnd(r.pivot_dist), "tightness": rnd(r.tightness),
+                "setup": bool(r.setup), "runner": bool(r.runner), "pivot_dist": rnd(r.pivot_dist), "tightness": rnd(r.tightness),
                 "vol_dryup": rnd(r.vol_dryup, 2), "earnings": r.earnings, "er_days": rnd(r.er_days, 0),
                 "er_soon": bool(r.er_soon), "broad": bool(r.broad), "cs": r.cs, "cs_n": int(r.cs_n),
                 "funds": rnd(r.funds, 0), "funds_chg": rnd(r.funds_chg),
@@ -1065,8 +1073,9 @@ def run(demo: bool, notify: bool):
         "stocks": {t: [r["name"], r.exchange, rnd(r.rs_rating, 0), rnd(r.rs_chg_1w, 0), rnd(r.chg_1m), rnd(r.off_high),
                        rnd(r.adr), rnd(r.atr_ext), int(bool(r.above_50)), int(bool(r.trend_template)),
                        int(bool(r.setup_all)), int(t in leaders.index), rnd(r.rs_win_1m, 0),
-                       r.cs, rnd(r.funds, 0), rnd(r.funds_chg)]
+                       r.cs, rnd(r.funds, 0), rnd(r.funds_chg), int(bool(r.runner))]
                    for t, r in stk.iterrows()},
+        "runners": [t for t in stk.sort_values("rs_rating", ascending=False).index[stk.sort_values("rs_rating", ascending=False).runner]],
         "members": {e: sorted(set(g)) for e, g in uni[uni.ticker.isin(S)].groupby("etf").ticker},
         "weights": ({e: {r.ticker: float(r.weight) for r in g.itertuples() if pd.notna(r.weight)}
                      for e, g in uni[uni.ticker.isin(S)].groupby("etf")} if "weight" in uni.columns else {}),

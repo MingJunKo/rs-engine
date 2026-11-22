@@ -152,7 +152,7 @@ function render(){
 
   // final list
   let seg = "all";
-  const SEG = {all:["All",x=>true], su:["Engine setup",x=>x.setup], lt:["Leading theme",x=>x.lead_theme], both:["Tech + fund",x=>x.both], ld:["Leaders",x=>x.leader], tu:["Turning",x=>x.turner]};
+  const SEG = {all:["All",x=>true], ru:["Runner setup",x=>x.runner], su:["Engine setup",x=>x.setup], lt:["Leading theme",x=>x.lead_theme], both:["Tech + fund",x=>x.both], ld:["Leaders",x=>x.leader], tu:["Turning",x=>x.turner]};
   const base = () => D.rows.filter(x => ($("#f-bio").checked || !x.biotech));
   const drawSeg = () => $("#seg").innerHTML = Object.entries(SEG).map(([k,[n,f]])=>`<button class="${k===seg?'on':''}" data-k="${k}">${n}<b>${base().filter(f).length}</b></button>`).join('');
   D.rows.forEach(x => { const p = x.persist; x.seen = p ? p.n + p.streak/100 : null; });
@@ -164,7 +164,7 @@ function render(){
   const cols = [
     {h:"Ticker", k:"symbol", l:1, f:symTd},
     {h:"Name", k:"name", l:1, f:x=>`<td class="nm l" title="${esc(x.industry)}">${esc(x.name)}</td>`},
-    {h:"Edge", l:1, tip:"Why this one has extra edge", f:x=>`<td class="l">${x.setup?'<span class="flag" style="color:#0b0b0a;background:#c9a55a" title="Also meets the RS Engine setup: RS ≥ 80, above the 50-day, near a pivot, tight, not extended">SETUP</span>':''}${x.lead_theme?'<span class="flag lt">LEAD THEME</span>':''}${x.leader?'<span class="flag ld">LEADER</span>':''}${x.both?'<span class="flag bf">TECH+FUND</span>':''}${x.turner?'<span class="flag tu">TURNING</span>':''}${x.biotech?'<span class="flag br">BIOTECH</span>':''}</td>`},
+    {h:"Edge", l:1, tip:"Why this one has extra edge", f:x=>`<td class="l">${x.runner?'<span class="flag" style="color:#0b0b0a;background:#f0c46a;box-shadow:0 0 6px #e8c07088" title="Runner setup: RS 70+, ADR 4%+, base ≤ 3.5 ADRs — the profile of past 100%+ winners">RUNNER</span>':''}${x.setup?'<span class="flag" style="color:#0b0b0a;background:#c9a55a" title="Also meets the RS Engine setup: RS ≥ 80, above the 50-day, near a pivot, tight, not extended">SETUP</span>':''}${x.lead_theme?'<span class="flag lt">LEAD THEME</span>':''}${x.leader?'<span class="flag ld">LEADER</span>':''}${x.both?'<span class="flag bf">TECH+FUND</span>':''}${x.turner?'<span class="flag tu">TURNING</span>':''}${x.biotech?'<span class="flag br">BIOTECH</span>':''}</td>`},
     {h:"Theme", k:"theme", l:1, f:x=>`<td class="l"><span class="chip">${esc(x.theme||'–')}</span></td>`},
     {h:"RS", k:"rs_rating", f:x=>`<td><span class="rating" style="background:${ratingColor(x.rs_rating)}">${x.rs_rating??'–'}</span></td>`},
     {h:"Δ1W", k:"rs_chg_1w", f:x=>`<td class="${x.rs_chg_1w>0?'up':x.rs_chg_1w<0?'dn':''}">${fmt(x.rs_chg_1w,0)}</td>`},

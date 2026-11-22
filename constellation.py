@@ -15,7 +15,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
 
-F_SETUP, F_LEADER, F_EP, F_INSIDER, F_C33, F_SCAN, F_TT, F_A50 = 1, 2, 4, 8, 16, 32, 64, 128
+F_SETUP, F_LEADER, F_EP, F_INSIDER, F_C33, F_SCAN, F_TT, F_A50, F_RUN = 1, 2, 4, 8, 16, 32, 64, 128, 256
 
 
 def _n(x, d=0):
@@ -55,6 +55,7 @@ def build(stk: pd.DataFrame, payload: dict, settings: dict, scans: dict | None =
         f |= F_SCAN if t in scan_rows else 0
         f |= F_TT if bool(r.get("trend_template")) else 0
         f |= F_A50 if bool(r.get("above_50")) else 0
+        f |= F_RUN if bool(r.get("runner")) else 0
         p = (scan_rows.get(t) or {}).get("persist") or {}
         nodes.append([t, tix[th], _n(r.rs_rating), _n(r.chg_1d, 1), f, _n(r.get("rs_chg_1w")),
                       _n(r.dollar_vol / 1e6), p.get("n") or 0, str(r.get("name") or "")[:40], r.get("exchange") or ""])
@@ -103,7 +104,7 @@ def build(stk: pd.DataFrame, payload: dict, settings: dict, scans: dict | None =
     if c33:
         ev.append({"k": "CODE 33", "t": f"{len(c33)} names: " + ", ".join(sorted(c33)[:8]), "tone": "info"})
 
-    counts = {"stocks": len(nodes), "setups": sum(1 for n in nodes if n[4] & F_SETUP),
+    counts = {"stocks": len(nodes), "setups": sum(1 for n in nodes if n[4] & F_SETUP), "runners": sum(1 for n in nodes if n[4] & F_RUN),
               "leaders": sum(1 for n in nodes if n[4] & F_LEADER), "ep": sum(1 for n in nodes if n[4] & F_EP),
               "insiders": sum(1 for n in nodes if n[4] & F_INSIDER), "c33": sum(1 for n in nodes if n[4] & F_C33),
               "scan": sum(1 for n in nodes if n[4] & F_SCAN)}

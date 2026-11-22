@@ -21,5 +21,10 @@
     "vpa": 23,
     "stretch": 53,
     "modelbook": 83
+  },
+  "runner": {
+    "min_rs": 70,
+    "min_adr": 4,
+    "max_tight": 3.5
   }
 }
