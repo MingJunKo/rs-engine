@@ -838,7 +838,8 @@ def run(demo: bool, notify: bool):
                         "first_seen": first_seen[t].strftime("%d %b"), "first_seen_iso": first_seen[t].strftime("%Y-%m-%d"),
                         "days_on": int(g.date.nunique()), "on_now": t in leaders.index,
                         "ret_since": pct(px_now, first_px[t]) if first_px.get(t) else np.nan,
-                        "weeks": [wk_rs.get(w) for w in week_ends]})
+                        "weeks": [wk_rs.get(w) for w in week_ends],
+                        "rs_trend": ([int(v) for v in stk_rating[t].dropna().tail(40)] if t in stk_rating.columns else [])})
     history.sort(key=lambda h: (-h["on_now"], -h["days_on"]))
     hist_week_labels = [pd.Timestamp(w).strftime("%d %b") for w in week_ends]
 

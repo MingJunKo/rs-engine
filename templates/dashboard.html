@@ -786,6 +786,16 @@ function drawSignals(){
     {h:"Sales QoQ", l:1, f:x=>`<td class="l" style="color:var(--t2)">${(x.sales_qoq||[]).map(v=>(v>0?'+':'')+v+'%').join(' → ')}</td>`},
   ], Q.map(x=>({...x, symbol:x.t, rs_rating:(ST[x.t]||[])[2] ?? x.rs, s_yoy:(x.sales||[]).slice(-1)[0]})), {sort:"rs_rating"});
 }
+/* RS rating sparkline on a fixed 40–99 scale, so lines compare across rows */
+function rsLine(v, w=120, h=26){
+  if (!v || v.length < 2) return '<span class="dim">–</span>';
+  const X = i => 1 + i*(w-2)/(v.length-1), Y = r => h-2 - (Math.max(40,r)-40)/59*(h-4);   // 40–99: where leaders live
+  const pts = v.map((r,i)=>`${X(i).toFixed(1)},${Y(r).toFixed(1)}`).join(" ");
+  const up = v[v.length-1] >= v[Math.max(0,v.length-21)], col = up ? "#8fcf8a" : "#e0a17a";
+  return `<svg width="${w}" height="${h}" style="vertical-align:middle;overflow:visible"><line x1="0" x2="${w}" y1="${Y(80)}" y2="${Y(80)}" stroke="#3a352e" stroke-dasharray="2 3"/>`+
+    `<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.4" stroke-linejoin="round"/><circle cx="${X(v.length-1)}" cy="${Y(v[v.length-1])}" r="2.2" fill="${col}"/></svg>`;
+}
+
 /* leader history */
 function drawHistory(){
   const H = D.history; if (!H || !H.rows) { $("#history").remove(); return; }
@@ -799,10 +809,13 @@ function drawHistory(){
     {h:"First seen", k:"first_seen_iso", f:x=>`<td style="color:var(--t3)">${esc(x.first_seen)}</td>`},
     {h:"Days on", k:"days_on", tip:"Daily runs it appeared in, within the window", f:x=>`<td>${x.days_on}</td>`},
     {h:"Since 1st seen", k:"ret_since", tip:"Price change since the first day it made the list", f:x=>`<td class="${x.ret_since>0?'up':x.ret_since<0?'dn':''}">${x.ret_since==null?'–':fmt(x.ret_since)+'%'}</td>`},
-    ...W.map((w,i)=>({h:w, tip:`Week ending ${w}`, f:x=>{const v=x.weeks[i]; return `<td>${v==null?'<span class="wk off">·</span>':`<span class="wk" style="background:${ratingColor(v)}">${v}</span>`}</td>`;}})),
+    ...W.map((w,i)=>({h:w, k:"w"+i, tip:`Week ending ${w} · click to sort`, f:x=>{const v=x.weeks[i]; return `<td>${v==null?'<span class="wk off">·</span>':`<span class="wk" style="background:${ratingColor(v)}">${v}</span>`}</td>`;}})),
+    {h:"RS trend · 40d", k:"rs_slope", l:1, tip:"Daily RS rating over the last 40 sessions, scale 40–99 (dashed line = 80). Sort = change over the last 20 sessions", f:x=>`<td class="l">${rsLine(x.rs_trend)}<span class="${x.rs_slope>0?'up':x.rs_slope<0?'dn':''}" style="font-size:11px;margin-left:6px">${x.rs_slope==null?'':fmt(x.rs_slope,0)}</span></td>`},
     {h:"Status", k:"on_now", l:1, f:x=>`<td class="l" style="color:${x.on_now?'#8fcf8a':'#6b645a'}">${x.on_now?'On list':'Dropped'}</td>`},
   ];
-  const go = () => table($("#hist-tbl"), cols, H.rows.filter(r => (!$("#h-on").checked || r.on_now) && (!$("#h-off").checked || !r.on_now)), {sort:"days_on"});
+  const rows = H.rows.map(r => { const o = {...r}; (r.weeks||[]).forEach((v,i)=>o["w"+i]=v);
+    const t = r.rs_trend||[]; o.rs_slope = t.length>20 ? t[t.length-1]-t[t.length-21] : null; return o; });
+  const go = () => table($("#hist-tbl"), cols, rows.filter(r => (!$("#h-on").checked || r.on_now) && (!$("#h-off").checked || !r.on_now)), {sort:"days_on"});
   ["#h-on","#h-off"].forEach(s => $(s).onchange = go); go();
 }
 
