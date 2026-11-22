@@ -48,7 +48,10 @@ grp = [e for e in etfs.symbol if meta.at[e, "category"] in ("Group", "SPDR Secto
 uni = pd.read_csv(ROOT / "config" / "universe.csv")
 etfs_of = uni.groupby(uni.ticker.str.upper()).etf.apply(lambda s: set(s)).to_dict()
 S = sorted(set(st.ticker) | set(W.symbol))
-px = E.download_yahoo(S + grp + [E.BENCH], period="6y", want=("Open", "High", "Low", "Close", "Volume"))
+import os
+PERIOD_ = os.environ.get("CAPTURE_PERIOD", "16y")             # a year more than the model book, for the 252-day warm-up
+px = E.download_yahoo(S + grp + [E.BENCH], period=PERIOD_, want=("Open", "High", "Low", "Close", "Volume"))
+px = {k: v_.astype("float32") for k, v_ in px.items()}
 c = px["Close"].ffill(limit=3)
 c = c.loc[c[E.BENCH].notna()]
 o, h, l, v = (px[k].reindex(c.index) for k in ("Open", "High", "Low", "Volume"))
