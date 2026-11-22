@@ -162,6 +162,12 @@ def run(demo: bool):
     E_["ep"] = (E_.gap >= 10) & (E_.bo_vol >= 3)
     E_ = E_.reset_index().rename(columns={"level_0": "date", "level_1": "ticker"})
     E_.columns = ["date", "ticker"] + list(E_.columns[2:])
+    try:                                                         # every breakout with its outcome (for environment studies)
+        (E_[["date", "ticker", "complete", "winner", "gain", "ret_20", "rs", "adr", "tight", "ep", "price", "dvol", "mkt_up"]]
+         .assign(date=lambda x: pd.to_datetime(x.date).dt.strftime("%Y-%m-%d")).round(2)
+         .to_csv(E.ROOT / "data" / "history" / "modelbook_events.csv.gz", index=False, compression="gzip"))
+    except Exception as e:
+        log(f"  events file not saved: {e}")
     log(f"  breakout events: {len(E_):,} ({int(E_.complete.sum()):,} with a full {HORIZON}-day outcome), "
         f"winners: {int(E_.winner.sum()):,}")
 
