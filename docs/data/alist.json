@@ -10,16 +10,6 @@
    "price": 38.38,
    "pivot": 39.5,
    "adr": 3.1
-  },
-  {
-   "t": "UVE",
-   "src": "RS setups",
-   "mkt": "SPY",
-   "go": false,
-   "rs": 88,
-   "price": 48.49,
-   "pivot": 50.75,
-   "adr": 3.0
   }
  ],
  "mkt_wmacd": {
