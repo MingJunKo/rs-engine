@@ -165,10 +165,13 @@ for w in W.itertuples():
     rec["js_tight_fail"] = bool(js_wl.values[b - PRE:b, j].any() and not js_final.values[b - PRE:b, j].any())
     rows.append(rec)
 R = pd.DataFrame(rows)
-U = R[R.in_universe]
-log(f"{len(U)} winners scored ({(~R.in_universe).sum()} outside the universe)")
+U = R[R.in_universe == True].copy()
+for k_ in U.columns:
+    if k_.endswith(" · before") or k_.endswith(" · after") or k_ == "js_tight_fail":
+        U[k_] = U[k_].fillna(False).astype(bool)
+log(f"{len(U)} winners scored ({(R.in_universe != True).sum()} outside the universe)")
 
-out = {"winners": int(len(R)), "scored": int(len(U)), "outside_universe": sorted(R[~R.in_universe].symbol.tolist()),
+out = {"winners": int(len(R)), "scored": int(len(U)), "outside_universe": sorted(R[R.in_universe != True].symbol.tolist()),
        "window": {"before": PRE, "after": POST}, "capture": {}, "by_year": {}, "daily_names": {}, "lift": {}}
 for k in FLAGS:
     out["capture"][k] = {"before": round(100 * U[k + " · before"].mean(), 1), "after_only": round(100 * (~U[k + " · before"] & U[k + " · after"]).mean(), 1),
