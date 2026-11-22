@@ -190,7 +190,7 @@ footer{padding:36px 0 48px;color:var(--t4);font-size:11px;font-family:"DM Mono",
   <div id="chart"><div class="legend"><span style="color:#e8c070">SMA 10</span><span style="color:#7c9cff">21</span><span style="color:#d4706a">50</span><span style="color:#5fc9a8">RS line</span><span id="lg-pos"></span></div></div>
   <div class="dnotes">
     <textarea id="d-note" placeholder="What do you see? Base shape, VCP contractions, the tell before the breakout, where you'd have bought, where the stop goes…"></textarea>
-    <div class="side"><label><input type="checkbox" id="d-studied"> Studied</label><span id="d-saved" style="color:var(--t4);font-size:10px"></span></div>
+    <div class="side"><label><input type="checkbox" id="d-studied"> Studied</label><span id="d-saved" style="color:var(--t4);font-size:10px"></span><span id="d-sync" style="color:var(--t4);font-size:10px;margin-left:auto"></span></div>
   </div>
   <div class="hint">↑ ↓ next / previous · Esc close · gold ▲ = breakout · grey ▼ = base high · green ● = peak of the run</div>
 </aside>
@@ -342,6 +342,36 @@ $("#export").onclick = () => {
 };
 drawBook();
 
+/* ── progress sync: notes go to the same private gist VPA Arena uses (VPA Arena → Stats → Sync my devices),
+      so phone and PC share them and the Telegram tracker can count them ── */
+const SYNC = (() => {
+  const FILE = "modelbook_notes.json";
+  let cfg = null; try { cfg = JSON.parse(localStorage.getItem("vpaSync") || "null"); } catch(e) {}
+  const on = !!(cfg && cfg.token && cfg.id);
+  const gh = (path, opt={}) => fetch("https://api.github.com" + path, {...opt, headers:{Authorization:"token " + cfg.token, Accept:"application/vnd.github+json"}})
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const status = t => { const el = $("#d-sync"); if (el) el.textContent = t; };
+  const collect = () => { const notes = {};
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i), m = k && k.match(/^mb-(note|done|t):(.+)$/); if (!m) continue;
+      const o = notes[m[2]] = notes[m[2]] || {}; o[m[1] === "note" ? "n" : m[1] === "done" ? "d" : "t"] = m[1] === "done" ? 1 : localStorage.getItem(k); }
+    return {updated: new Date().toISOString(), notes}; };
+  let pt;
+  const push = () => { if (!on) { status("not synced · turn on Sync in VPA Arena"); return; }
+    clearTimeout(pt); status("syncing…");
+    pt = setTimeout(() => gh("/gists/" + cfg.id, {method:"PATCH", body: JSON.stringify({files:{[FILE]:{content: JSON.stringify(collect())}}})})
+      .then(() => status("synced ✓")).catch(e => status("sync failed (" + e.message + ")")), 1200); };
+  const pull = () => !on ? Promise.resolve() : gh("/gists/" + cfg.id).then(g => { const f = g.files && g.files[FILE]; if (!f) return;
+      const R = JSON.parse(f.content || "{}").notes || {}; let n = 0;
+      Object.entries(R).forEach(([id, o]) => { const lt = store.get("mb-t:" + id) || "";
+        if ((o.t || "") > lt) { store.set("mb-note:" + id, o.n || null); store.set("mb-done:" + id, o.d ? "1" : null); store.set("mb-t:" + id, o.t || null); n++; } });
+      if (n) { try { drawBook(); } catch(e) {} } status("synced ✓"); })
+    .catch(e => status("sync failed (" + e.message + ")"));
+  if (!on) status("not synced · turn on Sync in VPA Arena");
+  return {on, push, pull};
+})();
+SYNC.pull().then(() => {                                   // a Telegram link opens straight into that chart: …/modelbook/#study=ID
+  const m = location.hash.match(/^#study=(.+)$/); if (m) openStudy(decodeURIComponent(m[1])); });
+
 $("#method").innerHTML = `<p><b>Breakout:</b> a close above the highest close of the prior 63 sessions, after at least 15 sessions below that high (out of a base of 3+ weeks). Price ≥ $${D.rules.min_price} and 50-day $ volume ≥ $${D.rules.min_dvol}M the day before.</p>
 <p><b>Winner:</b> the close reached +${D.rules.min_gain}% within ${D.rules.horizon} sessions. Only the first breakout of each run is listed. The run is then followed until the stock closes 25% below its high (or 18 months), and the high is the peak.</p>
 <p><b>Traits</b> are measured on the day before the breakout (RS rating is IBD-style: 40% 3-month + 20% each 6/9/12-month return, ranked across all stocks), except breakout volume and gap. <b>RS↑</b> = RS line vs SPY at a 52-week high on the breakout day; <b>LEAD</b> = RS line made a new high in the 10 days before while price was still below its high; <b>EP</b> = gap ≥ 10% on ≥ 3× volume.</p>
@@ -399,9 +429,9 @@ function closeStudy(){ $("#drawer").classList.remove("open"); $("#drawer").setAt
 function step(dv){ if (cur < 0) return; cur = Math.max(0, Math.min(rowsNow.length-1, cur+dv)); show(); }
 let saveT;
 $("#d-note").addEventListener("input", e => { const x = rowsNow[cur]; if (!x) return; clearTimeout(saveT);
-  saveT = setTimeout(() => { store.set("mb-note:"+x.id, e.target.value.trim()); $("#d-saved").textContent = "saved";
+  saveT = setTimeout(() => { store.set("mb-note:"+x.id, e.target.value.trim()); store.set("mb-t:"+x.id, new Date().toISOString()); $("#d-saved").textContent = "saved"; SYNC.push();
     const tr = $(`#book-tbl [data-id="${CSS.escape(x.id)}"]`)?.closest("tr"); if (tr) tr.classList.toggle("noted", !!e.target.value.trim()); }, 400); });
-$("#d-studied").onchange = e => { const x = rowsNow[cur]; if (!x) return; store.set("mb-done:"+x.id, e.target.checked ? "1" : null);
+$("#d-studied").onchange = e => { const x = rowsNow[cur]; if (!x) return; store.set("mb-done:"+x.id, e.target.checked ? "1" : null); store.set("mb-t:"+x.id, new Date().toISOString()); SYNC.push();
   const tr = $(`#book-tbl [data-id="${CSS.escape(x.id)}"]`)?.closest("tr"); if (tr) tr.classList.toggle("studied", e.target.checked); };
 $("#d-prev").onclick = () => step(-1); $("#d-next").onclick = () => step(1); $("#d-close").onclick = closeStudy;
 document.addEventListener("click", e => { const o = e.target.closest(".open[data-id]"); if (o) openStudy(o.dataset.id); });

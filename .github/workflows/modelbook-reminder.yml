@@ -1,0 +1,41 @@
+name: Model book annotation reminder
+
+on:
+  schedule:
+    - cron: "35 23 * * *"   # ~7:35am Singapore: today's chart + progress (backups below if GitHub runs late)
+    - cron: "15 0 * * *"    # ~8:15am backup (sends only if the morning one hasn't)
+    - cron: "30 12 * * *"   # ~8:30pm: last call, only if nothing was annotated today
+  workflow_dispatch:
+    inputs:
+      evening:
+        description: "Send the evening last-call version"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: modelbook-reminder
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install requests pandas numpy
+      - name: Send reminder
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          VPA_GIST_ID: ${{ secrets.VPA_GIST_ID }}
+        run: python modelbook_reminder.py ${{ (github.event.schedule == '30 12 * * *' || inputs.evening) && '--evening' || '' }}
+      - name: Save sent-state
+        run: |
+          git config user.name "rs-engine-bot"; git config user.email "rs-engine-bot@users.noreply.github.com"
+          git add data/history/modelbook_reminder.json 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Model book reminder state" && git pull --rebase -q && git push -q) || true
