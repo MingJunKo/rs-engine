@@ -261,3 +261,28 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-20,CBLL,RS setup,27.39,88.0,Medical Devices,True,0011110,Defensive Rotation
 2026-11-20,HG,RS setup,38.38,88.0,Insurance,True,10101-0,Defensive Rotation
 2026-11-20,UVE,RS setup,48.49,88.0,Insurance,True,1010110,Defensive Rotation
+2026-11-23,GME,RS setup,27.3,97.0,Retail,True,0011110,Defensive Rotation
+2026-11-23,SIBN,RS setup,24.77,97.0,Medical Devices,True,0010100,Defensive Rotation
+2026-11-23,CVCO,RS setup,675.02,96.0,Homebuilders,True,0010110,Defensive Rotation
+2026-11-23,SN,RS setup,225.37,96.0,Homebuilders,True,10101-0,Defensive Rotation
+2026-11-23,LMB,RS setup,55.62,94.0,Consumer Discretionary,True,1100100,Defensive Rotation
+2026-11-23,FLYW,RS setup,22.07,94.0,Consumer Discretionary,True,1010110,Defensive Rotation
+2026-11-23,IBTA,Weekly scan,55.17,94.0,Consumer Discretionary,True,0011110,Defensive Rotation
+2026-11-23,LUXE,Weekly scan,10.86,97.0,Consumer Discretionary,True,--111-0,Defensive Rotation
+2026-11-23,CRCT,Weekly scan,8.74,99.0,Technology,False,1011110,Defensive Rotation
+2026-11-23,PVH,Weekly scan,95.45,97.0,Industrials,False,1011110,Defensive Rotation
+2026-11-23,LMRI,Weekly scan,14.54,95.0,Health Care,False,-000110,Defensive Rotation
+2026-11-23,MSGE,Weekly scan,83.15,85.0,Consumer Discretionary,True,1010110,Defensive Rotation
+2026-11-23,APOG,Weekly scan,45.37,81.0,Consumer Discretionary,True,0011110,Defensive Rotation
+2026-11-23,PUBM,Weekly scan,20.14,86.0,Technology,False,1011110,Defensive Rotation
+2026-11-23,TASK,Weekly scan,9.03,83.0,Software & Cloud,False,0110100,Defensive Rotation
+2026-11-23,TPC,Weekly scan,92.88,82.0,Infrastructure,False,1010110,Defensive Rotation
+2026-11-23,SENEA,Weekly scan,35.42,66.0,Consumer Staples,True,1010010,Defensive Rotation
+2026-11-23,CHEF,Weekly scan,105.82,68.0,Food & Beverage,False,1110010,Defensive Rotation
+2026-11-23,MMYT,Weekly scan,49.63,58.0,Airlines,False,10010-0,Defensive Rotation
+2026-11-23,EROK,Weekly scan,21.22,63.0,Energy,False,--010-0,Defensive Rotation
+2026-11-23,ANRO,Weekly scan,26.57,61.0,Pharma,False,0000010,Defensive Rotation
+2026-11-23,FLY,Weekly scan,19.14,61.0,Aerospace & Defense,False,0000010,Defensive Rotation
+2026-11-23,DIOD,Weekly scan,82.56,60.0,Semiconductors,False,1000010,Defensive Rotation
+2026-11-23,SB,Weekly scan,7.72,41.0,Consumer Discretionary,True,10000-0,Defensive Rotation
+2026-11-23,ONTO,Weekly scan,190.99,35.0,Quantum,False,1000010,Defensive Rotation

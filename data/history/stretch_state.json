@@ -1,1 +1,1 @@
-{"date": "Fri 20 Nov 2026", "keys": ["QQQ:bigday", "QQQ:down4", "QQQ:drawdown", "QQQ:ext50", "QQQ:mco", "QQQ:namo", "QQQ:nymo", "QQQ:ratio5", "QQQ:rsi2", "QQQ:vix30", "QQQ:vixinv", "QQQ:vixspike", "QQQ:z1", "QQQ:z5", "SPY:band", "SPY:bigday", "SPY:down4", "SPY:drawdown", "SPY:ext50", "SPY:mco", "SPY:namo", "SPY:nymo", "SPY:ratio5", "SPY:rsi2", "SPY:streak", "SPY:vix30", "SPY:vixinv", "SPY:vixspike", "SPY:z5"], "cluster": true}
+{"date": "Mon 23 Nov 2026", "keys": ["QQQ:bigday", "QQQ:drawdown", "QQQ:vixinv", "SPY:bigday", "SPY:drawdown", "SPY:vixinv"], "cluster": false}
