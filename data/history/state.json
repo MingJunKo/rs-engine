@@ -1,34 +1,39 @@
 {
- "date": "2026-11-23",
+ "date": "2026-11-24",
  "regime": "Defensive Rotation",
  "setups": [
-  "AEO",
-  "CVCO",
-  "FLYW",
-  "GME",
+  "AMPH",
+  "BMI",
+  "BOBS",
+  "CSL",
+  "HLF",
   "HWKN",
-  "LMB",
+  "LIVN",
   "MAS",
+  "POOL",
+  "PRCT",
   "SIBN",
   "SN"
  ],
  "turners": [
-  "JETS"
+  "XBI"
  ],
  "prev": {
-  "date": "2026-11-20",
+  "date": "2026-11-23",
   "regime": "Defensive Rotation",
   "setups": [
    "AEO",
-   "CBLL",
-   "EW",
-   "FIZZ",
-   "HG",
-   "HMN",
+   "CVCO",
+   "FLYW",
+   "GME",
+   "HWKN",
+   "LMB",
    "MAS",
-   "POOL",
-   "RYAN"
+   "SIBN",
+   "SN"
   ],
-  "turners": []
+  "turners": [
+   "JETS"
+  ]
  }
 }

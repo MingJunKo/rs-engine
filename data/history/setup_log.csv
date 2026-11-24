@@ -286,3 +286,14 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-23,DIOD,Weekly scan,82.56,60.0,Semiconductors,False,1000010,Defensive Rotation
 2026-11-23,SB,Weekly scan,7.72,41.0,Consumer Discretionary,True,10000-0,Defensive Rotation
 2026-11-23,ONTO,Weekly scan,190.99,35.0,Quantum,False,1000010,Defensive Rotation
+2026-11-24,HLF,RS setup,16.3,97.0,Health Care,True,10011-0,Defensive Rotation
+2026-11-24,AMPH,RS setup,29.63,96.0,Pharma,True,0010100,Defensive Rotation
+2026-11-24,BOBS,RS setup,20.55,93.0,Retail,True,-111110,Defensive Rotation
+2026-11-24,PRCT,RS setup,25.21,92.0,Medical Devices,True,0001100,Defensive Rotation
+2026-11-24,TRUP,Weekly scan,35.43,91.0,Health Care,True,0011100,Defensive Rotation
+2026-11-24,SBC,Weekly scan,6.05,94.0,Health Care,True,--011-0,Defensive Rotation
+2026-11-24,OBIO,Weekly scan,6.9,89.0,Health Care,True,00111-0,Defensive Rotation
+2026-11-24,LFTO,Weekly scan,23.01,93.0,Software & Cloud,False,-0001-0,Defensive Rotation
+2026-11-24,CAR,Weekly scan,129.38,76.0,Transports,False,0000010,Defensive Rotation
+2026-11-24,CHRW,Weekly scan,140.53,57.0,Transports,False,1000010,Defensive Rotation
+2026-11-24,OPTX,Weekly scan,6.16,50.0,Semiconductors,False,10010-0,Defensive Rotation

@@ -1,25 +1,15 @@
 {
- "date": "2026-11-23",
+ "date": "2026-11-24",
  "rows": [
   {
    "t": "SN",
    "src": "RS setups",
    "mkt": "SPY",
    "go": false,
-   "rs": 96,
-   "price": 225.37,
-   "pivot": 232.76,
-   "adr": 4.0
-  },
-  {
-   "t": "FLYW",
-   "src": "RS setups",
-   "mkt": "SPY",
-   "go": false,
-   "rs": 94,
-   "price": 22.07,
-   "pivot": 22.58,
-   "adr": 4.4
+   "rs": 95,
+   "price": 228.93,
+   "pivot": 232.94,
+   "adr": 4.2
   }
  ],
  "mkt_wmacd": {
@@ -28,7 +18,7 @@
  },
  "exposure": {
   "pct": 0,
-  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 36%",
+  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 40%",
   "note": "cash \u2014 no new longs"
  }
 }
