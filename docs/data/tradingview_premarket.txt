@@ -1,4 +1,2 @@
-###Pre-market 23 Nov: earnings or RS 70+
-ZS,KYMR,SMTC,SENS,ELMT
-###Pre-market 23 Nov: other gappers
-USDE,APLD,HOS,ABTC,TGB,ASST,UMC,FTI,BTGO,FWDI,ASX,FORM,GLXY,WYFI,BMNR,NGNE,ARM,HYMC,AEHR,KC
+###Pre-market 24 Nov: earnings or RS 70+
+FLNC,INSM,DKS,EMBC,ANF,KSS
