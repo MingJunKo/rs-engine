@@ -377,6 +377,28 @@ def run_scans(ctx: dict) -> dict:
     except Exception as e:
         print("  scan persistence skipped:", e)
 
+    # Runner setups the engine flags that your scans don't carry today (the Telegram list minus this page's list)
+    off_runners = []
+    try:
+        onlist = {r["symbol"] for r in rows}
+        rr = stk[stk.get("runner", pd.Series(False, index=stk.index)).fillna(False).astype(bool)]
+        for t, r in rr.sort_values("rs_rating", ascending=False).iterrows():
+            if t in onlist:
+                continue
+            w = W.get(t) or {}
+            if w.get("tight_miss"):
+                miss = "watchlist, failed tightness: " + ", ".join(w["tight_miss"])
+            elif w.get("miss"):
+                miss = f"{SCREEN_NAMES.get(w.get('best'), w.get('best'))}: failed " + ", ".join(w["miss"][:3])
+            else:
+                miss = "outside the scan universe"
+            off_runners.append({"symbol": t, "name": r["name"], "exchange": r.exchange, "theme": r.theme,
+                                "rs_rating": None if pd.isna(r.rs_rating) else int(r.rs_rating),
+                                "adr": _r(r.get("adr")), "pivot_dist": _r(r.get("pivot_dist")), "tightness": _r(r.get("tightness")),
+                                "setup": bool(r.get("setup_all")), "biotech": bool(bio.get(t, False)), "why": miss})
+    except Exception as e:
+        print("  off-scan runners skipped:", e)
+
     eps = ep_scan(o, h, l, c, v, d)
     para = parabolic_scan(o, h, l, c, v, d)
     news = catalysts([e["symbol"] for e in eps if e["days_ago"] <= 2][:25] + [p["symbol"] for p in para][:8]) \
@@ -398,7 +420,7 @@ def run_scans(ctx: dict) -> dict:
     return {"asof": ctx["asof"], "generated": ctx["generated"], "watchlists": wls, "rs_scan": rs_scan,
             "funnel": {"base": int(in_wl.sum()), "tight": int((in_wl & (tb | ta)).sum()), "rs_scan": int(S["s27"].sum()),
                        "wl6": int(wl6.sum()), "final": len(rows), "biotech": sum(r["biotech"] for r in rows)},
-            "rows": rows, "dropped": drop, "ep": eps, "parabolic": para, "coverage": cover, "top_themes": top_themes,
+            "rows": rows, "dropped": drop, "off_runners": off_runners, "ep": eps, "parabolic": para, "coverage": cover, "top_themes": top_themes,
             "premarket": _premarket()}
 
 
