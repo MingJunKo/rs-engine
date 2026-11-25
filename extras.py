@@ -69,7 +69,7 @@ def clusters(stk: pd.DataFrame, close: pd.DataFrame, ep_today: list, setups: lis
         if t in setups:
             why.append("setup")
         if t in new_hi:
-            why.append("new high")
+            why.append("52W high")
         if why:
             flags[t] = why
     groups = {}
@@ -84,7 +84,7 @@ def clusters(stk: pd.DataFrame, close: pd.DataFrame, ep_today: list, setups: lis
             out.append({"industry": ind, "n": len(xs),
                         "names": [{"t": t, "why": "/".join(w), "rs": None if pd.isna(stk.at[t, "rs_rating"]) else int(stk.at[t, "rs_rating"])}
                                   for t, w in xs[:8]],
-                        "eps": sum("EP" in w for _, w in xs), "highs": sum("new high" in w for _, w in xs)})
+                        "eps": sum("EP" in w for _, w in xs), "highs": sum("52W high" in w for _, w in xs)})
     return sorted(out, key=lambda x: (-x["eps"], -x["n"]))
 
 

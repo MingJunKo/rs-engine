@@ -799,7 +799,7 @@ function drawSignals(){
   // clusters
   const C = X.clusters || [], cel = $("#sig-clusters");
   cel.innerHTML = !C.length ? `<div class="sig-empty">No industry has 3+ names flagged today.</div>` :
-    C.map(c => `<div class="clu"><div class="ci"><b>${esc(c.industry)}</b> · ${c.n} names${c.eps?` · ${c.eps} EP`:''}${c.highs?` · ${c.highs} new high${c.highs>1?'s':''}`:''}</div>
+    C.map(c => `<div class="clu"><div class="ci"><b>${esc(c.industry)}</b> · ${c.n} names${c.eps?` · ${c.eps} EP`:''}${c.highs?` · ${c.highs} at 52W highs`:''}</div>
       <div class="cn">${c.names.map(n=>`<span class="c"><span class="open" data-sym="${esc(n.t)}" style="cursor:pointer">${esc(n.t)}</span> <span style="color:var(--t3)">${esc(n.why)}${n.rs!=null?' · RS '+n.rs:''}</span></span>`).join("")}</div></div>`).join("");
   cel._rows = C.flatMap(c => c.names.map(n => ({symbol:n.t, rs_rating:n.rs, theme:c.industry})));
   cel.querySelectorAll(".open").forEach(o => o.closest(".cn")._rows = cel._rows);
