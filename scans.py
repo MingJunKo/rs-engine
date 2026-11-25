@@ -452,9 +452,7 @@ def dropped(log: pd.DataFrame, rows: list, W: dict, c: pd.DataFrame, stk: pd.Dat
             continue
         last = g.date.max()
         w = W.get(t) or {}
-        if w.get("bio"):
-            why_ = "biotech set aside"
-        elif w.get("tight_miss"):
+        if w.get("tight_miss"):
             why_ = "in a watchlist, failed the tightness pass: " + ", ".join(w["tight_miss"])
         elif w.get("miss") is not None:
             why_ = f"{SCREEN_NAMES.get(w.get('best'), w.get('best'))}: failed " + ", ".join(w["miss"])
