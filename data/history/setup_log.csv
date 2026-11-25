@@ -297,3 +297,9 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-24,CAR,Weekly scan,129.38,76.0,Transports,False,0000010,Defensive Rotation
 2026-11-24,CHRW,Weekly scan,140.53,57.0,Transports,False,1000010,Defensive Rotation
 2026-11-24,OPTX,Weekly scan,6.16,50.0,Semiconductors,False,10010-0,Defensive Rotation
+2026-11-25,KNSA,RS setup,100.99,92.0,Health Care,True,10111-0,Defensive Rotation
+2026-11-25,MHK,RS setup,152.19,92.0,Homebuilders,True,0010110,Defensive Rotation
+2026-11-25,SKY,RS setup,97.76,91.0,Homebuilders,True,0010110,Defensive Rotation
+2026-11-25,DUOL,Weekly scan,153.45,71.0,Software & Cloud,False,0000010,Defensive Rotation
+2026-11-25,SHIP,Weekly scan,14.83,35.0,Consumer Discretionary,False,10000-0,Defensive Rotation
+2026-11-25,POWL,Weekly scan,155.04,42.0,Infrastructure,False,1100010,Defensive Rotation
