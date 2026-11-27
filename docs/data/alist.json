@@ -1,34 +1,13 @@
 {
- "date": "2026-11-25",
- "rows": [
-  {
-   "t": "KNSA",
-   "src": "RS setups",
-   "mkt": "SPY",
-   "go": false,
-   "rs": 92,
-   "price": 100.99,
-   "pivot": 103.37,
-   "adr": 4.5
-  },
-  {
-   "t": "SN",
-   "src": "RS setups",
-   "mkt": "SPY",
-   "go": false,
-   "rs": 91,
-   "price": 232.5,
-   "pivot": 235.23,
-   "adr": 4.5
-  }
- ],
+ "date": "2026-11-27",
+ "rows": [],
  "mkt_wmacd": {
   "QQQ": false,
   "SPY": false
  },
  "exposure": {
   "pct": 0,
-  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 43%",
+  "why": "0/2 index W-MACD green, 2/7 gauges risk-on, breadth 48%",
   "note": "cash \u2014 no new longs"
  }
 }

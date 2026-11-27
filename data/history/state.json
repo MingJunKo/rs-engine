@@ -1,37 +1,35 @@
 {
- "date": "2026-11-25",
+ "date": "2026-11-27",
  "regime": "Defensive Rotation",
  "setups": [
-  "BMI",
-  "KNSA",
+  "AMPH",
+  "FERG",
   "LIVN",
+  "MDLN",
   "MHK",
-  "SIBN",
-  "SKY",
-  "SN"
+  "SIBN"
  ],
  "turners": [
-  "IBB"
+  "IPAY",
+  "XLB",
+  "SHLD",
+  "XLRE",
+  "XLC"
  ],
  "prev": {
-  "date": "2026-11-24",
+  "date": "2026-11-25",
   "regime": "Defensive Rotation",
   "setups": [
-   "AMPH",
    "BMI",
-   "BOBS",
-   "CSL",
-   "HLF",
-   "HWKN",
+   "KNSA",
    "LIVN",
-   "MAS",
-   "POOL",
-   "PRCT",
+   "MHK",
    "SIBN",
+   "SKY",
    "SN"
   ],
   "turners": [
-   "XBI"
+   "IBB"
   ]
  }
 }

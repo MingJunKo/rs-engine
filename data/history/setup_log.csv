@@ -303,3 +303,8 @@ date,symbol,source,price,rs,theme,lead_theme,cs,regime
 2026-11-25,DUOL,Weekly scan,153.45,71.0,Software & Cloud,False,0000010,Defensive Rotation
 2026-11-25,SHIP,Weekly scan,14.83,35.0,Consumer Discretionary,False,10000-0,Defensive Rotation
 2026-11-25,POWL,Weekly scan,155.04,42.0,Infrastructure,False,1100010,Defensive Rotation
+2026-11-27,MDLN,RS setup,41.19,95.0,Medical Devices,True,-001110,Defensive Rotation
+2026-11-27,FERG,RS setup,261.91,94.0,Water,True,0011110,Defensive Rotation
+2026-11-27,HAWK,Weekly scan,18.21,68.0,Software & Cloud,False,--000-0,Defensive Rotation
+2026-11-27,CAKE,Weekly scan,111.2,59.0,Consumer Discretionary,False,1111010,Defensive Rotation
+2026-11-27,PANW,Weekly scan,366.76,47.0,Cybersecurity,False,0010010,Defensive Rotation
